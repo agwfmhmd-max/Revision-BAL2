@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Révision BA L2 - Banques et Assurances</title>
     
-    <!-- خط عربي أنيق من جوجل -->
+    <!-- خط عربي أنيق (Tajawal) -->
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
     <!-- مكتبة الأيقونات -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <link rel="stylesheet" href="style.css">
 
-    <!-- مكتبة PDF.js -->
+    <!-- مكتبة PDF.js للقراءة -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script>
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
@@ -20,7 +20,7 @@
 </head>
 <body>
 
-    <!-- الشريط العلوي الاحترافي -->
+    <!-- الشريط العلوي (المطور) -->
     <nav class="top-nav">
         <div class="nav-content">
             <div class="developer-info">
@@ -45,27 +45,39 @@
 
     <div class="container">
         
-        <!-- 1. قسم اختيار الفصل الدراسي (يظهر أولاً) -->
+        <!-- 1. الشاشة الرئيسية (اختيار الفصل + النتائج) -->
         <div id="semester-selection" class="section-box fade-in">
-            <h2 class="section-title">اختر الفصل الدراسي</h2>
+            <h2 class="section-title">القائمة الرئيسية</h2>
             <div class="semesters-grid">
+                
+                <!-- زر S3 -->
                 <div class="semester-card" onclick="showSubjects('s3')">
                     <div class="icon-box"><i class="fas fa-book-open"></i></div>
                     <h3>Semestre 3</h3>
                     <p>Technique Bancaire, Marketing...</p>
                 </div>
+
+                <!-- زر S4 -->
                 <div class="semester-card" onclick="showSubjects('s4')">
                     <div class="icon-box"><i class="fas fa-graduation-cap"></i></div>
                     <h3>Semestre 4</h3>
                     <p>Assurances, Finance...</p>
                 </div>
+
+                <!-- ✅ زر النتائج الجديد -->
+                <div class="semester-card" onclick="window.location.href='https://resultat-iscae.vercel.app/'">
+                    <div class="icon-box"><i class="fas fa-chart-line"></i></div>
+                    <h3>النتائج</h3>
+                    <p>عرض نتائج ISCAE</p>
+                </div>
+
             </div>
         </div>
 
         <!-- 2. قسم المواد (مخفي افتراضياً) -->
         <div id="subjects-container" class="section-box hidden">
             <div class="header-with-back">
-                <button class="back-btn" onclick="goBackToSemesters()"><i class="fas fa-arrow-right"></i> رجوع</button>
+                <button class="back-btn" onclick="goBackToSemesters()"><i class="fas fa-arrow-right"></i> القائمة الرئيسية</button>
                 <h2 id="current-semester-title" class="section-title">مواد الفصل</h2>
             </div>
 
@@ -80,7 +92,9 @@
                 <button onclick="loadFiles('Marketing')">Marketing</button>
                 <button onclick="loadFiles('Droit administrative')">Droit administrative</button>
                 <button onclick="loadFiles('Macroéconomie')">Macroéconomie</button>
-                <button onclick="loadFiles('Méthodes aide décision')">Méthodes d’aide à la décision</button>
+                
+                <!-- ✅ تم تعديل الاسم هنا ليطابق الملفات تماماً -->
+                <button onclick="loadFiles('Méthodes d’aide à la décision')">Méthodes d’aide à la décision</button>
             </div>
 
             <!-- مواد S4 -->
@@ -108,7 +122,7 @@
 
     </div>
 
-    <!-- 4. واجهة قراءة PDF (تغطي الشاشة بالكامل عند الفتح) -->
+    <!-- 4. واجهة قراءة PDF -->
     <div id="pdf-viewer-overlay" class="hidden">
         <div class="viewer-header">
             <span id="viewer-filename">اسم الملف</span>
