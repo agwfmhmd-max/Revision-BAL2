@@ -5,10 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Révision BA L2 - Banques et Assurances</title>
     <link rel="stylesheet" href="style.css">
+    <!-- مكتبة PDF.js للقراءة المباشرة -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script>
+        // إعداد عامل المكتبة (مهم جداً للعمل)
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    </script>
 </head>
 <body>
 
-    <!-- رأس الصفحة -->
     <header>
         <h1>Révision BA L2</h1>
         <p>Banques et Assurances – L2</p>
@@ -16,10 +21,8 @@
 
     <div class="container">
         
-        <!-- قسم اختيار المواد -->
+        <!-- قسم المواد -->
         <div class="subjects-section">
-            
-            <!-- Semestre 3 -->
             <div class="semester-block">
                 <h2>Semestre 3 (S3)</h2>
                 <div class="buttons-grid">
@@ -36,7 +39,6 @@
                 </div>
             </div>
 
-            <!-- Semestre 4 -->
             <div class="semester-block">
                 <h2>Semestre 4 (S4)</h2>
                 <div class="buttons-grid">
@@ -54,23 +56,24 @@
             </div>
         </div>
 
-        <!-- قسم قائمة الملفات -->
+        <!-- القائمة -->
         <div id="file-list-container" class="hidden">
             <h3>الملفات المتاحة: <span id="selected-subject-name"></span></h3>
             <ul id="pdf-list"></ul>
-            <p id="loading-msg" style="display:none; color: #666;">جاري البحث عن الملفات...</p>
-            <p id="no-files-msg" style="display:none; color: red;">لا توجد ملفات لهذه المادة حاليًا.</p>
+            <p id="loading-msg" style="display:none;">جاري البحث...</p>
+            <p id="no-files-msg" style="display:none; color: red;">لا توجد ملفات.</p>
         </div>
 
-        <!-- قسم قارئ PDF -->
+        <!-- قارئ PDF المباشر (تغييرنا الـ iframe بـ div عادي) -->
         <div id="pdf-viewer-container" class="hidden">
             <h3>معاينة الملف:</h3>
-            <iframe id="pdf-frame" src=""></iframe>
+            <!-- هنا سيتم رسم صفحات الـ PDF -->
+            <div id="pdf-render-area"></div>
+            <p id="rendering-msg" style="display:none; color: #003366;">جاري فتح الملف، يرجى الانتظار...</p>
         </div>
 
     </div>
 
-    <!-- التذييل -->
     <footer>
         <p>Développé par Mohamed Dah Agove</p>
     </footer>
