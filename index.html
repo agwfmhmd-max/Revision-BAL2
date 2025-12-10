@@ -3,302 +3,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Révision BA L2</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>
-        /* نفس التصميم السابق */
-        :root {
-            --primary-color: #0e5e49; --secondary-color: #1a8e6f; --accent-color: #f0c44a;
-            --text-color: #333; --light-bg: #f4f7f6; --white: #ffffff; --footer-bg: #2c3e50;
-        }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            font-family: 'Cairo', 'Poppins', sans-serif; background-color: var(--light-bg);
-            color: var(--text-color); background-image: linear-gradient(135deg, #f4f7f6 0%, #e0e8e5 100%);
-            min-height: 100vh; display: flex; flex-direction: column;
-        }
-        header {
-            background: var(--primary-color); color: var(--white); text-align: center;
-            padding: 2.5rem 1rem; border-bottom: 5px solid var(--accent-color);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2); position: relative; overflow: hidden;
-        }
-        header::before {
-            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 10%, transparent 10%);
-            background-size: 20px 20px; opacity: 0.3;
-        }
-        header h1 { font-family: 'Poppins', sans-serif; font-size: 3rem; font-weight: 700; margin: 0; letter-spacing: 2px; }
-        .subtitle { margin-top: 5px; font-family: 'Poppins', sans-serif; font-size: 1.2rem; color: var(--accent-color); }
-        .container { max-width: 1200px; margin: 2rem auto; padding: 0 15px; flex: 1; }
-        .semester-controls { display: flex; justify-content: center; gap: 20px; margin-bottom: 30px; }
-        .sem-btn {
-            background: var(--white); color: var(--primary-color); border: 2px solid var(--primary-color);
-            padding: 10px 40px; border-radius: 30px; font-size: 1.2rem; cursor: pointer;
-            transition: all 0.3s ease; font-family: 'Poppins', sans-serif; font-weight: bold;
-        }
-        .sem-btn.active, .sem-btn:hover { background: var(--primary-color); color: var(--white); transform: translateY(-2px); }
-        .semester-content { display: none; animation: fadeIn 0.5s ease; }
-        .semester-content.active { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .subject-card {
-            background: var(--white); border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            transition: all 0.3s ease; overflow: hidden; border-right: 5px solid var(--secondary-color);
-        }
-        .subject-card:hover { box-shadow: 0 8px 20px rgba(0,0,0,0.1); border-right-color: var(--accent-color); }
-        .card-header { padding: 20px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; background: #fff; }
-        .subject-info { flex-grow: 1; }
-        .subject-name { font-family: 'Poppins', sans-serif; font-weight: 600; color: var(--text-color); font-size: 1rem; margin-bottom: 5px; text-align: left; }
-        .coeff { font-size: 0.8rem; color: #777; background: #eee; padding: 2px 8px; border-radius: 4px; }
-        .toggle-icon { font-size: 1.2rem; color: var(--primary-color); transition: transform 0.3s ease; }
-        .subject-card.active .toggle-icon { transform: rotate(180deg); }
-        .card-actions { 
-            max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; 
-            background-color: #f8fdfb; padding: 0 20px; 
-        }
-        .subject-card.active .card-actions { 
-            max-height: 400px; padding: 15px 20px 20px 20px; border-top: 1px solid #eee; overflow-y: auto;
-        }
-        .files-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
-        .file-item {
-            display: flex; align-items: center; justify-content: space-between; background: white;
-            padding: 10px; border-radius: 8px; border: 1px solid #eee; cursor: pointer; transition: 0.2s;
-        }
-        .file-item:hover { background: #f0f7f5; border-color: var(--secondary-color); }
-        .file-name { font-size: 0.9rem; color: #555; word-break: break-all; text-align: left; direction: ltr; flex: 1; margin-right: 10px;}
-        .file-icon { color: #d35400; font-size: 1.2rem; margin-right: 10px; }
-        .modal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(5px);
-        }
-        .modal-content { background: white; width: 90%; height: 90%; border-radius: 10px; display: flex; flex-direction: column; }
-        .modal-header { padding: 15px; background: var(--primary-color); color: white; display: flex; justify-content: space-between; align-items: center; }
-        .close-btn { background: rgba(255,255,255,0.2); border: none; color: white; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font-size: 1.2rem; }
-        .pdf-frame { flex-grow: 1; width: 100%; border: none; }
-        .fallback-msg { padding: 20px; text-align: center; display: none; }
-        footer { background-color: var(--footer-bg); color: #ecf0f1; padding: 30px 20px; text-align: center; margin-top: 50px; border-top: 4px solid var(--accent-color); }
-        .dev-link {
-            display: inline-flex; align-items: center; gap: 10px; background: rgba(255, 255, 255, 0.1); color: var(--accent-color);
-            text-decoration: none; padding: 10px 25px; border-radius: 50px; border: 1px solid var(--accent-color); transition: all 0.3s ease; font-family: 'Poppins', sans-serif; margin-top: 15px;
-        }
-        .dev-link:hover { background: var(--accent-color); color: var(--footer-bg); transform: scale(1.05); }
-        @media (max-width: 600px) { header h1 { font-size: 2.2rem; } .sem-btn { padding: 8px 25px; font-size: 1rem; } }
-    </style>
+    <title>Révision BA L2 - Banques et Assurances</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
+    <!-- رأس الصفحة -->
     <header>
-        <h1>BA L2</h1>
-        <div class="subtitle">Banques et Assurances</div>
+        <h1>Révision BA L2</h1>
+        <p>Banques et Assurances – L2</p>
     </header>
 
     <div class="container">
-        <div class="semester-controls">
-            <button class="sem-btn active" onclick="showSemester('s3')">S3</button>
-            <button class="sem-btn" onclick="showSemester('s4')">S4</button>
+        
+        <!-- قسم اختيار المواد -->
+        <div class="subjects-section">
+            
+            <!-- Semestre 3 -->
+            <div class="semester-block">
+                <h2>Semestre 3 (S3)</h2>
+                <div class="buttons-grid">
+                    <button onclick="loadFiles('Technique Bancaire')">Technique Bancaire</button>
+                    <button onclick="loadFiles('Système financier mauritanien')">Système financier mauritanien</button>
+                    <button onclick="loadFiles('Gestion Financière')">Gestion Financière</button>
+                    <button onclick="loadFiles('Comptabilité des Sociétés')">Comptabilité des Sociétés</button>
+                    <button onclick="loadFiles('Anglais des affaires')">Anglais des affaires</button>
+                    <button onclick="loadFiles('Logiciels Bancaire')">Logiciels Bancaire</button>
+                    <button onclick="loadFiles('Marketing')">Marketing</button>
+                    <button onclick="loadFiles('Droit administrative')">Droit administrative</button>
+                    <button onclick="loadFiles('Macroéconomie')">Macroéconomie</button>
+                    <button onclick="loadFiles('Méthodes aide décision')">Méthodes d’aide à la décision</button>
+                </div>
+            </div>
+
+            <!-- Semestre 4 -->
+            <div class="semester-block">
+                <h2>Semestre 4 (S4)</h2>
+                <div class="buttons-grid">
+                    <button onclick="loadFiles('Comptabilité des Société assurance')">Comptabilité des Sociétés d’assurance</button>
+                    <button onclick="loadFiles('Assurances des biens')">Assurances des biens</button>
+                    <button onclick="loadFiles('Comptabilité Bancaire')">Comptabilité Bancaire</button>
+                    <button onclick="loadFiles('Comptabilité de Gestion')">Comptabilité de Gestion</button>
+                    <button onclick="loadFiles('Finance des marchés')">Finance des marchés</button>
+                    <button onclick="loadFiles('Analyse Financière')">Analyse Financière</button>
+                    <button onclick="loadFiles('Gestion de la trésorerie')">Gestion de la trésorerie</button>
+                    <button onclick="loadFiles('GRH')">GRH</button>
+                    <button onclick="loadFiles('Droit des assurances')">Droit des assurances</button>
+                    <button onclick="loadFiles('Commerce international')">Commerce international</button>
+                </div>
+            </div>
         </div>
 
-        <div id="s3" class="semester-content active"></div>
-        <div id="s4" class="semester-content"></div>
-    </div>
-
-    <!-- PDF Viewer Modal -->
-    <div id="pdfModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 id="modalTitle" style="font-family: 'Poppins', sans-serif;"></h3>
-                <button class="close-btn" onclick="closeModal()">×</button>
-            </div>
-            <iframe id="pdfViewer" class="pdf-frame" src=""></iframe>
-            <div id="fallbackMessage" class="fallback-msg">
-                <p>عذراً، لم يتم العثور على الملف أو المتصفح لا يدعم العرض المباشر.</p>
-                <a id="downloadLink" href="#" target="_blank">تحميل الملف</a>
-            </div>
+        <!-- قسم قائمة الملفات -->
+        <div id="file-list-container" class="hidden">
+            <h3>الملفات المتاحة: <span id="selected-subject-name"></span></h3>
+            <ul id="pdf-list"></ul>
+            <p id="loading-msg" style="display:none; color: #666;">جاري البحث عن الملفات...</p>
+            <p id="no-files-msg" style="display:none; color: red;">لا توجد ملفات لهذه المادة حاليًا.</p>
         </div>
+
+        <!-- قسم قارئ PDF -->
+        <div id="pdf-viewer-container" class="hidden">
+            <h3>معاينة الملف:</h3>
+            <iframe id="pdf-frame" src=""></iframe>
+        </div>
+
     </div>
 
+    <!-- التذييل -->
     <footer>
-        <div class="footer-content">
-            <p>جميع الحقوق محفوظة | Révision BA L2</p>
-            <a href="https://wa.me/22220479962" target="_blank" class="dev-link">
-                <span class="dev-text">Développé par</span>
-                <span class="dev-name">Mohamed Dah Agove</span>
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
-            </a>
-        </div>
+        <p>Développé par Mohamed Dah Agove</p>
     </footer>
 
-    <script>
-        // =========================================================================
-        //  القائمة التي أرسلتها (تم إضافتها هنا)
-        // =========================================================================
-        const allFiles = [
-            "Chapitre 1 Macro_EC .pdf",
-            "Chapitre 2 Macro_ EC.pdf",
-            "Circulaire 03_GR_2019 Systeme .pdf",
-            "Droit .pdf",
-            "EX _ Macro  1.pdf",
-            "formulaire statistique.pdf",
-            "géneralité sur la gestion financiére.pdf",
-            "HW Pre-Int 4th edSB _Anglais.pdf",
-            "Les Principaux Formule de Calculer Macro(Devoir) .pdf",
-            "MACRO.pdf",
-            "Methode .pdf",
-            "Plan Comptable Mauritanie_ Comptabilites des Societes.pdf",
-            "resime drt adm.pdf", 
-            "Resumé Ad❤️🫶.pdf", 
-            "Résume Système financeur.pdf",
-            "Résumé.pdf",
-            "Système FM (yssf).pdf",
-            "TD-1_Methode .pdf",
-        ];
-
-        // تم ضبط الكلمات المفتاحية لتناسب أسماء ملفاتك
-        const subjectsData = {
-            s3: [
-                { name: "Technique Bancaire", coeff: 4.0, keyword: "Technique Bancaire" },
-                // تم تغيير Keyword إلى "Système" أو "Systeme" ليشمل كل ملفاتك
-                { name: "Système financier mauritanien", coeff: 4.0, keyword: "Systeme" },
-                { name: "Gestion Financière", coeff: 4.0, keyword: "Gestion Financière" },
-                // تم تغيير Keyword إلى "Societes" ليشمل Plan Comptable...
-                { name: "Comptabilité des Sociétés", coeff: 4.0, keyword: "Societes" },
-                { name: "Anglais des affaires", coeff: 2.0, keyword: "Anglais" },
-                { name: "Logiciels Bancaire et d'assurances", coeff: 3.0, keyword: "Logiciels" },
-                { name: "Marketing", coeff: 2.0, keyword: "Marketing" },
-                { name: "Droit administrative", coeff: 2.0, keyword: "Droit" },
-                { name: "Macroéconomie", coeff: 2.0, keyword: "Macro" },
-                // تم تغيير Keyword إلى "Methode"
-                { name: "Méthodes d'aide à la décision", coeff: 3.0, keyword: "Methode" }
-            ],
-            s4: [
-                { name: "Comptabilité des Sociétés d'assurance", coeff: 4.0, keyword: "assurance" },
-                { name: "Assurances des biens et des personnes", coeff: 3.0, keyword: "biens" },
-                { name: "Comptabilité Bancaire", coeff: 3.0, keyword: "Comptabilité Bancaire" },
-                { name: "Comptabilité de Gestion", coeff: 2.0, keyword: "Gestion" },
-                { name: "Finance des marchés", coeff: 4.0, keyword: "Finance" },
-                { name: "Analyse Financier", coeff: 4.0, keyword: "Analyse" },
-                { name: "Gestion de la trésorerie", coeff: 2.0, keyword: "trésorerie" },
-                { name: "GRH", coeff: 2.0, keyword: "GRH" },
-                { name: "Droit des assurances", coeff: 4.0, keyword: "Droit des assurances" },
-                { name: "Commerce international", coeff: 2.0, keyword: "Commerce" }
-            ]
-        };
-
-        // دالة تنظيف النصوص للمقارنة (تجاهل الحركات والمسافات)
-        function cleanText(text) {
-            return text.toLowerCase()
-                       .normalize("NFD").replace(/[\u0300-\u036f]/g, "") 
-                       .replace(/è/g, "e").replace(/é/g, "e") // تحويل خاص لضمان التطابق
-                       .trim();
-        }
-
-        function findFilesForSubject(keyword) {
-            const searchKey = cleanText(keyword);
-            return allFiles.filter(file => cleanText(file).includes(searchKey));
-        }
-
-        function renderSubjects() {
-            ['s3', 's4'].forEach(semester => {
-                const container = document.getElementById(semester);
-                subjectsData[semester].forEach((sub, index) => {
-                    const card = document.createElement('div');
-                    card.className = 'subject-card';
-                    card.id = `card-${semester}-${index}`;
-                    
-                    const foundFiles = findFilesForSubject(sub.keyword);
-                    const hasFiles = foundFiles.length > 0;
-                    const iconColor = hasFiles ? 'var(--primary-color)' : '#ccc';
-
-                    card.innerHTML = `
-                        <div class="card-header" onclick="toggleCard('card-${semester}-${index}')">
-                            <div class="subject-info">
-                                <div class="subject-name">${sub.name}</div>
-                                <span class="coeff">Coeff: ${sub.coeff}</span>
-                            </div>
-                            <div class="toggle-icon" style="color:${iconColor}">
-                                ${hasFiles ? '▼' : '∅'}
-                            </div>
-                        </div>
-                        <div class="card-actions">
-                            ${generateFilesList(foundFiles, sub.name)}
-                        </div>
-                    `;
-                    container.appendChild(card);
-                });
-            });
-        }
-
-        function generateFilesList(files, subjectName) {
-            if (files.length === 0) {
-                return `<div style="text-align:center; padding:10px; color:#777;">لا توجد ملفات متوفرة حالياً لهذه المادة.</div>`;
-            }
-            
-            let html = '<ul class="files-list">';
-            files.forEach(file => {
-                html += `
-                    <li class="file-item" onclick="openPdf('${subjectName}', '${file}')">
-                        <span class="file-icon">📄</span>
-                        <span class="file-name">${file}</span>
-                        <span style="font-size:0.8rem; color:#aaa;">عرض</span>
-                    </li>
-                `;
-            });
-            html += '</ul>';
-            return html;
-        }
-
-        function toggleCard(cardId) {
-            const card = document.getElementById(cardId);
-            document.querySelectorAll('.subject-card.active').forEach(c => {
-                if(c.id !== cardId) c.classList.remove('active');
-            });
-            card.classList.toggle('active');
-        }
-
-        function showSemester(sem) {
-            document.querySelectorAll('.semester-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.sem-btn').forEach(el => el.classList.remove('active'));
-            document.getElementById(sem).classList.add('active');
-            const btnIndex = sem === 's3' ? 0 : 1;
-            document.querySelectorAll('.sem-btn')[btnIndex].classList.add('active');
-        }
-
-        function openPdf(title, filename) {
-            const modal = document.getElementById('pdfModal');
-            const iframe = document.getElementById('pdfViewer');
-            const modalTitle = document.getElementById('modalTitle');
-            const downloadLink = document.getElementById('downloadLink');
-            const fallbackMsg = document.getElementById('fallbackMessage');
-            
-            const filePath = `pdfs/${encodeURIComponent(filename)}`;
-
-            modalTitle.textContent = title;
-            iframe.style.display = 'block';
-            fallbackMsg.style.display = 'none';
-            iframe.src = filePath;
-            downloadLink.href = filePath;
-            modal.style.display = 'flex';
-
-            iframe.onerror = function() {
-                iframe.style.display = 'none';
-                fallbackMsg.style.display = 'block';
-            };
-        }
-
-        function closeModal() {
-            const modal = document.getElementById('pdfModal');
-            const iframe = document.getElementById('pdfViewer');
-            modal.style.display = 'none';
-            iframe.src = '';
-        }
-
-        window.onclick = function(event) {
-            const modal = document.getElementById('pdfModal');
-            if (event.target == modal) {
-                closeModal();
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', renderSubjects);
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
