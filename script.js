@@ -1,44 +1,86 @@
+// إعدادات المستودع (تأكد من صحتها)
 const repoOwner = "agwfmhmd-max"; 
 const repoName = "Revision-BAL2"; 
-const branchName = "main"; // تأكد من اسم الفرع
-
+const branchName = "main"; 
 const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/`;
 
 let allFiles = []; 
 
+// عند تحميل الصفحة
 document.addEventListener("DOMContentLoaded", () => {
     fetchFilesFromGitHub();
 });
 
+// 1. جلب الملفات
 function fetchFilesFromGitHub() {
     fetch(apiUrl)
         .then(res => res.json())
         .then(data => {
             allFiles = data;
-            console.log("Files loaded:", allFiles.length);
+            console.log("تم تحميل قاعدة البيانات:", allFiles.length);
         })
-        .catch(err => console.error("Error:", err));
+        .catch(err => console.error("Error loading files:", err));
 }
 
+// 2. إدارة واجهة الفصول (S3 / S4)
+function showSubjects(semester) {
+    // إخفاء قسم اختيار الفصل
+    document.getElementById('semester-selection').classList.add('hidden');
+    
+    // إظهار قسم المواد
+    document.getElementById('subjects-container').classList.remove('hidden');
+    document.getElementById('subjects-container').classList.add('fade-in');
+
+    // تحديد أي قائمة مواد ستظهر
+    const s3List = document.getElementById('s3-list');
+    const s4List = document.getElementById('s4-list');
+    const title = document.getElementById('current-semester-title');
+
+    if (semester === 's3') {
+        s3List.classList.remove('hidden');
+        s4List.classList.add('hidden');
+        title.textContent = "مواد الفصل الثالث (S3)";
+    } else {
+        s3List.classList.add('hidden');
+        s4List.classList.remove('hidden');
+        title.textContent = "مواد الفصل الرابع (S4)";
+    }
+}
+
+function goBackToSemesters() {
+    // إخفاء كل شيء والعودة للرئيسية
+    document.getElementById('subjects-container').classList.add('hidden');
+    document.getElementById('file-list-container').classList.add('hidden');
+    
+    const semSelection = document.getElementById('semester-selection');
+    semSelection.classList.remove('hidden');
+    semSelection.classList.add('fade-in');
+}
+
+// 3. عرض الملفات عند اختيار المادة
 function loadFiles(subjectName) {
     const listContainer = document.getElementById('file-list-container');
     const pdfList = document.getElementById('pdf-list');
     const subjectTitle = document.getElementById('selected-subject-name');
-    const viewerContainer = document.getElementById('pdf-viewer-container');
-    const renderArea = document.getElementById('pdf-render-area');
-    
-    // تصفير الواجهة
-    pdfList.innerHTML = "";
-    renderArea.innerHTML = ""; // حذف أي ملف مفتوح سابقاً
-    viewerContainer.classList.add('hidden'); 
-    listContainer.classList.remove('hidden'); 
-    subjectTitle.textContent = subjectName;
+    const noFilesMsg = document.getElementById('no-files-msg');
+    const spinner = document.getElementById('loading-spinner');
 
+    // إعداد الواجهة
+    pdfList.innerHTML = "";
+    listContainer.classList.remove('hidden');
+    listContainer.classList.add('fade-in');
+    subjectTitle.textContent = subjectName;
+    noFilesMsg.classList.add('hidden');
+
+    // التأكد من تحميل الملفات
     if (allFiles.length === 0) {
+        spinner.classList.remove('hidden');
         setTimeout(() => loadFiles(subjectName), 1000);
         return;
     }
+    spinner.classList.add('hidden');
 
+    // الفلترة
     const filteredFiles = allFiles.filter(file => {
         const name = file.name.toLowerCase();
         const search = subjectName.toLowerCase();
@@ -46,75 +88,74 @@ function loadFiles(subjectName) {
     });
 
     if (filteredFiles.length === 0) {
-        const li = document.createElement('li');
-        li.textContent = "لا توجد ملفات";
-        li.style.color = "red";
-        pdfList.appendChild(li);
+        noFilesMsg.classList.remove('hidden');
     } else {
         filteredFiles.forEach(file => {
             const li = document.createElement('li');
-            li.textContent = file.name.replace('.pdf', ''); 
-            li.onclick = () => renderPdf(file.name); // استدعاء دالة الرسم الجديدة
+            // تنظيف الاسم للعرض
+            const displayName = file.name.replace('.pdf', '').replace(subjectName, '').replace(/^[\s-–]+/, '') || file.name.replace('.pdf', '');
+            
+            li.textContent = displayName;
+            li.onclick = () => renderPdf(file.name);
             pdfList.appendChild(li);
         });
+        
+        // التمرير للقائمة
+        listContainer.scrollIntoView({ behavior: 'smooth' });
     }
-
-    listContainer.scrollIntoView({ behavior: 'smooth' });
 }
 
-// --- دالة قراءة PDF المباشرة (بدون Google) ---
+// 4. قارئ PDF الاحترافي
 async function renderPdf(fileName) {
-    const viewerContainer = document.getElementById('pdf-viewer-container');
+    const viewerOverlay = document.getElementById('pdf-viewer-overlay');
     const renderArea = document.getElementById('pdf-render-area');
-    const loadingMsg = document.getElementById('rendering-msg');
+    const msgDiv = document.getElementById('rendering-msg');
+    const filenameLabel = document.getElementById('viewer-filename');
 
-    // إظهار منطقة العرض
-    viewerContainer.classList.remove('hidden');
-    loadingMsg.style.display = 'block';
-    renderArea.innerHTML = ""; // تنظيف الصفحات القديمة
-    
-    viewerContainer.scrollIntoView({ behavior: 'smooth' });
+    // فتح واجهة القراءة
+    viewerOverlay.classList.remove('hidden');
+    filenameLabel.textContent = fileName.replace('.pdf', '');
+    renderArea.innerHTML = "";
+    msgDiv.style.display = 'block';
 
-    // رابط الملف المباشر (Raw)
     const url = `https://raw.githubusercontent.com/${repoOwner}/${repoName}/${branchName}/${encodeURIComponent(fileName)}`;
 
     try {
-        // 1. تحميل المستند باستخدام PDF.js
         const loadingTask = pdfjsLib.getDocument(url);
         const pdf = await loadingTask.promise;
 
-        loadingMsg.style.display = 'none'; // إخفاء رسالة التحميل
+        msgDiv.style.display = 'none';
 
-        // 2. حلقة تكرارية لعرض جميع الصفحات
+        // عرض كل الصفحات
         for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
             const page = await pdf.getPage(pageNum);
             
-            // تحديد دقة العرض (Scale)
-            // 1.5 تعني جودة جيدة، يمكن زيادتها لـ 2 إذا كانت النصوص صغيرة
-            const scale = 1.5;
-            const viewport = page.getViewport({ scale: scale });
+            // حساب الحجم المناسب للشاشة
+            let scale = 1.5;
+            if(window.innerWidth < 600) scale = 0.8; // تصغير للموبايل
 
-            // إنشاء عنصر Canvas لكل صفحة
+            const viewport = page.getViewport({ scale: scale });
             const canvas = document.createElement('canvas');
             const context = canvas.getContext('2d');
+            
             canvas.height = viewport.height;
             canvas.width = viewport.width;
 
-            // رسم الصفحة داخل الـ Canvas
             const renderContext = {
                 canvasContext: context,
                 viewport: viewport
             };
-            
-            renderArea.appendChild(canvas); // إضافة الصفحة للموقع
-            
-            // انتظار رسم الصفحة الحالية قبل الانتقال للتالية (لترتيب الصفحات)
+
+            renderArea.appendChild(canvas);
             await page.render(renderContext).promise;
         }
 
     } catch (error) {
-        console.error('Error rendering PDF:', error);
-        loadingMsg.textContent = "حدث خطأ أثناء قراءة الملف. تأكد من الإنترنت.";
-        loadingMsg.style.color = "red";
+        console.error('Error:', error);
+        msgDiv.innerHTML = `<p style="color:#ff5252">حدث خطأ أثناء تحميل الملف.<br>تأكد من الإنترنت.</p>`;
     }
+}
+
+function closePdfViewer() {
+    document.getElementById('pdf-viewer-overlay').classList.add('hidden');
 }

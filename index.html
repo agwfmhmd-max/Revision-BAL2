@@ -4,79 +4,122 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Révision BA L2 - Banques et Assurances</title>
+    
+    <!-- خط عربي أنيق من جوجل -->
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- مكتبة الأيقونات -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <link rel="stylesheet" href="style.css">
-    <!-- مكتبة PDF.js للقراءة المباشرة -->
+
+    <!-- مكتبة PDF.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script>
-        // إعداد عامل المكتبة (مهم جداً للعمل)
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
     </script>
 </head>
 <body>
 
-    <header>
-        <h1>Révision BA L2</h1>
-        <p>Banques et Assurances – L2</p>
+    <!-- الشريط العلوي الاحترافي -->
+    <nav class="top-nav">
+        <div class="nav-content">
+            <div class="developer-info">
+                <span>تم التطوير بواسطة: </span>
+                <a href="https://wa.me/22220479962" target="_blank" class="dev-name">
+                    <i class="fab fa-whatsapp"></i> Mohamed Dah Agove
+                </a>
+            </div>
+            <div class="dua-text">
+                ❤️ لا تنسونا من صالح الدعاء
+            </div>
+        </div>
+    </nav>
+
+    <!-- الهيدر الرئيسي -->
+    <header class="main-header">
+        <div class="header-overlay">
+            <h1>Révision BA L2</h1>
+            <p>المراجعة الشاملة - Banques et Assurances</p>
+        </div>
     </header>
 
     <div class="container">
         
-        <!-- قسم المواد -->
-        <div class="subjects-section">
-            <div class="semester-block">
-                <h2>Semestre 3 (S3)</h2>
-                <div class="buttons-grid">
-                    <button onclick="loadFiles('Technique Bancaire')">Technique Bancaire</button>
-                    <button onclick="loadFiles('Système financier mauritanien')">Système financier mauritanien</button>
-                    <button onclick="loadFiles('Gestion Financière')">Gestion Financière</button>
-                    <button onclick="loadFiles('Comptabilité des Sociétés')">Comptabilité des Sociétés</button>
-                    <button onclick="loadFiles('Anglais des affaires')">Anglais des affaires</button>
-                    <button onclick="loadFiles('Logiciels Bancaire')">Logiciels Bancaire</button>
-                    <button onclick="loadFiles('Marketing')">Marketing</button>
-                    <button onclick="loadFiles('Droit administrative')">Droit administrative</button>
-                    <button onclick="loadFiles('Macroéconomie')">Macroéconomie</button>
-                    <button onclick="loadFiles('Méthodes aide décision')">Méthodes d’aide à la décision</button>
+        <!-- 1. قسم اختيار الفصل الدراسي (يظهر أولاً) -->
+        <div id="semester-selection" class="section-box fade-in">
+            <h2 class="section-title">اختر الفصل الدراسي</h2>
+            <div class="semesters-grid">
+                <div class="semester-card" onclick="showSubjects('s3')">
+                    <div class="icon-box"><i class="fas fa-book-open"></i></div>
+                    <h3>Semestre 3</h3>
+                    <p>Technique Bancaire, Marketing...</p>
                 </div>
-            </div>
-
-            <div class="semester-block">
-                <h2>Semestre 4 (S4)</h2>
-                <div class="buttons-grid">
-                    <button onclick="loadFiles('Comptabilité des Société assurance')">Comptabilité des Sociétés d’assurance</button>
-                    <button onclick="loadFiles('Assurances des biens')">Assurances des biens</button>
-                    <button onclick="loadFiles('Comptabilité Bancaire')">Comptabilité Bancaire</button>
-                    <button onclick="loadFiles('Comptabilité de Gestion')">Comptabilité de Gestion</button>
-                    <button onclick="loadFiles('Finance des marchés')">Finance des marchés</button>
-                    <button onclick="loadFiles('Analyse Financière')">Analyse Financière</button>
-                    <button onclick="loadFiles('Gestion de la trésorerie')">Gestion de la trésorerie</button>
-                    <button onclick="loadFiles('GRH')">GRH</button>
-                    <button onclick="loadFiles('Droit des assurances')">Droit des assurances</button>
-                    <button onclick="loadFiles('Commerce international')">Commerce international</button>
+                <div class="semester-card" onclick="showSubjects('s4')">
+                    <div class="icon-box"><i class="fas fa-graduation-cap"></i></div>
+                    <h3>Semestre 4</h3>
+                    <p>Assurances, Finance...</p>
                 </div>
             </div>
         </div>
 
-        <!-- القائمة -->
-        <div id="file-list-container" class="hidden">
-            <h3>الملفات المتاحة: <span id="selected-subject-name"></span></h3>
+        <!-- 2. قسم المواد (مخفي افتراضياً) -->
+        <div id="subjects-container" class="section-box hidden">
+            <div class="header-with-back">
+                <button class="back-btn" onclick="goBackToSemesters()"><i class="fas fa-arrow-right"></i> رجوع</button>
+                <h2 id="current-semester-title" class="section-title">مواد الفصل</h2>
+            </div>
+
+            <!-- مواد S3 -->
+            <div id="s3-list" class="buttons-grid hidden">
+                <button onclick="loadFiles('Technique Bancaire')">Technique Bancaire</button>
+                <button onclick="loadFiles('Système financier mauritanien')">Système financier mauritanien</button>
+                <button onclick="loadFiles('Gestion Financière')">Gestion Financière</button>
+                <button onclick="loadFiles('Comptabilité des Sociétés')">Comptabilité des Sociétés</button>
+                <button onclick="loadFiles('Anglais des affaires')">Anglais des affaires</button>
+                <button onclick="loadFiles('Logiciels Bancaire')">Logiciels Bancaire</button>
+                <button onclick="loadFiles('Marketing')">Marketing</button>
+                <button onclick="loadFiles('Droit administrative')">Droit administrative</button>
+                <button onclick="loadFiles('Macroéconomie')">Macroéconomie</button>
+                <button onclick="loadFiles('Méthodes aide décision')">Méthodes d’aide à la décision</button>
+            </div>
+
+            <!-- مواد S4 -->
+            <div id="s4-list" class="buttons-grid hidden">
+                <button onclick="loadFiles('Comptabilité des Société assurance')">Comptabilité des Assurances</button>
+                <button onclick="loadFiles('Assurances des biens')">Assurances des biens</button>
+                <button onclick="loadFiles('Comptabilité Bancaire')">Comptabilité Bancaire</button>
+                <button onclick="loadFiles('Comptabilité de Gestion')">Comptabilité de Gestion</button>
+                <button onclick="loadFiles('Finance des marchés')">Finance des marchés</button>
+                <button onclick="loadFiles('Analyse Financière')">Analyse Financière</button>
+                <button onclick="loadFiles('Gestion de la trésorerie')">Gestion de la trésorerie</button>
+                <button onclick="loadFiles('GRH')">GRH</button>
+                <button onclick="loadFiles('Droit des assurances')">Droit des assurances</button>
+                <button onclick="loadFiles('Commerce international')">Commerce international</button>
+            </div>
+        </div>
+
+        <!-- 3. قائمة الملفات -->
+        <div id="file-list-container" class="section-box hidden">
+            <h3>📂 الملفات المتاحة: <span id="selected-subject-name" class="highlight-text"></span></h3>
             <ul id="pdf-list"></ul>
-            <p id="loading-msg" style="display:none;">جاري البحث...</p>
-            <p id="no-files-msg" style="display:none; color: red;">لا توجد ملفات.</p>
-        </div>
-
-        <!-- قارئ PDF المباشر (تغييرنا الـ iframe بـ div عادي) -->
-        <div id="pdf-viewer-container" class="hidden">
-            <h3>معاينة الملف:</h3>
-            <!-- هنا سيتم رسم صفحات الـ PDF -->
-            <div id="pdf-render-area"></div>
-            <p id="rendering-msg" style="display:none; color: #003366;">جاري فتح الملف، يرجى الانتظار...</p>
+            <div id="loading-spinner" class="spinner hidden"></div>
+            <p id="no-files-msg" class="hidden error-msg">⚠️ لا توجد ملفات لهذه المادة حاليًا.</p>
         </div>
 
     </div>
 
-    <footer>
-        <p>Développé par Mohamed Dah Agove</p>
-    </footer>
+    <!-- 4. واجهة قراءة PDF (تغطي الشاشة بالكامل عند الفتح) -->
+    <div id="pdf-viewer-overlay" class="hidden">
+        <div class="viewer-header">
+            <span id="viewer-filename">اسم الملف</span>
+            <button onclick="closePdfViewer()" class="close-viewer-btn"><i class="fas fa-times"></i> إغلاق</button>
+        </div>
+        <div id="pdf-render-area"></div>
+        <div id="rendering-msg">
+            <div class="spinner"></div>
+            <p>جاري تحضير المستند...</p>
+        </div>
+    </div>
 
     <script src="script.js"></script>
 </body>
