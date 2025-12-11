@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function fetchFilesFromGitHub() {
-    // إضافة timestamp لتجنب الكاش القديم
+    // timestamp لمنع الكاش القديم
     fetch(apiUrl + "?t=" + new Date().getTime())
         .then(res => res.json())
         .then(data => {
@@ -46,33 +46,38 @@ function goBackToSemesters() {
     document.getElementById('semester-selection').classList.remove('hidden');
 }
 
-// 🧠 دالة تنظيف النصوص للمقارنة الذكية
+// 🧠 1. دالة تنظيف النصوص (لجعل البحث مرناً جداً)
 function normalizeText(text) {
     return text
-        .toLowerCase() // تحويل لصغير
-        .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // إزالة الحركات (accents)
-        .replace(/[^a-z0-9]/g, " ") // إزالة الرموز الخاصة
+        .toLowerCase()
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // حذف الحركات مثل é
+        .replace(/[^a-z0-9\s]/g, " ") // حذف الرموز وترك المسافات
         .trim();
 }
 
-// 🔍 خوارزمية البحث المرن
+// 🧠 2. خوارزمية البحث الذكية
 function isFileMatch(fileName, subjectName) {
     const fileClean = normalizeText(fileName);
     const subjectClean = normalizeText(subjectName);
 
-    // 1. إذا كان اسم الملف يحتوي على اسم المادة كاملاً
+    // أ) تطابق مباشر
     if (fileClean.includes(subjectClean)) return true;
 
-    // 2. البحث بالكلمات المفتاحية (للمواد الطويلة مثل Méthodes d’aide à la décision)
-    // نقسم اسم المادة إلى كلمات
-    const subjectKeywords = subjectClean.split(" ").filter(w => w.length > 2); // نأخذ الكلمات الأطول من حرفين
+    // ب) تطابق الكلمات المفتاحية (للملفات التي أسمائها مقلوبة أو مختصرة)
+    // نقسم اسم المادة إلى كلمات، ونحذف الكلمات القصيرة جداً (مثل de, la)
+    const subjectKeywords = subjectClean.split(/\s+/).filter(w => w.length > 2);
     
-    // يجب أن يحتوي الملف على جميع الكلمات المهمة في اسم المادة
-    // أو على الأقل 70% من الكلمات لتكون النتيجة دقيقة
-    const matches = subjectKeywords.filter(keyword => fileClean.includes(keyword));
-    
-    // إذا تطابقت أغلب الكلمات المهمة
-    return matches.length === subjectKeywords.length; 
+    if (subjectKeywords.length === 0) return false;
+
+    // نحسب عدد الكلمات الموجودة في اسم الملف
+    let matchCount = 0;
+    subjectKeywords.forEach(keyword => {
+        if (fileClean.includes(keyword)) matchCount++;
+    });
+
+    // إذا وجدنا أكثر من نصف كلمات المادة في اسم الملف، نعتبره تطابقاً
+    // هذا يلتقط: "Decision Methodes.pdf" للمادة "Méthodes de décision"
+    return matchCount >= Math.ceil(subjectKeywords.length * 0.6); 
 }
 
 function loadFiles(subjectName) {
@@ -94,7 +99,7 @@ function loadFiles(subjectName) {
     }
     spinner.classList.add('hidden');
 
-    // استخدام الدالة الذكية للفلترة
+    // استخدام الدالة الذكية
     const filteredFiles = allFiles.filter(file => {
         return isFileMatch(file.name, subjectName) && file.name.endsWith(".pdf");
     });
@@ -104,7 +109,6 @@ function loadFiles(subjectName) {
     } else {
         filteredFiles.forEach(file => {
             const li = document.createElement('li');
-            // عرض اسم الملف بشكل نظيف
             li.textContent = file.name.replace('.pdf', '');
             li.onclick = () => openSmartViewer(file.name);
             pdfList.appendChild(li);
@@ -113,7 +117,7 @@ function loadFiles(subjectName) {
     }
 }
 
-// عارض الملفات (Google + Fallback)
+// ✅ العارض المحسن (بدون تنزيل)
 function openSmartViewer(fileName) {
     const viewerOverlay = document.getElementById('pdf-viewer-overlay');
     const renderArea = document.getElementById('pdf-render-area');
@@ -126,23 +130,27 @@ function openSmartViewer(fileName) {
     renderArea.innerHTML = ""; 
     msgDiv.style.display = 'block';
     
-    // الروابط
+    // رابط CDN سريع
     const cdnUrl = `https://cdn.jsdelivr.net/gh/${repoOwner}/${repoName}@${branchName}/${encodeURIComponent(fileName)}`;
-    const rawUrl = `https://raw.githubusercontent.com/${repoOwner}/${repoName}/${branchName}/${encodeURIComponent(fileName)}`;
+    
+    // رابط العارض الخارجي (يفتح صفحة ويب للعرض وليس الملف المباشر)
+    // نستخدم Google Drive Viewer لأنه لا يقوم بالتنزيل التلقائي
+    const googleViewerUrl = `https://drive.google.com/viewerng/viewer?url=${cdnUrl}`;
 
-    // زر الفتح الخارجي
-    actionBtn.onclick = () => window.open(rawUrl, '_blank');
+    // 🔴 عند الضغط على زر خارجي: نفتح صفحة العارض في نافذة جديدة
+    // هذا يمنع التنزيل ويجبر المتصفح على العرض
+    actionBtn.onclick = () => window.open(googleViewerUrl, '_blank');
     actionBtn.style.display = 'block'; 
 
-    // محاولة فتح Google Viewer
+    // محاولة العرض الداخلي
     const iframe = document.createElement('iframe');
-    iframe.src = `https://docs.google.com/viewer?url=${cdnUrl}&embedded=true`;
+    // نستخدم embedded=true للعرض الداخلي
+    iframe.src = `https://drive.google.com/viewerng/viewer?embedded=true&url=${cdnUrl}`;
     
-    // إخفاء رسالة التحميل عند النجاح
     iframe.onload = function() { msgDiv.style.display = 'none'; };
     
-    // تنظيف بعد 4 ثواني إذا تأخر
-    setTimeout(() => { msgDiv.style.display = 'none'; }, 4000);
+    // مهلة 5 ثواني
+    setTimeout(() => { msgDiv.style.display = 'none'; }, 5000);
 
     renderArea.appendChild(iframe);
 }

@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Révision BA L2 - Banques et Assurances</title>
     
-    <!-- إعدادات PWA (التثبيت) -->
+    <!-- PWA Setup -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#003366">
     <link rel="apple-touch-icon" href="icon-192.png">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-    <!-- الخطوط والأيقونات -->
+    <!-- Fonts & Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -76,21 +76,21 @@
                 <h2 id="current-semester-title" class="section-title">مواد الفصل</h2>
             </div>
 
-            <!-- S3 -->
+            <!-- قائمة مواد S3 (كما طلبت بالضبط) -->
             <div id="s3-list" class="buttons-grid hidden">
-                <button onclick="loadFiles('Technique Bancaire')">Technique Bancaire</button>
-                <button onclick="loadFiles('Système financier mauritanien')">Système financier mauritanien</button>
-                <button onclick="loadFiles('Gestion Financière')">Gestion Financière</button>
-                <button onclick="loadFiles('Comptabilité des Sociétés')">Comptabilité des Sociétés</button>
                 <button onclick="loadFiles('Anglais des affaires')">Anglais des affaires</button>
+                <button onclick="loadFiles('Méthodes d’aide à la décision')">Méthodes d’aide à la décision</button>
                 <button onclick="loadFiles('Logiciels Bancaire')">Logiciels Bancaire</button>
                 <button onclick="loadFiles('Marketing')">Marketing</button>
+                <button onclick="loadFiles('Comptabilité des Sociétés')">Comptabilité des Sociétés</button>
                 <button onclick="loadFiles('Droit administrative')">Droit administrative</button>
+                <button onclick="loadFiles('Technique Bancaire')">Technique Bancaire</button>
                 <button onclick="loadFiles('Macroéconomie')">Macroéconomie</button>
-                <button onclick="loadFiles('Méthodes d’aide à la décision')">Méthodes d’aide à la décision</button>
+                <button onclick="loadFiles('Gestion Financière')">Gestion Financière</button>
+                <button onclick="loadFiles('Système financier mauritanien')">Système financier mauritanien</button>
             </div>
 
-            <!-- S4 -->
+            <!-- قائمة مواد S4 -->
             <div id="s4-list" class="buttons-grid hidden">
                 <button onclick="loadFiles('Comptabilité des Société assurance')">Comptabilité des Assurances</button>
                 <button onclick="loadFiles('Assurances des biens')">Assurances des biens</button>
@@ -115,20 +115,21 @@
 
     </div>
 
-    <!-- واجهة القراءة (Google + زر خارجي) -->
+    <!-- واجهة القراءة -->
     <div id="pdf-viewer-overlay" class="hidden">
         <div class="viewer-header">
             <div style="display:flex; align-items:center; gap:10px;">
                 <button onclick="closePdfViewer()" class="close-viewer-btn"><i class="fas fa-times"></i> إغلاق</button>
                 <span id="viewer-filename" style="font-size:0.9rem; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; max-width:150px; color:#ddd;">اسم الملف</span>
             </div>
+            <!-- زر فتح خارجي -->
             <button id="viewer-action-btn" class="external-btn"><i class="fas fa-external-link-alt"></i> فتح خارجي</button>
         </div>
         <div id="pdf-render-area"></div>
         <div id="rendering-msg">
             <div class="spinner"></div>
             <p>جاري تحضير الملف...</p>
-            <p style="font-size:0.8rem; opacity:0.8; margin-top:5px;">إذا تأخر التحميل، اضغط على "فتح خارجي"</p>
+            <p style="font-size:0.8rem; opacity:0.8; margin-top:5px;">إذا لم يظهر، اضغط على "فتح خارجي"</p>
         </div>
     </div>
 
