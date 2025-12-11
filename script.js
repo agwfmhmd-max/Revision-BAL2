@@ -4,8 +4,8 @@ const repoName = "Revision-BAL2";
 const branchName = "main"; 
 const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/`;
 
-// ✅ (1) روابط الخطوط وإصلاح الأحرف (مهم جداً لحل مشكلة المسافات)
-const cMapUrl = 'https://unpkg.com/pdfjs-dist@3.11.174/cmaps/';
+// إعدادات المكتبة والخطوط
+const cmapsUrl = 'https://unpkg.com/pdfjs-dist@3.11.174/cmaps/';
 const standardFontDataUrl = 'https://unpkg.com/pdfjs-dist@3.11.174/standard_fonts/';
 
 let allFiles = []; 
@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
     fetchFilesFromGitHub();
 });
 
-// جلب الملفات
+// 1. جلب الملفات
 function fetchFilesFromGitHub() {
     fetch(apiUrl)
         .then(res => res.json())
@@ -25,7 +25,7 @@ function fetchFilesFromGitHub() {
         .catch(err => console.error("Error loading files:", err));
 }
 
-// التنقل بين الفصول
+// 2. إدارة الواجهة (التنقل)
 function showSubjects(semester) {
     document.getElementById('semester-selection').classList.add('hidden');
     const subjectsContainer = document.getElementById('subjects-container');
@@ -55,7 +55,7 @@ function goBackToSemesters() {
     semSelection.classList.add('fade-in');
 }
 
-// عرض القائمة
+// 3. عرض الملفات
 function loadFiles(subjectName) {
     const listContainer = document.getElementById('file-list-container');
     const pdfList = document.getElementById('pdf-list');
@@ -95,7 +95,7 @@ function loadFiles(subjectName) {
     }
 }
 
-// 4. قارئ PDF المحسن (إصلاح المسافات والخطوط)
+// 4. قارئ PDF بتقنية SVG (فيكتور) لحل مشكلة الخطوط والمسافات
 async function renderPdf(fileName) {
     const viewerOverlay = document.getElementById('pdf-viewer-overlay');
     const renderArea = document.getElementById('pdf-render-area');
@@ -110,12 +110,11 @@ async function renderPdf(fileName) {
     const url = `https://raw.githubusercontent.com/${repoOwner}/${repoName}/${branchName}/${encodeURIComponent(fileName)}`;
 
     try {
-        // ✅ (2) تحميل المستند مع إعدادات الخطوط الصارمة
         const loadingTask = pdfjsLib.getDocument({
             url: url,
-            cMapUrl: cMapUrl,
+            cMapUrl: cmapsUrl,
             cMapPacked: true,
-            standardFontDataUrl: standardFontDataUrl // هذا السطر هو حل مشكلة المسافات
+            standardFontDataUrl: standardFontDataUrl
         });
 
         const pdf = await loadingTask.promise;
@@ -124,37 +123,23 @@ async function renderPdf(fileName) {
         for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
             const page = await pdf.getPage(pageNum);
             
-            // حساب الأبعاد بدقة
-            const containerWidth = renderArea.clientWidth || window.innerWidth;
-            const pixelRatio = window.devicePixelRatio || 1; // كثافة الشاشة
-            
-            const unscaledViewport = page.getViewport({ scale: 1 });
-            
-            // معادلة التكبير لتناسب العرض
-            const scale = (containerWidth / unscaledViewport.width) * pixelRatio;
-            
-            const viewport = page.getViewport({ scale: scale });
+            // نستخدم مقياس رسم عادي لأن SVG لا يتأثر بالبيكسلات (دقة لا نهائية)
+            const viewport = page.getViewport({ scale: 1.5 });
 
-            const canvas = document.createElement('canvas');
-            const context = canvas.getContext('2d', { alpha: false }); // تحسين الأداء
-            
-            // ✅ (3) استخدام أرقام صحيحة (Math.floor) لمنع ضبابية الحواف
-            canvas.width = Math.floor(viewport.width);
-            canvas.height = Math.floor(viewport.height);
+            // 1. إنشاء عنصر SVG بدلاً من Canvas
+            const operatorList = await page.getOperatorList();
+            const svgGfx = new pdfjsLib.SVGGraphics(page.commonObjs, page.objs);
+            const svg = await svgGfx.getSVG(operatorList, viewport);
 
-            // ضغط الكانفس بتقنية CSS Pixel Matching
-            canvas.style.width = "100%";
-            canvas.style.height = "auto";
-            canvas.style.marginBottom = "10px";
-            canvas.style.boxShadow = "0 2px 8px rgba(0,0,0,0.2)";
+            // 2. تنسيق الـ SVG ليناسب الشاشة
+            svg.style.width = "100%";
+            svg.style.height = "auto";
+            svg.style.marginBottom = "10px";
+            svg.style.boxShadow = "0 2px 8px rgba(0,0,0,0.1)";
+            svg.style.backgroundColor = "white"; // خلفية بيضاء للصفحة
 
-            const renderContext = {
-                canvasContext: context,
-                viewport: viewport
-            };
-
-            renderArea.appendChild(canvas);
-            await page.render(renderContext).promise;
+            // 3. إضافة الصفحة للموقع
+            renderArea.appendChild(svg);
         }
 
     } catch (error) {
