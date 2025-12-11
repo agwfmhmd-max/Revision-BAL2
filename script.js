@@ -4,8 +4,9 @@ const repoName = "Revision-BAL2";
 const branchName = "main"; 
 const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/`;
 
-// ✅ إضافة رابط ملفات الخطوط (CMaps) لإصلاح المسافات والأحرف الغريبة
-const cmapsUrl = 'https://unpkg.com/pdfjs-dist@3.11.174/cmaps/';
+// ✅ (1) روابط الخطوط وإصلاح الأحرف (مهم جداً لحل مشكلة المسافات)
+const cMapUrl = 'https://unpkg.com/pdfjs-dist@3.11.174/cmaps/';
+const standardFontDataUrl = 'https://unpkg.com/pdfjs-dist@3.11.174/standard_fonts/';
 
 let allFiles = []; 
 
@@ -13,7 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
     fetchFilesFromGitHub();
 });
 
-// 1. جلب الملفات
+// جلب الملفات
 function fetchFilesFromGitHub() {
     fetch(apiUrl)
         .then(res => res.json())
@@ -24,7 +25,7 @@ function fetchFilesFromGitHub() {
         .catch(err => console.error("Error loading files:", err));
 }
 
-// 2. التنقل بين الفصول
+// التنقل بين الفصول
 function showSubjects(semester) {
     document.getElementById('semester-selection').classList.add('hidden');
     const subjectsContainer = document.getElementById('subjects-container');
@@ -54,7 +55,7 @@ function goBackToSemesters() {
     semSelection.classList.add('fade-in');
 }
 
-// 3. عرض الملفات
+// عرض القائمة
 function loadFiles(subjectName) {
     const listContainer = document.getElementById('file-list-container');
     const pdfList = document.getElementById('pdf-list');
@@ -86,8 +87,7 @@ function loadFiles(subjectName) {
     } else {
         filteredFiles.forEach(file => {
             const li = document.createElement('li');
-            let displayName = file.name.replace('.pdf', '');
-            li.textContent = displayName;
+            li.textContent = file.name.replace('.pdf', '');
             li.onclick = () => renderPdf(file.name);
             pdfList.appendChild(li);
         });
@@ -95,7 +95,7 @@ function loadFiles(subjectName) {
     }
 }
 
-// 4. قارئ PDF عالي الدقة (Smart Sharpness Fix)
+// 4. قارئ PDF المحسن (إصلاح المسافات والخطوط)
 async function renderPdf(fileName) {
     const viewerOverlay = document.getElementById('pdf-viewer-overlay');
     const renderArea = document.getElementById('pdf-render-area');
@@ -110,11 +110,12 @@ async function renderPdf(fileName) {
     const url = `https://raw.githubusercontent.com/${repoOwner}/${repoName}/${branchName}/${encodeURIComponent(fileName)}`;
 
     try {
-        // ✅ تحميل المستند مع تفعيل CMaps (لإصلاح الخطوط)
+        // ✅ (2) تحميل المستند مع إعدادات الخطوط الصارمة
         const loadingTask = pdfjsLib.getDocument({
             url: url,
-            cMapUrl: cmapsUrl,
-            cMapPacked: true
+            cMapUrl: cMapUrl,
+            cMapPacked: true,
+            standardFontDataUrl: standardFontDataUrl // هذا السطر هو حل مشكلة المسافات
         });
 
         const pdf = await loadingTask.promise;
@@ -123,41 +124,33 @@ async function renderPdf(fileName) {
         for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
             const page = await pdf.getPage(pageNum);
             
-            // ✅ الخوارزمية الجديدة للوضوح الفائق:
-            // 1. نحسب عرض شاشة المستخدم الحقيقي
+            // حساب الأبعاد بدقة
             const containerWidth = renderArea.clientWidth || window.innerWidth;
+            const pixelRatio = window.devicePixelRatio || 1; // كثافة الشاشة
             
-            // 2. نحسب كثافة بيكسلات الشاشة (للهواتف تكون 2 أو 3)
-            // هذا هو السر في جعل النص "شفرة" وبدون ضبابية
-            const pixelRatio = window.devicePixelRatio || 1;
-
-            // 3. نحصل على الأبعاد الأصلية للصفحة
             const unscaledViewport = page.getViewport({ scale: 1 });
             
-            // 4. نحسب معامل التكبير ليملأ العرض + نضربه في كثافة الشاشة
+            // معادلة التكبير لتناسب العرض
             const scale = (containerWidth / unscaledViewport.width) * pixelRatio;
-
+            
             const viewport = page.getViewport({ scale: scale });
 
-            // إعداد اللوحة (Canvas)
             const canvas = document.createElement('canvas');
-            const context = canvas.getContext('2d');
+            const context = canvas.getContext('2d', { alpha: false }); // تحسين الأداء
             
-            canvas.width = viewport.width;
-            canvas.height = viewport.height;
+            // ✅ (3) استخدام أرقام صحيحة (Math.floor) لمنع ضبابية الحواف
+            canvas.width = Math.floor(viewport.width);
+            canvas.height = Math.floor(viewport.height);
 
-            // ✅ نضغط اللوحة الكبيرة لتناسب الشاشة باستخدام CSS
-            // هذا يجعل البيكسلات مضغوطة وحادة جداً
-            canvas.style.width = "100%"; 
+            // ضغط الكانفس بتقنية CSS Pixel Matching
+            canvas.style.width = "100%";
             canvas.style.height = "auto";
-            canvas.style.marginBottom = "15px";
-            canvas.style.boxShadow = "0 2px 5px rgba(0,0,0,0.2)";
+            canvas.style.marginBottom = "10px";
+            canvas.style.boxShadow = "0 2px 8px rgba(0,0,0,0.2)";
 
             const renderContext = {
                 canvasContext: context,
-                viewport: viewport,
-                // تفعيل تسريع الهاردوير
-                enableHWA: true
+                viewport: viewport
             };
 
             renderArea.appendChild(canvas);
