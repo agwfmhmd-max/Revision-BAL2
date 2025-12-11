@@ -1,5 +1,5 @@
-// ✅ قمنا بتغيير الرقم إلى v2 لإجبار المتصفح على حذف النسخة القديمة
-const CACHE_NAME = 'revision-ba-v2';
+// ✅ قمنا بتغيير الرقم إلى v3 لإجبار المتصفح على حذف النسخة القديمة
+const CACHE_NAME = 'revision-ba-v3';
 const assetsToCache = [
   './',
   './index.html',
