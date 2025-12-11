@@ -1,12 +1,10 @@
-// إعدادات المستودع
 const repoOwner = "agwfmhmd-max"; 
 const repoName = "Revision-BAL2"; 
 const branchName = "main"; 
 const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/`;
 
-// إعدادات المكتبة والخطوط
+// استخدام روابط CDN حديثة ومستقرة
 const cmapsUrl = 'https://unpkg.com/pdfjs-dist@3.11.174/cmaps/';
-const standardFontDataUrl = 'https://unpkg.com/pdfjs-dist@3.11.174/standard_fonts/';
 
 let allFiles = []; 
 
@@ -14,18 +12,16 @@ document.addEventListener("DOMContentLoaded", () => {
     fetchFilesFromGitHub();
 });
 
-// 1. جلب الملفات
 function fetchFilesFromGitHub() {
-    fetch(apiUrl)
+    // نضيف timestamp لمنع الكاش من حفظ القائمة القديمة
+    fetch(apiUrl + "?t=" + new Date().getTime())
         .then(res => res.json())
         .then(data => {
             allFiles = data;
-            console.log("Database loaded:", allFiles.length);
         })
-        .catch(err => console.error("Error loading files:", err));
+        .catch(err => console.error(err));
 }
 
-// 2. إدارة الواجهة (التنقل)
 function showSubjects(semester) {
     document.getElementById('semester-selection').classList.add('hidden');
     const subjectsContainer = document.getElementById('subjects-container');
@@ -50,12 +46,9 @@ function showSubjects(semester) {
 function goBackToSemesters() {
     document.getElementById('subjects-container').classList.add('hidden');
     document.getElementById('file-list-container').classList.add('hidden');
-    const semSelection = document.getElementById('semester-selection');
-    semSelection.classList.remove('hidden');
-    semSelection.classList.add('fade-in');
+    document.getElementById('semester-selection').classList.remove('hidden');
 }
 
-// 3. عرض الملفات
 function loadFiles(subjectName) {
     const listContainer = document.getElementById('file-list-container');
     const pdfList = document.getElementById('pdf-list');
@@ -65,7 +58,6 @@ function loadFiles(subjectName) {
 
     pdfList.innerHTML = "";
     listContainer.classList.remove('hidden');
-    listContainer.classList.add('fade-in');
     subjectTitle.textContent = subjectName;
     noFilesMsg.classList.add('hidden');
 
@@ -77,9 +69,7 @@ function loadFiles(subjectName) {
     spinner.classList.add('hidden');
 
     const filteredFiles = allFiles.filter(file => {
-        const name = file.name.toLowerCase();
-        const search = subjectName.toLowerCase();
-        return name.startsWith(search) && name.endsWith(".pdf");
+        return file.name.toLowerCase().startsWith(subjectName.toLowerCase()) && file.name.endsWith(".pdf");
     });
 
     if (filteredFiles.length === 0) {
@@ -95,7 +85,7 @@ function loadFiles(subjectName) {
     }
 }
 
-// 4. قارئ PDF بتقنية SVG (فيكتور) لحل مشكلة الخطوط والمسافات
+// 4. القارئ بنظام Canvas High-DPI (يحل مشكلة التشويه والفراغات)
 async function renderPdf(fileName) {
     const viewerOverlay = document.getElementById('pdf-viewer-overlay');
     const renderArea = document.getElementById('pdf-render-area');
@@ -113,8 +103,7 @@ async function renderPdf(fileName) {
         const loadingTask = pdfjsLib.getDocument({
             url: url,
             cMapUrl: cmapsUrl,
-            cMapPacked: true,
-            standardFontDataUrl: standardFontDataUrl
+            cMapPacked: true
         });
 
         const pdf = await loadingTask.promise;
@@ -123,28 +112,36 @@ async function renderPdf(fileName) {
         for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
             const page = await pdf.getPage(pageNum);
             
-            // نستخدم مقياس رسم عادي لأن SVG لا يتأثر بالبيكسلات (دقة لا نهائية)
-            const viewport = page.getViewport({ scale: 1.5 });
+            // ✅ السر في الوضوح: نضاعف حجم الرسم 2x أو 3x حسب قوة الشاشة
+            // هذا يحول النص إلى صورة فائقة الدقة فتختفي مشاكل الخطوط
+            const scale = 2.5; 
+            const viewport = page.getViewport({ scale: scale });
 
-            // 1. إنشاء عنصر SVG بدلاً من Canvas
-            const operatorList = await page.getOperatorList();
-            const svgGfx = new pdfjsLib.SVGGraphics(page.commonObjs, page.objs);
-            const svg = await svgGfx.getSVG(operatorList, viewport);
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            
+            canvas.height = viewport.height;
+            canvas.width = viewport.width;
 
-            // 2. تنسيق الـ SVG ليناسب الشاشة
-            svg.style.width = "100%";
-            svg.style.height = "auto";
-            svg.style.marginBottom = "10px";
-            svg.style.boxShadow = "0 2px 8px rgba(0,0,0,0.1)";
-            svg.style.backgroundColor = "white"; // خلفية بيضاء للصفحة
+            // نجبر المتصفح على عرض الصورة الكبيرة في مساحة صغيرة (فتصبح حادة جداً)
+            canvas.style.width = "100%";
+            canvas.style.height = "auto";
+            canvas.style.marginBottom = "10px";
+            canvas.style.borderRadius = "4px";
+            canvas.style.boxShadow = "0 2px 5px rgba(0,0,0,0.2)";
 
-            // 3. إضافة الصفحة للموقع
-            renderArea.appendChild(svg);
+            const renderContext = {
+                canvasContext: context,
+                viewport: viewport
+            };
+
+            renderArea.appendChild(canvas);
+            await page.render(renderContext).promise;
         }
 
     } catch (error) {
-        console.error('Error rendering PDF:', error);
-        msgDiv.innerHTML = `<p style="color:#ff5252; text-align:center;">حدث خطأ أثناء تحميل الملف.<br>تأكد من الإنترنت.</p>`;
+        console.error('Error:', error);
+        msgDiv.innerHTML = `<p style="color:red">حدث خطأ. تأكد من الإنترنت.</p>`;
     }
 }
 
