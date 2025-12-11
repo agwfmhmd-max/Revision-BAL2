@@ -1,5 +1,4 @@
-// ✅ قمنا بتغيير الرقم إلى v3 لإجبار المتصفح على حذف النسخة القديمة
-const CACHE_NAME = 'revision-ba-v3';
+const CACHE_NAME = 'revision-ba-v5'; // ✅ تأكد من هذا الرقم الجديد
 const assetsToCache = [
   './',
   './index.html',
@@ -9,7 +8,7 @@ const assetsToCache = [
 ];
 
 self.addEventListener('install', event => {
-  self.skipWaiting(); // تفعيل التحديث فوراً
+  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
@@ -19,7 +18,6 @@ self.addEventListener('install', event => {
 });
 
 self.addEventListener('activate', event => {
-  // حذف الملفات القديمة (v1)
   event.waitUntil(
     caches.keys().then(cacheNames => {
       return Promise.all(
@@ -37,7 +35,6 @@ self.addEventListener('fetch', event => {
   event.respondWith(
     caches.match(event.request)
       .then(response => {
-        // حاول الجلب من الشبكة أولاً للحصول على أحدث نسخة (Network First)
         return fetch(event.request).catch(() => response);
       })
   );

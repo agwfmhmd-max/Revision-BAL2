@@ -4,17 +4,15 @@ const repoName = "Revision-BAL2";
 const branchName = "main"; 
 const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/`;
 
-// مكتبات الخطوط (مهمة جداً)
-const cmapsUrl = 'https://unpkg.com/pdfjs-dist@3.11.174/cmaps/';
-
 let allFiles = []; 
 
 document.addEventListener("DOMContentLoaded", () => {
     fetchFilesFromGitHub();
 });
 
+// جلب الملفات مع منع التخزين المؤقت للقائمة
 function fetchFilesFromGitHub() {
-    fetch(apiUrl)
+    fetch(apiUrl + "?t=" + new Date().getTime())
         .then(res => res.json())
         .then(data => {
             allFiles = data;
@@ -22,6 +20,7 @@ function fetchFilesFromGitHub() {
         .catch(err => console.error(err));
 }
 
+// التنقل بين القوائم
 function showSubjects(semester) {
     document.getElementById('semester-selection').classList.add('hidden');
     const subjectsContainer = document.getElementById('subjects-container');
@@ -49,6 +48,7 @@ function goBackToSemesters() {
     document.getElementById('semester-selection').classList.remove('hidden');
 }
 
+// عرض قائمة الملفات
 function loadFiles(subjectName) {
     const listContainer = document.getElementById('file-list-container');
     const pdfList = document.getElementById('pdf-list');
@@ -78,15 +78,15 @@ function loadFiles(subjectName) {
         filteredFiles.forEach(file => {
             const li = document.createElement('li');
             li.textContent = file.name.replace('.pdf', '');
-            li.onclick = () => renderPdf(file.name);
+            li.onclick = () => openGoogleViewer(file.name);
             pdfList.appendChild(li);
         });
         listContainer.scrollIntoView({ behavior: 'smooth' });
     }
 }
 
-// 4. قارئ PDF باستخدام رابط JSDelivr (الحل لمشكلة الخطوط)
-async function renderPdf(fileName) {
+// ✅ الحل النهائي: استخدام Google Viewer + CDN
+function openGoogleViewer(fileName) {
     const viewerOverlay = document.getElementById('pdf-viewer-overlay');
     const renderArea = document.getElementById('pdf-render-area');
     const msgDiv = document.getElementById('rendering-msg');
@@ -97,66 +97,22 @@ async function renderPdf(fileName) {
     renderArea.innerHTML = ""; 
     msgDiv.style.display = 'block';
 
-    // ✅ التغيير الجوهري هنا:
-    // نستخدم cdn.jsdelivr.net بدلاً من raw.githubusercontent
-    // هذا يسمح بتحميل الخطوط بشكل صحيح ويمنع تباعد الأحرف
-    const url = `https://cdn.jsdelivr.net/gh/${repoOwner}/${repoName}@${branchName}/${encodeURIComponent(fileName)}`;
+    // نستخدم CDN (jsDelivr) لأنه أسرع ويدعم جوجل بدون مشاكل
+    const cdnUrl = `https://cdn.jsdelivr.net/gh/${repoOwner}/${repoName}@${branchName}/${encodeURIComponent(fileName)}`;
 
-    try {
-        const loadingTask = pdfjsLib.getDocument({
-            url: url,
-            cMapUrl: cmapsUrl,
-            cMapPacked: true
-        });
-
-        const pdf = await loadingTask.promise;
+    const iframe = document.createElement('iframe');
+    iframe.src = `https://docs.google.com/gview?url=${cdnUrl}&embedded=true`;
+    
+    iframe.onload = function() {
         msgDiv.style.display = 'none';
+    };
 
-        for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-            const page = await pdf.getPage(pageNum);
-            
-            // دقة عالية جداً (HD)
-            const scale = 2.0; 
-            const viewport = page.getViewport({ scale: scale });
+    setTimeout(() => { msgDiv.style.display = 'none'; }, 3000);
 
-            const canvas = document.createElement('canvas');
-            const context = canvas.getContext('2d');
-            
-            canvas.height = viewport.height;
-            canvas.width = viewport.width;
-
-            // تنسيق CSS ليناسب الشاشة
-            canvas.style.width = "100%";
-            canvas.style.height = "auto";
-            canvas.style.marginBottom = "10px";
-            canvas.style.borderRadius = "5px";
-            canvas.style.boxShadow = "0 4px 6px rgba(0,0,0,0.1)";
-
-            const renderContext = {
-                canvasContext: context,
-                viewport: viewport
-            };
-
-            renderArea.appendChild(canvas);
-            await page.render(renderContext).promise;
-        }
-
-    } catch (error) {
-        console.error('Error:', error);
-        msgDiv.innerHTML = `<p style="color:red; text-align:center; padding:20px;">
-            تعذر فتح الملف.<br>
-            جاري المحاولة بالسيرفر الاحتياطي...
-        </p>`;
-        
-        // محاولة احتياطية (Fallback)
-        setTimeout(() => {
-             // في حال فشل السيرفر الأول، نستخدم رابط GitHub المباشر
-             const fallbackUrl = `https://raw.githubusercontent.com/${repoOwner}/${repoName}/${branchName}/${encodeURIComponent(fileName)}`;
-             window.open(fallbackUrl, '_blank'); // فتحه في نافذة جديدة كحل أخير
-        }, 2000);
-    }
+    renderArea.appendChild(iframe);
 }
 
 function closePdfViewer() {
     document.getElementById('pdf-viewer-overlay').classList.add('hidden');
+    document.getElementById('pdf-render-area').innerHTML = "";
 }

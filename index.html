@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Révision BA L2 - Banques et Assurances</title>
     
-    <!-- ✅ إعدادات التثبيت (PWA) -->
+    <!-- إعدادات التثبيت (PWA) -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#003366">
     <link rel="apple-touch-icon" href="icon-192.png">
@@ -16,12 +16,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <link rel="stylesheet" href="style.css">
-
-    <!-- PDF.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-    <script>
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-    </script>
 </head>
 <body>
 
@@ -50,8 +44,8 @@
         <div id="semester-selection" class="section-box fade-in">
             <h2 class="section-title">القائمة الرئيسية</h2>
             
-            <!-- ✅ زر التثبيت (يظهر فقط إذا كان متاحاً) -->
-            <button id="install-btn" class="hidden" style="width:100%; margin-bottom:20px; background:#2e7d32; color:white; border:none; padding:15px; border-radius:10px; font-weight:bold; cursor:pointer;">
+            <!-- زر التثبيت -->
+            <button id="install-btn" class="hidden install-btn-style">
                 <i class="fas fa-download"></i> تثبيت التطبيق على الهاتف
             </button>
 
@@ -68,7 +62,8 @@
                     <p>Assurances, Finance...</p>
                 </div>
 
-                <div class="semester-card" onclick="window.location.href='https://resultat-iscae.vercel.app/'">
+                <!-- زر النتائج -->
+                <div class="semester-card result-card" onclick="window.location.href='https://resultat-iscae.vercel.app/'">
                     <div class="icon-box"><i class="fas fa-chart-line"></i></div>
                     <h3>النتائج</h3>
                     <p>عرض نتائج ISCAE</p>
@@ -94,6 +89,7 @@
                 <button onclick="loadFiles('Marketing')">Marketing</button>
                 <button onclick="loadFiles('Droit administrative')">Droit administrative</button>
                 <button onclick="loadFiles('Macroéconomie')">Macroéconomie</button>
+                <!-- الاسم المصحح -->
                 <button onclick="loadFiles('Méthodes d’aide à la décision')">Méthodes d’aide à la décision</button>
             </div>
 
@@ -122,7 +118,7 @@
 
     </div>
 
-    <!-- واجهة القراءة -->
+    <!-- واجهة القراءة (Google Viewer) -->
     <div id="pdf-viewer-overlay" class="hidden">
         <div class="viewer-header">
             <span id="viewer-filename">اسم الملف</span>
@@ -131,38 +127,33 @@
         <div id="pdf-render-area"></div>
         <div id="rendering-msg">
             <div class="spinner"></div>
-            <p>جاري تحضير المستند...</p>
+            <p>جاري جلب الملف من السيرفر...</p>
         </div>
     </div>
 
     <script src="script.js"></script>
 
-    <!-- ✅ كود تشغيل التثبيت (Service Worker) -->
+    <!-- كود تفعيل التثبيت -->
     <script>
-        // تسجيل Service Worker
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('sw.js')
             .then(() => console.log('Service Worker Registered'))
             .catch(err => console.log('Service Worker Failed', err));
         }
 
-        // زر التثبيت اليدوي
         let deferredPrompt;
         const installBtn = document.getElementById('install-btn');
 
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
-            installBtn.classList.remove('hidden'); // إظهار الزر
+            installBtn.classList.remove('hidden');
         });
 
         installBtn.addEventListener('click', () => {
             installBtn.classList.add('hidden');
             deferredPrompt.prompt();
             deferredPrompt.userChoice.then((choiceResult) => {
-                if (choiceResult.outcome === 'accepted') {
-                    console.log('User accepted the install prompt');
-                }
                 deferredPrompt = null;
             });
         });
