@@ -1,4 +1,3 @@
-// إعدادات المستودع
 const repoOwner = "agwfmhmd-max"; 
 const repoName = "Revision-BAL2"; 
 const branchName = "main"; 
@@ -10,17 +9,16 @@ document.addEventListener("DOMContentLoaded", () => {
     fetchFilesFromGitHub();
 });
 
-// جلب الملفات مع منع التخزين المؤقت للقائمة
 function fetchFilesFromGitHub() {
+    // إضافة timestamp لتجنب الكاش القديم
     fetch(apiUrl + "?t=" + new Date().getTime())
         .then(res => res.json())
         .then(data => {
             allFiles = data;
         })
-        .catch(err => console.error(err));
+        .catch(err => console.error("Error fetching files:", err));
 }
 
-// التنقل بين القوائم
 function showSubjects(semester) {
     document.getElementById('semester-selection').classList.add('hidden');
     const subjectsContainer = document.getElementById('subjects-container');
@@ -48,7 +46,35 @@ function goBackToSemesters() {
     document.getElementById('semester-selection').classList.remove('hidden');
 }
 
-// عرض قائمة الملفات
+// 🧠 دالة تنظيف النصوص للمقارنة الذكية
+function normalizeText(text) {
+    return text
+        .toLowerCase() // تحويل لصغير
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // إزالة الحركات (accents)
+        .replace(/[^a-z0-9]/g, " ") // إزالة الرموز الخاصة
+        .trim();
+}
+
+// 🔍 خوارزمية البحث المرن
+function isFileMatch(fileName, subjectName) {
+    const fileClean = normalizeText(fileName);
+    const subjectClean = normalizeText(subjectName);
+
+    // 1. إذا كان اسم الملف يحتوي على اسم المادة كاملاً
+    if (fileClean.includes(subjectClean)) return true;
+
+    // 2. البحث بالكلمات المفتاحية (للمواد الطويلة مثل Méthodes d’aide à la décision)
+    // نقسم اسم المادة إلى كلمات
+    const subjectKeywords = subjectClean.split(" ").filter(w => w.length > 2); // نأخذ الكلمات الأطول من حرفين
+    
+    // يجب أن يحتوي الملف على جميع الكلمات المهمة في اسم المادة
+    // أو على الأقل 70% من الكلمات لتكون النتيجة دقيقة
+    const matches = subjectKeywords.filter(keyword => fileClean.includes(keyword));
+    
+    // إذا تطابقت أغلب الكلمات المهمة
+    return matches.length === subjectKeywords.length; 
+}
+
 function loadFiles(subjectName) {
     const listContainer = document.getElementById('file-list-container');
     const pdfList = document.getElementById('pdf-list');
@@ -68,8 +94,9 @@ function loadFiles(subjectName) {
     }
     spinner.classList.add('hidden');
 
+    // استخدام الدالة الذكية للفلترة
     const filteredFiles = allFiles.filter(file => {
-        return file.name.toLowerCase().startsWith(subjectName.toLowerCase()) && file.name.endsWith(".pdf");
+        return isFileMatch(file.name, subjectName) && file.name.endsWith(".pdf");
     });
 
     if (filteredFiles.length === 0) {
@@ -77,37 +104,45 @@ function loadFiles(subjectName) {
     } else {
         filteredFiles.forEach(file => {
             const li = document.createElement('li');
+            // عرض اسم الملف بشكل نظيف
             li.textContent = file.name.replace('.pdf', '');
-            li.onclick = () => openGoogleViewer(file.name);
+            li.onclick = () => openSmartViewer(file.name);
             pdfList.appendChild(li);
         });
         listContainer.scrollIntoView({ behavior: 'smooth' });
     }
 }
 
-// ✅ الحل النهائي: استخدام Google Viewer + CDN
-function openGoogleViewer(fileName) {
+// عارض الملفات (Google + Fallback)
+function openSmartViewer(fileName) {
     const viewerOverlay = document.getElementById('pdf-viewer-overlay');
     const renderArea = document.getElementById('pdf-render-area');
     const msgDiv = document.getElementById('rendering-msg');
     const filenameLabel = document.getElementById('viewer-filename');
+    const actionBtn = document.getElementById('viewer-action-btn');
 
     viewerOverlay.classList.remove('hidden');
     filenameLabel.textContent = fileName.replace('.pdf', '');
     renderArea.innerHTML = ""; 
     msgDiv.style.display = 'block';
-
-    // نستخدم CDN (jsDelivr) لأنه أسرع ويدعم جوجل بدون مشاكل
-    const cdnUrl = `https://cdn.jsdelivr.net/gh/${repoOwner}/${repoName}@${branchName}/${encodeURIComponent(fileName)}`;
-
-    const iframe = document.createElement('iframe');
-    iframe.src = `https://docs.google.com/gview?url=${cdnUrl}&embedded=true`;
     
-    iframe.onload = function() {
-        msgDiv.style.display = 'none';
-    };
+    // الروابط
+    const cdnUrl = `https://cdn.jsdelivr.net/gh/${repoOwner}/${repoName}@${branchName}/${encodeURIComponent(fileName)}`;
+    const rawUrl = `https://raw.githubusercontent.com/${repoOwner}/${repoName}/${branchName}/${encodeURIComponent(fileName)}`;
 
-    setTimeout(() => { msgDiv.style.display = 'none'; }, 3000);
+    // زر الفتح الخارجي
+    actionBtn.onclick = () => window.open(rawUrl, '_blank');
+    actionBtn.style.display = 'block'; 
+
+    // محاولة فتح Google Viewer
+    const iframe = document.createElement('iframe');
+    iframe.src = `https://docs.google.com/viewer?url=${cdnUrl}&embedded=true`;
+    
+    // إخفاء رسالة التحميل عند النجاح
+    iframe.onload = function() { msgDiv.style.display = 'none'; };
+    
+    // تنظيف بعد 4 ثواني إذا تأخر
+    setTimeout(() => { msgDiv.style.display = 'none'; }, 4000);
 
     renderArea.appendChild(iframe);
 }

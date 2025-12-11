@@ -1,4 +1,4 @@
-const CACHE_NAME = 'revision-ba-v5'; // ✅ تأكد من هذا الرقم الجديد
+const CACHE_NAME = 'revision-ba-v7'; // ✅ تحديث جديد
 const assetsToCache = [
   './',
   './index.html',
@@ -10,10 +10,7 @@ const assetsToCache = [
 self.addEventListener('install', event => {
   self.skipWaiting();
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => {
-        return cache.addAll(assetsToCache);
-      })
+    caches.open(CACHE_NAME).then(cache => cache.addAll(assetsToCache))
   );
 });
 
@@ -22,9 +19,7 @@ self.addEventListener('activate', event => {
     caches.keys().then(cacheNames => {
       return Promise.all(
         cacheNames.map(cacheName => {
-          if (cacheName !== CACHE_NAME) {
-            return caches.delete(cacheName);
-          }
+          if (cacheName !== CACHE_NAME) return caches.delete(cacheName);
         })
       );
     })
@@ -33,9 +28,8 @@ self.addEventListener('activate', event => {
 
 self.addEventListener('fetch', event => {
   event.respondWith(
-    caches.match(event.request)
-      .then(response => {
-        return fetch(event.request).catch(() => response);
-      })
+    caches.match(event.request).then(response => {
+      return fetch(event.request).catch(() => response);
+    })
   );
 });

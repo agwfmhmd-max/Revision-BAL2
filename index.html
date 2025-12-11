@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Révision BA L2 - Banques et Assurances</title>
     
-    <!-- إعدادات التثبيت (PWA) -->
+    <!-- إعدادات PWA (التثبيت) -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#003366">
     <link rel="apple-touch-icon" href="icon-192.png">
@@ -44,7 +44,6 @@
         <div id="semester-selection" class="section-box fade-in">
             <h2 class="section-title">القائمة الرئيسية</h2>
             
-            <!-- زر التثبيت -->
             <button id="install-btn" class="hidden install-btn-style">
                 <i class="fas fa-download"></i> تثبيت التطبيق على الهاتف
             </button>
@@ -62,7 +61,6 @@
                     <p>Assurances, Finance...</p>
                 </div>
 
-                <!-- زر النتائج -->
                 <div class="semester-card result-card" onclick="window.location.href='https://resultat-iscae.vercel.app/'">
                     <div class="icon-box"><i class="fas fa-chart-line"></i></div>
                     <h3>النتائج</h3>
@@ -78,7 +76,7 @@
                 <h2 id="current-semester-title" class="section-title">مواد الفصل</h2>
             </div>
 
-            <!-- مواد S3 -->
+            <!-- S3 -->
             <div id="s3-list" class="buttons-grid hidden">
                 <button onclick="loadFiles('Technique Bancaire')">Technique Bancaire</button>
                 <button onclick="loadFiles('Système financier mauritanien')">Système financier mauritanien</button>
@@ -89,11 +87,10 @@
                 <button onclick="loadFiles('Marketing')">Marketing</button>
                 <button onclick="loadFiles('Droit administrative')">Droit administrative</button>
                 <button onclick="loadFiles('Macroéconomie')">Macroéconomie</button>
-                <!-- الاسم المصحح -->
                 <button onclick="loadFiles('Méthodes d’aide à la décision')">Méthodes d’aide à la décision</button>
             </div>
 
-            <!-- مواد S4 -->
+            <!-- S4 -->
             <div id="s4-list" class="buttons-grid hidden">
                 <button onclick="loadFiles('Comptabilité des Société assurance')">Comptabilité des Assurances</button>
                 <button onclick="loadFiles('Assurances des biens')">Assurances des biens</button>
@@ -113,49 +110,45 @@
             <h3>📂 الملفات المتاحة: <span id="selected-subject-name" class="highlight-text"></span></h3>
             <ul id="pdf-list"></ul>
             <div id="loading-spinner" class="spinner hidden"></div>
-            <p id="no-files-msg" class="hidden error-msg">⚠️ لا توجد ملفات لهذه المادة حاليًا.</p>
+            <p id="no-files-msg" class="hidden error-msg">⚠️ لا توجد ملفات تطابق البحث.</p>
         </div>
 
     </div>
 
-    <!-- واجهة القراءة (Google Viewer) -->
+    <!-- واجهة القراءة (Google + زر خارجي) -->
     <div id="pdf-viewer-overlay" class="hidden">
         <div class="viewer-header">
-            <span id="viewer-filename">اسم الملف</span>
-            <button onclick="closePdfViewer()" class="close-viewer-btn"><i class="fas fa-times"></i> إغلاق</button>
+            <div style="display:flex; align-items:center; gap:10px;">
+                <button onclick="closePdfViewer()" class="close-viewer-btn"><i class="fas fa-times"></i> إغلاق</button>
+                <span id="viewer-filename" style="font-size:0.9rem; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; max-width:150px; color:#ddd;">اسم الملف</span>
+            </div>
+            <button id="viewer-action-btn" class="external-btn"><i class="fas fa-external-link-alt"></i> فتح خارجي</button>
         </div>
         <div id="pdf-render-area"></div>
         <div id="rendering-msg">
             <div class="spinner"></div>
-            <p>جاري جلب الملف من السيرفر...</p>
+            <p>جاري تحضير الملف...</p>
+            <p style="font-size:0.8rem; opacity:0.8; margin-top:5px;">إذا تأخر التحميل، اضغط على "فتح خارجي"</p>
         </div>
     </div>
 
     <script src="script.js"></script>
 
-    <!-- كود تفعيل التثبيت -->
+    <!-- PWA Script -->
     <script>
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js')
-            .then(() => console.log('Service Worker Registered'))
-            .catch(err => console.log('Service Worker Failed', err));
+            navigator.serviceWorker.register('sw.js').catch(console.error);
         }
-
         let deferredPrompt;
         const installBtn = document.getElementById('install-btn');
-
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
             installBtn.classList.remove('hidden');
         });
-
         installBtn.addEventListener('click', () => {
             installBtn.classList.add('hidden');
             deferredPrompt.prompt();
-            deferredPrompt.userChoice.then((choiceResult) => {
-                deferredPrompt = null;
-            });
         });
     </script>
 </body>
