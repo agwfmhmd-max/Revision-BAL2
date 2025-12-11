@@ -10,7 +10,6 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function fetchFilesFromGitHub() {
-    // timestamp لمنع الكاش القديم
     fetch(apiUrl + "?t=" + new Date().getTime())
         .then(res => res.json())
         .then(data => {
@@ -46,38 +45,45 @@ function goBackToSemesters() {
     document.getElementById('semester-selection').classList.remove('hidden');
 }
 
-// 🧠 1. دالة تنظيف النصوص (لجعل البحث مرناً جداً)
+// 🧠 1. دالة تنظيف النصوص (المطورة)
 function normalizeText(text) {
     return text
         .toLowerCase()
-        .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // حذف الحركات مثل é
-        .replace(/[^a-z0-9\s]/g, " ") // حذف الرموز وترك المسافات
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // حذف الحركات
+        .replace(/[_.-]/g, " ") // ✅ تحويل الرموز _ و - و . إلى مسافات (مهم جداً لطلبك)
+        .replace(/[^a-z0-9\s]/g, "") // حذف الرموز الغريبة الأخرى
         .trim();
 }
 
-// 🧠 2. خوارزمية البحث الذكية
+// 🧠 2. خوارزمية البحث الذكية جداً
 function isFileMatch(fileName, subjectName) {
     const fileClean = normalizeText(fileName);
     const subjectClean = normalizeText(subjectName);
 
-    // أ) تطابق مباشر
-    if (fileClean.includes(subjectClean)) return true;
+    // قائمة الكلمات التي لا تؤثر في البحث (Stop Words)
+    // سيتم تجاهل كلمة "des" في "Anglais des affaires"
+    const stopWords = ["le", "la", "les", "de", "des", "du", "et", "en", "au", "aux", "un", "une", "pour", "a"];
 
-    // ب) تطابق الكلمات المفتاحية (للملفات التي أسمائها مقلوبة أو مختصرة)
-    // نقسم اسم المادة إلى كلمات، ونحذف الكلمات القصيرة جداً (مثل de, la)
-    const subjectKeywords = subjectClean.split(/\s+/).filter(w => w.length > 2);
-    
-    if (subjectKeywords.length === 0) return false;
+    // استخراج الكلمات المهمة فقط من اسم المادة
+    const subjectKeywords = subjectClean.split(/\s+/)
+        .filter(w => w.length > 1 && !stopWords.includes(w));
 
-    // نحسب عدد الكلمات الموجودة في اسم الملف
+    // فحص تطابق الكلمات المهمة مع اسم الملف
     let matchCount = 0;
     subjectKeywords.forEach(keyword => {
         if (fileClean.includes(keyword)) matchCount++;
     });
 
-    // إذا وجدنا أكثر من نصف كلمات المادة في اسم الملف، نعتبره تطابقاً
-    // هذا يلتقط: "Decision Methodes.pdf" للمادة "Méthodes de décision"
-    return matchCount >= Math.ceil(subjectKeywords.length * 0.6); 
+    // القواعد:
+    // 1. إذا كانت المادة تتكون من كلمة أو كلمتين (مثل Marketing أو Technique Bancaire)
+    // يجب أن تكون كل الكلمات موجودة لضمان الدقة.
+    if (subjectKeywords.length <= 2) {
+        return matchCount === subjectKeywords.length;
+    }
+
+    // 2. للمواد الطويلة (مثل Méthodes d’aide à la décision)
+    // يكفي تطابق 70% من الكلمات.
+    return matchCount >= Math.ceil(subjectKeywords.length * 0.7); 
 }
 
 function loadFiles(subjectName) {
@@ -99,9 +105,9 @@ function loadFiles(subjectName) {
     }
     spinner.classList.add('hidden');
 
-    // استخدام الدالة الذكية
     const filteredFiles = allFiles.filter(file => {
-        return isFileMatch(file.name, subjectName) && file.name.endsWith(".pdf");
+        // نستخدم الدالة الذكية + نتأكد أنه ملف PDF
+        return isFileMatch(file.name, subjectName) && file.name.toLowerCase().endsWith(".pdf");
     });
 
     if (filteredFiles.length === 0) {
@@ -109,7 +115,7 @@ function loadFiles(subjectName) {
     } else {
         filteredFiles.forEach(file => {
             const li = document.createElement('li');
-            li.textContent = file.name.replace('.pdf', '');
+            li.textContent = file.name.replace('.pdf', ''); // إزالة الامتداد فقط
             li.onclick = () => openSmartViewer(file.name);
             pdfList.appendChild(li);
         });
@@ -117,7 +123,7 @@ function loadFiles(subjectName) {
     }
 }
 
-// ✅ العارض المحسن (بدون تنزيل)
+// العارض (يمنع التنزيل + خيار خارجي)
 function openSmartViewer(fileName) {
     const viewerOverlay = document.getElementById('pdf-viewer-overlay');
     const renderArea = document.getElementById('pdf-render-area');
@@ -130,26 +136,19 @@ function openSmartViewer(fileName) {
     renderArea.innerHTML = ""; 
     msgDiv.style.display = 'block';
     
-    // رابط CDN سريع
     const cdnUrl = `https://cdn.jsdelivr.net/gh/${repoOwner}/${repoName}@${branchName}/${encodeURIComponent(fileName)}`;
     
-    // رابط العارض الخارجي (يفتح صفحة ويب للعرض وليس الملف المباشر)
-    // نستخدم Google Drive Viewer لأنه لا يقوم بالتنزيل التلقائي
+    // رابط العارض الخارجي (Google Drive) - لا ينزل الملف بل يعرضه
     const googleViewerUrl = `https://drive.google.com/viewerng/viewer?url=${cdnUrl}`;
 
-    // 🔴 عند الضغط على زر خارجي: نفتح صفحة العارض في نافذة جديدة
-    // هذا يمنع التنزيل ويجبر المتصفح على العرض
     actionBtn.onclick = () => window.open(googleViewerUrl, '_blank');
     actionBtn.style.display = 'block'; 
 
-    // محاولة العرض الداخلي
     const iframe = document.createElement('iframe');
-    // نستخدم embedded=true للعرض الداخلي
+    // استخدام Google Drive Viewer للعرض الداخلي (أكثر استقراراً)
     iframe.src = `https://drive.google.com/viewerng/viewer?embedded=true&url=${cdnUrl}`;
     
     iframe.onload = function() { msgDiv.style.display = 'none'; };
-    
-    // مهلة 5 ثواني
     setTimeout(() => { msgDiv.style.display = 'none'; }, 5000);
 
     renderArea.appendChild(iframe);
