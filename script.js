@@ -1,9 +1,10 @@
+// إعدادات المستودع
 const repoOwner = "agwfmhmd-max"; 
 const repoName = "Revision-BAL2"; 
 const branchName = "main"; 
 const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/`;
 
-// استخدام روابط CDN حديثة ومستقرة
+// مكتبات الخطوط (مهمة جداً)
 const cmapsUrl = 'https://unpkg.com/pdfjs-dist@3.11.174/cmaps/';
 
 let allFiles = []; 
@@ -13,8 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function fetchFilesFromGitHub() {
-    // نضيف timestamp لمنع الكاش من حفظ القائمة القديمة
-    fetch(apiUrl + "?t=" + new Date().getTime())
+    fetch(apiUrl)
         .then(res => res.json())
         .then(data => {
             allFiles = data;
@@ -85,7 +85,7 @@ function loadFiles(subjectName) {
     }
 }
 
-// 4. القارئ بنظام Canvas High-DPI (يحل مشكلة التشويه والفراغات)
+// 4. قارئ PDF باستخدام رابط JSDelivr (الحل لمشكلة الخطوط)
 async function renderPdf(fileName) {
     const viewerOverlay = document.getElementById('pdf-viewer-overlay');
     const renderArea = document.getElementById('pdf-render-area');
@@ -97,7 +97,10 @@ async function renderPdf(fileName) {
     renderArea.innerHTML = ""; 
     msgDiv.style.display = 'block';
 
-    const url = `https://raw.githubusercontent.com/${repoOwner}/${repoName}/${branchName}/${encodeURIComponent(fileName)}`;
+    // ✅ التغيير الجوهري هنا:
+    // نستخدم cdn.jsdelivr.net بدلاً من raw.githubusercontent
+    // هذا يسمح بتحميل الخطوط بشكل صحيح ويمنع تباعد الأحرف
+    const url = `https://cdn.jsdelivr.net/gh/${repoOwner}/${repoName}@${branchName}/${encodeURIComponent(fileName)}`;
 
     try {
         const loadingTask = pdfjsLib.getDocument({
@@ -112,9 +115,8 @@ async function renderPdf(fileName) {
         for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
             const page = await pdf.getPage(pageNum);
             
-            // ✅ السر في الوضوح: نضاعف حجم الرسم 2x أو 3x حسب قوة الشاشة
-            // هذا يحول النص إلى صورة فائقة الدقة فتختفي مشاكل الخطوط
-            const scale = 2.5; 
+            // دقة عالية جداً (HD)
+            const scale = 2.0; 
             const viewport = page.getViewport({ scale: scale });
 
             const canvas = document.createElement('canvas');
@@ -123,12 +125,12 @@ async function renderPdf(fileName) {
             canvas.height = viewport.height;
             canvas.width = viewport.width;
 
-            // نجبر المتصفح على عرض الصورة الكبيرة في مساحة صغيرة (فتصبح حادة جداً)
+            // تنسيق CSS ليناسب الشاشة
             canvas.style.width = "100%";
             canvas.style.height = "auto";
             canvas.style.marginBottom = "10px";
-            canvas.style.borderRadius = "4px";
-            canvas.style.boxShadow = "0 2px 5px rgba(0,0,0,0.2)";
+            canvas.style.borderRadius = "5px";
+            canvas.style.boxShadow = "0 4px 6px rgba(0,0,0,0.1)";
 
             const renderContext = {
                 canvasContext: context,
@@ -141,7 +143,17 @@ async function renderPdf(fileName) {
 
     } catch (error) {
         console.error('Error:', error);
-        msgDiv.innerHTML = `<p style="color:red">حدث خطأ. تأكد من الإنترنت.</p>`;
+        msgDiv.innerHTML = `<p style="color:red; text-align:center; padding:20px;">
+            تعذر فتح الملف.<br>
+            جاري المحاولة بالسيرفر الاحتياطي...
+        </p>`;
+        
+        // محاولة احتياطية (Fallback)
+        setTimeout(() => {
+             // في حال فشل السيرفر الأول، نستخدم رابط GitHub المباشر
+             const fallbackUrl = `https://raw.githubusercontent.com/${repoOwner}/${repoName}/${branchName}/${encodeURIComponent(fileName)}`;
+             window.open(fallbackUrl, '_blank'); // فتحه في نافذة جديدة كحل أخير
+        }, 2000);
     }
 }
 
