@@ -76,7 +76,7 @@
                 <h2 id="current-semester-title" class="section-title">مواد الفصل</h2>
             </div>
 
-            <!-- قائمة مواد S3 (كما طلبت بالضبط) -->
+            <!-- قائمة مواد S3 -->
             <div id="s3-list" class="buttons-grid hidden">
                 <button onclick="loadFiles('Anglais des affaires')">Anglais des affaires</button>
                 <button onclick="loadFiles('Méthodes d’aide à la décision')">Méthodes d’aide à la décision</button>
@@ -133,10 +133,32 @@
         </div>
     </div>
 
+    <!-- التذييل الاحترافي (تم تحديث السنة) -->
+    <footer class="main-footer">
+        <div class="footer-content">
+            <p class="validation-text">✨ اتدورو تفاليدو إن شاء الله ✨</p>
+            <div class="footer-divider"></div>
+            <div class="dev-credit">
+                <p>
+                    تم التطوير <i class="fas fa-heart pulse-icon"></i> بواسطة
+                    <br>
+                    <a href="https://wa.me/22220479962" target="_blank" class="dev-link-pro">
+                        <i class="fab fa-whatsapp"></i> Mohamed Dah Agove
+                    </a>
+                </p>
+            </div>
+            <!-- السنة محدثة وتلقائية -->
+            <p class="copyright">جميع الحقوق محفوظة © <span id="current-year">2025</span></p>
+        </div>
+    </footer>
+
     <script src="script.js"></script>
 
-    <!-- PWA Script -->
+    <!-- PWA Installer & Year Script -->
     <script>
+        // تحديث السنة تلقائياً
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('sw.js').catch(console.error);
         }

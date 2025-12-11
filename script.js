@@ -45,44 +45,38 @@ function goBackToSemesters() {
     document.getElementById('semester-selection').classList.remove('hidden');
 }
 
-// 🧠 1. دالة تنظيف النصوص (المطورة)
+// 🧠 1. دالة تنظيف النصوص (تحويل _ إلى مسافة)
 function normalizeText(text) {
     return text
         .toLowerCase()
         .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // حذف الحركات
-        .replace(/[_.-]/g, " ") // ✅ تحويل الرموز _ و - و . إلى مسافات (مهم جداً لطلبك)
-        .replace(/[^a-z0-9\s]/g, "") // حذف الرموز الغريبة الأخرى
+        .replace(/[_.-]/g, " ") // ✅ استبدال الرموز بمسافات
+        .replace(/[^a-z0-9\s]/g, "") // تنظيف الباقي
         .trim();
 }
 
-// 🧠 2. خوارزمية البحث الذكية جداً
+// 🧠 2. خوارزمية البحث الذكية
 function isFileMatch(fileName, subjectName) {
     const fileClean = normalizeText(fileName);
     const subjectClean = normalizeText(subjectName);
 
-    // قائمة الكلمات التي لا تؤثر في البحث (Stop Words)
-    // سيتم تجاهل كلمة "des" في "Anglais des affaires"
+    // قائمة الكلمات المستبعدة
     const stopWords = ["le", "la", "les", "de", "des", "du", "et", "en", "au", "aux", "un", "une", "pour", "a"];
 
-    // استخراج الكلمات المهمة فقط من اسم المادة
+    // استخراج الكلمات الأساسية من المادة
     const subjectKeywords = subjectClean.split(/\s+/)
         .filter(w => w.length > 1 && !stopWords.includes(w));
 
-    // فحص تطابق الكلمات المهمة مع اسم الملف
+    // عد الكلمات المتطابقة
     let matchCount = 0;
     subjectKeywords.forEach(keyword => {
         if (fileClean.includes(keyword)) matchCount++;
     });
 
     // القواعد:
-    // 1. إذا كانت المادة تتكون من كلمة أو كلمتين (مثل Marketing أو Technique Bancaire)
-    // يجب أن تكون كل الكلمات موجودة لضمان الدقة.
     if (subjectKeywords.length <= 2) {
         return matchCount === subjectKeywords.length;
     }
-
-    // 2. للمواد الطويلة (مثل Méthodes d’aide à la décision)
-    // يكفي تطابق 70% من الكلمات.
     return matchCount >= Math.ceil(subjectKeywords.length * 0.7); 
 }
 
@@ -106,7 +100,6 @@ function loadFiles(subjectName) {
     spinner.classList.add('hidden');
 
     const filteredFiles = allFiles.filter(file => {
-        // نستخدم الدالة الذكية + نتأكد أنه ملف PDF
         return isFileMatch(file.name, subjectName) && file.name.toLowerCase().endsWith(".pdf");
     });
 
@@ -115,7 +108,7 @@ function loadFiles(subjectName) {
     } else {
         filteredFiles.forEach(file => {
             const li = document.createElement('li');
-            li.textContent = file.name.replace('.pdf', ''); // إزالة الامتداد فقط
+            li.textContent = file.name.replace('.pdf', ''); 
             li.onclick = () => openSmartViewer(file.name);
             pdfList.appendChild(li);
         });
@@ -123,7 +116,7 @@ function loadFiles(subjectName) {
     }
 }
 
-// العارض (يمنع التنزيل + خيار خارجي)
+// العارض (فتح خارجي بدون تنزيل)
 function openSmartViewer(fileName) {
     const viewerOverlay = document.getElementById('pdf-viewer-overlay');
     const renderArea = document.getElementById('pdf-render-area');
@@ -138,14 +131,13 @@ function openSmartViewer(fileName) {
     
     const cdnUrl = `https://cdn.jsdelivr.net/gh/${repoOwner}/${repoName}@${branchName}/${encodeURIComponent(fileName)}`;
     
-    // رابط العارض الخارجي (Google Drive) - لا ينزل الملف بل يعرضه
+    // ✅ هذا الرابط يجبر المتصفح على عرض الملف في Google Drive Viewer بدلاً من تنزيله
     const googleViewerUrl = `https://drive.google.com/viewerng/viewer?url=${cdnUrl}`;
 
     actionBtn.onclick = () => window.open(googleViewerUrl, '_blank');
     actionBtn.style.display = 'block'; 
 
     const iframe = document.createElement('iframe');
-    // استخدام Google Drive Viewer للعرض الداخلي (أكثر استقراراً)
     iframe.src = `https://drive.google.com/viewerng/viewer?embedded=true&url=${cdnUrl}`;
     
     iframe.onload = function() { msgDiv.style.display = 'none'; };
