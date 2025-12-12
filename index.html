@@ -5,11 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Révision BA - Banques et Assurances</title>
     
+    <!-- PWA Setup -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#003366">
     <link rel="apple-touch-icon" href="icon-192.png">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
+    <!-- Fonts & Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -43,7 +45,7 @@
             <i class="fas fa-download"></i> تثبيت التطبيق على الهاتف
         </button>
 
-        <!-- 1. اختيار المستوى -->
+        <!-- 1. المستويات -->
         <div id="level-selection" class="section-box fade-in">
             <h2 class="section-title">اختر المستوى الدراسي</h2>
             <div class="semesters-grid">
@@ -70,7 +72,7 @@
             </div>
         </div>
 
-        <!-- 2. الفصول (Semesters) -->
+        <!-- 2. الفصول -->
         
         <!-- L1 -->
         <div id="semesters-l1" class="section-box hidden">
@@ -126,28 +128,30 @@
             </div>
         </div>
 
-        <!-- 3. المواد (Subjects) -->
+        <!-- 3. المواد -->
         <div id="subjects-container" class="section-box hidden">
             <div class="header-with-back">
                 <button class="back-btn" onclick="goBackToSemesters()"><i class="fas fa-arrow-right"></i> الفصول</button>
                 <h2 id="current-semester-title" class="section-title">المواد</h2>
             </div>
 
-            <!-- ✅ S1 LIST -->
+            <!-- S1 -->
             <div id="s1-list" class="buttons-grid hidden">
                 <button onclick="loadFiles('Principe de gestion')">Principe de gestion</button>
                 <button onclick="loadFiles('Comptabilité financière I')">Comptabilité financière I</button>
                 <button onclick="loadFiles('Statistique descriptive I')">Statistique descriptive I</button>
                 <button onclick="loadFiles('Mathématique')">Mathématique</button>
                 <button onclick="loadFiles('Anglais I')">Anglais I</button>
-                <button onclick="loadFiles('Méthodologie du travail universitaire')">Méthodologie du travail universitaire</button>
+                <button onclick="loadFiles('Méthodologie du travail universitaire')">Méthodologie du travail</button>
                 <button onclick="loadFiles('MS office')">MS office</button>
                 <button onclick="loadFiles('Introduction à l’économie')">Introduction à l'économie</button>
                 <button onclick="loadFiles('Introduction au droit')">Introduction au droit</button>
                 <button onclick="loadFiles('Technique de communication')">Technique de communication</button>
+                <!-- أرشيف S1 -->
+                <button onclick="loadFiles('Archive S1')" class="archive-btn"><i class="fas fa-archive"></i> L'archive</button>
             </div>
 
-            <!-- ✅ S2 LIST -->
+            <!-- S2 -->
             <div id="s2-list" class="buttons-grid hidden">
                 <button onclick="loadFiles('Comptabilité financière II')">Comptabilité financière II</button>
                 <button onclick="loadFiles('Micro-finance')">Micro-finance</button>
@@ -159,26 +163,30 @@
                 <button onclick="loadFiles('Développement personnel')">Développement personnel</button>
                 <button onclick="loadFiles('Microéconomie')">Microéconomie</button>
                 <button onclick="loadFiles('Droit des affaires')">Droit des affaires</button>
+                <!-- أرشيف S2 -->
+                <button onclick="loadFiles('Archive S2')" class="archive-btn"><i class="fas fa-archive"></i> L'archive</button>
             </div>
 
-            <!-- ✅ S3 LIST -->
+            <!-- S3 -->
             <div id="s3-list" class="buttons-grid hidden">
                 <button onclick="loadFiles('Technique Bancaire')">Technique Bancaire</button>
                 <button onclick="loadFiles('Système financier mauritanien')">Système financier mauritanien</button>
                 <button onclick="loadFiles('Gestion Financière')">Gestion Financière</button>
                 <button onclick="loadFiles('Comptabilité des Sociétés')">Comptabilité des Sociétés</button>
                 <button onclick="loadFiles('Anglais des affaires')">Anglais des affaires</button>
-                <button onclick="loadFiles('Logiciels Bancaire et d’assurances')">Logiciels Bancaire et d'assurances</button>
+                <button onclick="loadFiles('Logiciels Bancaire et d’assurances')">Logiciels Bancaire</button>
                 <button onclick="loadFiles('Marketing')">Marketing</button>
                 <button onclick="loadFiles('Droit administrative')">Droit administrative</button>
                 <button onclick="loadFiles('Macroéconomie')">Macroéconomie</button>
                 <button onclick="loadFiles('Méthodes d’aide à la décision')">Méthodes d'aide à la décision</button>
+                <!-- أرشيف S3 -->
+                <button onclick="loadFiles('Archive S3')" class="archive-btn"><i class="fas fa-archive"></i> L'archive</button>
             </div>
 
-            <!-- ✅ S4 LIST -->
+            <!-- S4 -->
             <div id="s4-list" class="buttons-grid hidden">
-                <button onclick="loadFiles('Comptabilité des Sociétés d’assurance')">Comptabilité des Sociétés d'assurance</button>
-                <button onclick="loadFiles('Assurances des biens et des personnes')">Assurances des biens et des personnes</button>
+                <button onclick="loadFiles('Comptabilité des Sociétés d’assurance')">Comptabilité des Assurances</button>
+                <button onclick="loadFiles('Assurances des biens et des personnes')">Assurances des biens</button>
                 <button onclick="loadFiles('Comptabilité Bancaire')">Comptabilité Bancaire</button>
                 <button onclick="loadFiles('Comptabilité de Gestion')">Comptabilité de Gestion</button>
                 <button onclick="loadFiles('Finance des marchés')">Finance des marchés</button>
@@ -187,11 +195,21 @@
                 <button onclick="loadFiles('GRH')">GRH</button>
                 <button onclick="loadFiles('Droit des assurances')">Droit des assurances</button>
                 <button onclick="loadFiles('Commerce international')">Commerce international</button>
+                <!-- أرشيف S4 -->
+                <button onclick="loadFiles('Archive S4')" class="archive-btn"><i class="fas fa-archive"></i> L'archive</button>
             </div>
 
-            <!-- Placeholder for S5/S6 -->
-            <div id="s5-list" class="buttons-grid hidden"><p style="width:100%; text-align:center; color:#666;">قريباً...</p></div>
-            <div id="s6-list" class="buttons-grid hidden"><p style="width:100%; text-align:center; color:#666;">قريباً...</p></div>
+            <!-- S5 -->
+            <div id="s5-list" class="buttons-grid hidden">
+                <p style="width:100%; text-align:center; color:#666;">سيتم إضافة المواد قريباً...</p>
+                <button onclick="loadFiles('Archive S5')" class="archive-btn"><i class="fas fa-archive"></i> L'archive</button>
+            </div>
+
+            <!-- S6 -->
+            <div id="s6-list" class="buttons-grid hidden">
+                <p style="width:100%; text-align:center; color:#666;">سيتم إضافة المواد قريباً...</p>
+                <button onclick="loadFiles('Archive S6')" class="archive-btn"><i class="fas fa-archive"></i> L'archive</button>
+            </div>
         </div>
 
         <!-- عرض الملفات -->
@@ -220,6 +238,7 @@
         </div>
     </div>
 
+    <!-- نافذة الأيفون -->
     <div id="ios-install-modal" class="hidden">
         <div class="ios-modal-content">
             <h3>📱 التثبيت على الأيفون</h3>
@@ -256,7 +275,6 @@
         if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(console.error);
 
         const installBtn = document.getElementById('install-btn');
-        let deferredPrompt;
         const isIos = /iphone|ipad|ipod/.test(window.navigator.userAgent.toLowerCase()) || (window.navigator.userAgent.includes("Mac") && "ontouchend" in document);
         const isInStandaloneMode = ('standalone' in window.navigator) && (window.navigator.standalone);
 
@@ -265,6 +283,7 @@
             installBtn.innerHTML = '<i class="fab fa-apple"></i> تثبيت التطبيق (iPhone)';
             installBtn.addEventListener('click', () => document.getElementById('ios-install-modal').classList.remove('hidden'));
         } else {
+            let deferredPrompt;
             window.addEventListener('beforeinstallprompt', (e) => {
                 e.preventDefault();
                 deferredPrompt = e;

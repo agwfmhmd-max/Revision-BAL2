@@ -1,4 +1,3 @@
-/* (استخدم نفس ملف style.css من الرد السابق تماماً) */
 :root {
     --primary-color: #0d47a1;
     --secondary-color: #1565c0;
@@ -61,3 +60,14 @@ iframe { width: 100%; height: 100%; border: none; }
 .ios-modal-content ol { text-align: right; padding-right: 20px; margin: 15px 0; }
 .ios-modal-content li { margin-bottom: 10px; font-size: 0.95rem; }
 .ios-modal-content button { background: #003366; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%; }
+
+/* زر الأرشيف */
+.archive-btn {
+    background-color: #ff9800 !important;
+    color: white !important;
+    border: 1px solid #f57c00 !important;
+}
+.archive-btn:hover {
+    background-color: #e65100 !important;
+    transform: translateY(-2px);
+}

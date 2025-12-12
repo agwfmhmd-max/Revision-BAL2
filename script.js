@@ -66,68 +66,61 @@ function goBackToSemesters() {
 
 // ---------------- البحث الذكي والدقيق ----------------
 
-// 1. تنظيف النص
+// 1. تنظيف النص: إزالة الحركات، واستبدال _ - . ' بمسافات
 function normalizeText(text) {
     return text.toLowerCase()
         .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // إزالة الحركات
-        .replace(/['’]/g, " ") // استبدال الفواصل بمسافات
+        .replace(/['’]/g, " ") // استبدال الفواصل بمسافات (d'economie -> d economie)
         .replace(/[_.-]/g, " ") // استبدال الرموز بمسافات
         .replace(/[^a-z0-9\s]/g, "") // إبقاء الأحرف والأرقام
-        .replace(/\s+/g, " ") // إزالة المسافات الزائدة
+        .replace(/\s+/g, " ") // إزالة المسافات المتكررة
         .trim();
 }
 
 // 2. معالجة الأرقام الرومانية (I -> 1, II -> 2)
 function mapRomanNumbers(text) {
-    // نضيف مسافات حول النص لضمان تطابق الكلمة كاملة (مثلاً i لا تستبدل داخل كلمه finance)
     let safeText = " " + text + " ";
-    safeText = safeText.replace(/\s(i|1)\s/g, " 1 "); // I أو 1 تصبح 1
-    safeText = safeText.replace(/\s(ii|2)\s/g, " 2 "); // II أو 2 تصبح 2
+    safeText = safeText.replace(/\s(i|1)\s/g, " 1 ");
+    safeText = safeText.replace(/\s(ii|2)\s/g, " 2 ");
     return safeText;
 }
 
-// 3. خوارزمية المطابقة المتقدمة
+// 3. خوارزمية المطابقة
 function isFileMatch(fileName, subjectName) {
     let fileClean = normalizeText(fileName);
     let subjectClean = normalizeText(subjectName);
 
-    // تطبيق معالجة الأرقام (تحويل I إلى 1 و II إلى 2)
+    // تطبيق معالجة الأرقام
     let fileMapped = mapRomanNumbers(fileClean);
     let subjectMapped = mapRomanNumbers(subjectClean);
 
-    // --- (أ) قواعد صارمة للتفريق بين المواد المتشابهة ---
-
-    // 1. قاعدة "Affaires" (للتفريق بين Anglais I و Anglais des affaires)
+    // (أ) قواعد صارمة للتفريق
+    // 1. Anglais I vs Affaires
     if (subjectClean.includes("affaires")) {
-        // إذا المادة فيها Affaires، الملف *يجب* أن يكون فيه Affaires
         if (!fileClean.includes("affaires")) return false;
     } 
     else if (subjectClean.includes("anglais") && !subjectClean.includes("affaires")) {
-        // إذا المادة هي Anglais فقط (بدون affaires)، والملف فيه Affaires -> ارفضه
         if (fileClean.includes("affaires")) return false;
     }
 
-    // 2. قاعدة الأرقام (للتفريق بين I و II)
-    // نستخدم النسخ التي حولنا فيها الأرقام الرومانية
+    // 2. الأرقام (1 vs 2)
     if (subjectMapped.includes(" 1 ")) {
-        if (!fileMapped.includes(" 1 ")) return false; // المادة 1، الملف ليس 1
-        if (fileMapped.includes(" 2 ")) return false; // الملف فيه 2 (خطأ)
+        if (!fileMapped.includes(" 1 ")) return false; 
+        if (fileMapped.includes(" 2 ")) return false; 
     }
     if (subjectMapped.includes(" 2 ")) {
-        if (!fileMapped.includes(" 2 ")) return false; // المادة 2، الملف ليس 2
-        if (fileMapped.includes(" 1 ")) return false; // الملف فيه 1 (خطأ)
+        if (!fileMapped.includes(" 2 ")) return false; 
+        if (fileMapped.includes(" 1 ")) return false; 
     }
 
-    // --- (ب) البحث العام بالكلمات المفتاحية ---
+    // (ب) البحث بالكلمات المفتاحية
     const stopWords = ["le", "la", "les", "de", "des", "du", "et", "en", "au", "aux", "un", "une", "pour", "a", "l", "d"];
-
     const subjectKeywords = subjectClean.split(/\s+/).filter(w => w.length > 1 && !stopWords.includes(w));
 
     if (subjectKeywords.length === 0) return fileClean.includes(subjectClean);
 
     let matchCount = 0;
     subjectKeywords.forEach(keyword => {
-        // بحث عن الكلمة داخل اسم الملف
         if (fileClean.includes(keyword)) matchCount++;
     });
 
@@ -173,7 +166,7 @@ function loadFiles(subjectName) {
     }
 }
 
-// ---------------- العارض (Viewer) ----------------
+// العارض (Google Drive Viewer)
 function openSmartViewer(fileName) {
     const viewerOverlay = document.getElementById('pdf-viewer-overlay');
     const renderArea = document.getElementById('pdf-render-area');
@@ -189,6 +182,7 @@ function openSmartViewer(fileName) {
     const cdnUrl = `https://cdn.jsdelivr.net/gh/${repoOwner}/${repoName}@${branchName}/${encodeURIComponent(fileName)}`;
     const googleViewerUrl = `https://drive.google.com/viewerng/viewer?url=${cdnUrl}`;
 
+    // الزر الخارجي يفتح Google Drive Viewer في نافذة جديدة (لا ينزل الملف مباشرة)
     actionBtn.onclick = () => window.open(googleViewerUrl, '_blank');
     actionBtn.style.display = 'block'; 
 

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'revision-ba-v19'; // ✅ إصدار جديد للخوارزمية الدقيقة
+const CACHE_NAME = 'revision-ba-v21'; // ✅ الإصدار النهائي
 const assetsToCache = [
   './',
   './index.html',
