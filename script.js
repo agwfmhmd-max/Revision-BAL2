@@ -4,6 +4,7 @@ const branchName = "main";
 const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/`;
 
 let allFiles = []; 
+let currentLevel = ''; // لتخزين المستوى الحالي (l1, l2, l3) عند الرجوع
 
 document.addEventListener("DOMContentLoaded", () => {
     fetchFilesFromGitHub();
@@ -12,67 +13,98 @@ document.addEventListener("DOMContentLoaded", () => {
 function fetchFilesFromGitHub() {
     fetch(apiUrl + "?t=" + new Date().getTime())
         .then(res => res.json())
-        .then(data => {
-            allFiles = data;
-        })
+        .then(data => allFiles = data)
         .catch(err => console.error("Error fetching files:", err));
 }
 
+// 1. عرض الفصول بناءً على المستوى (L1, L2, L3)
+function showSemesters(level) {
+    currentLevel = level; // حفظ المستوى الحالي للرجوع
+    document.getElementById('level-selection').classList.add('hidden');
+    
+    // إخفاء جميع الفصول أولاً
+    document.getElementById('semesters-l1').classList.add('hidden');
+    document.getElementById('semesters-l2').classList.add('hidden');
+    document.getElementById('semesters-l3').classList.add('hidden');
+
+    // إظهار الفصل المطلوب
+    const targetDiv = document.getElementById(`semesters-${level}`);
+    if (targetDiv) {
+        targetDiv.classList.remove('hidden');
+        targetDiv.classList.add('fade-in');
+    }
+}
+
+// 2. الرجوع من الفصول إلى المستويات
+function goBackToLevels() {
+    document.getElementById('semesters-l1').classList.add('hidden');
+    document.getElementById('semesters-l2').classList.add('hidden');
+    document.getElementById('semesters-l3').classList.add('hidden');
+    
+    const levelSelection = document.getElementById('level-selection');
+    levelSelection.classList.remove('hidden');
+    levelSelection.classList.add('fade-in');
+}
+
+// 3. عرض المواد بناءً على الفصل (S1, S2, ...)
 function showSubjects(semester) {
-    document.getElementById('semester-selection').classList.add('hidden');
+    // إخفاء حاويات الفصول
+    document.getElementById('semesters-l1').classList.add('hidden');
+    document.getElementById('semesters-l2').classList.add('hidden');
+    document.getElementById('semesters-l3').classList.add('hidden');
+
     const subjectsContainer = document.getElementById('subjects-container');
     subjectsContainer.classList.remove('hidden');
     subjectsContainer.classList.add('fade-in');
 
-    const s3List = document.getElementById('s3-list');
-    const s4List = document.getElementById('s4-list');
-    const title = document.getElementById('current-semester-title');
+    // إخفاء كل قوائم المواد
+    ['s1','s2','s3','s4','s5','s6'].forEach(s => {
+        const div = document.getElementById(`${s}-list`);
+        if(div) div.classList.add('hidden');
+    });
 
-    if (semester === 's3') {
-        s3List.classList.remove('hidden');
-        s4List.classList.add('hidden');
-        title.textContent = "مواد الفصل الثالث (S3)";
-    } else {
-        s3List.classList.add('hidden');
-        s4List.classList.remove('hidden');
-        title.textContent = "مواد الفصل الرابع (S4)";
-    }
+    // إظهار القائمة المطلوبة
+    const targetList = document.getElementById(`${semester}-list`);
+    const title = document.getElementById('current-semester-title');
+    
+    if (targetList) targetList.classList.remove('hidden');
+    title.textContent = `مواد الفصل (${semester.toUpperCase()})`;
 }
 
+// 4. الرجوع من المواد إلى الفصول
 function goBackToSemesters() {
     document.getElementById('subjects-container').classList.add('hidden');
     document.getElementById('file-list-container').classList.add('hidden');
-    document.getElementById('semester-selection').classList.remove('hidden');
+    
+    // العودة لقائمة الفصول بناءً على المستوى المحفوظ
+    if (currentLevel) {
+        showSemesters(currentLevel);
+    } else {
+        goBackToLevels(); // احتياط
+    }
 }
 
-// 🧠 1. دالة تنظيف النصوص (للبحث المرن)
+// --- بقية دوال البحث والعرض (لم تتغير) ---
+
 function normalizeText(text) {
-    return text
-        .toLowerCase()
-        .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // حذف الحركات
-        .replace(/[_.-]/g, " ") // استبدال الرموز بمسافات
-        .replace(/[^a-z0-9\s]/g, "")
-        .trim();
+    return text.toLowerCase()
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+        .replace(/[_.-]/g, " ")
+        .replace(/[^a-z0-9\s]/g, "").trim();
 }
 
-// 🧠 2. خوارزمية البحث الذكية
 function isFileMatch(fileName, subjectName) {
     const fileClean = normalizeText(fileName);
     const subjectClean = normalizeText(subjectName);
+    const stopWords = ["le", "la", "les", "de", "des", "du", "et", "en", "au", "aux", "un", "une", "pour", "a", "l"];
 
-    const stopWords = ["le", "la", "les", "de", "des", "du", "et", "en", "au", "aux", "un", "une", "pour", "a"];
-
-    const subjectKeywords = subjectClean.split(/\s+/)
-        .filter(w => w.length > 1 && !stopWords.includes(w));
-
+    const subjectKeywords = subjectClean.split(/\s+/).filter(w => w.length > 1 && !stopWords.includes(w));
     let matchCount = 0;
     subjectKeywords.forEach(keyword => {
         if (fileClean.includes(keyword)) matchCount++;
     });
 
-    if (subjectKeywords.length <= 2) {
-        return matchCount === subjectKeywords.length;
-    }
+    if (subjectKeywords.length <= 2) return matchCount === subjectKeywords.length;
     return matchCount >= Math.ceil(subjectKeywords.length * 0.7); 
 }
 
@@ -95,9 +127,7 @@ function loadFiles(subjectName) {
     }
     spinner.classList.add('hidden');
 
-    const filteredFiles = allFiles.filter(file => {
-        return isFileMatch(file.name, subjectName) && file.name.toLowerCase().endsWith(".pdf");
-    });
+    const filteredFiles = allFiles.filter(file => isFileMatch(file.name, subjectName) && file.name.toLowerCase().endsWith(".pdf"));
 
     if (filteredFiles.length === 0) {
         noFilesMsg.classList.remove('hidden');
@@ -112,7 +142,6 @@ function loadFiles(subjectName) {
     }
 }
 
-// العارض (Google Drive Viewer)
 function openSmartViewer(fileName) {
     const viewerOverlay = document.getElementById('pdf-viewer-overlay');
     const renderArea = document.getElementById('pdf-render-area');
@@ -126,15 +155,12 @@ function openSmartViewer(fileName) {
     msgDiv.style.display = 'block';
     
     const cdnUrl = `https://cdn.jsdelivr.net/gh/${repoOwner}/${repoName}@${branchName}/${encodeURIComponent(fileName)}`;
-    
-    // رابط Google Viewer في وضع العرض فقط
     const googleViewerUrl = `https://drive.google.com/viewerng/viewer?url=${cdnUrl}`;
 
     actionBtn.onclick = () => window.open(googleViewerUrl, '_blank');
     actionBtn.style.display = 'block'; 
 
     const iframe = document.createElement('iframe');
-    // embedded=true للعرض داخل الموقع
     iframe.src = `https://drive.google.com/viewerng/viewer?embedded=true&url=${cdnUrl}`;
     
     iframe.onload = function() { msgDiv.style.display = 'none'; };
