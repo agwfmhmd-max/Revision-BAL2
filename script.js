@@ -64,45 +64,76 @@ function goBackToSemesters() {
     else goBackToLevels();
 }
 
-// ---------------- البحث الذكي ----------------
+// ---------------- البحث الذكي والدقيق ----------------
 
-// 1. تنظيف النص: إزالة الحركات، استبدال الرموز ( _ . - ' ) بمسافات
+// 1. تنظيف النص
 function normalizeText(text) {
     return text.toLowerCase()
-        .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // إزالة الـ accents (é -> e)
-        .replace(/['’]/g, " ") // استبدال الفاصلة العلوية بمسافة (مهم لـ d'aide, l'economie)
-        .replace(/[_.-]/g, " ") // استبدال الفواصل بمسافة
-        .replace(/[^a-z0-9\s]/g, "") // إبقاء الأرقام والحروف فقط
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // إزالة الحركات
+        .replace(/['’]/g, " ") // استبدال الفواصل بمسافات
+        .replace(/[_.-]/g, " ") // استبدال الرموز بمسافات
+        .replace(/[^a-z0-9\s]/g, "") // إبقاء الأحرف والأرقام
+        .replace(/\s+/g, " ") // إزالة المسافات الزائدة
         .trim();
 }
 
-// 2. المطابقة
-function isFileMatch(fileName, subjectName) {
-    const fileClean = normalizeText(fileName);
-    const subjectClean = normalizeText(subjectName);
+// 2. معالجة الأرقام الرومانية (I -> 1, II -> 2)
+function mapRomanNumbers(text) {
+    // نضيف مسافات حول النص لضمان تطابق الكلمة كاملة (مثلاً i لا تستبدل داخل كلمه finance)
+    let safeText = " " + text + " ";
+    safeText = safeText.replace(/\s(i|1)\s/g, " 1 "); // I أو 1 تصبح 1
+    safeText = safeText.replace(/\s(ii|2)\s/g, " 2 "); // II أو 2 تصبح 2
+    return safeText;
+}
 
-    // قائمة الكلمات المستبعدة (Stop Words) التي لا تهم في البحث
+// 3. خوارزمية المطابقة المتقدمة
+function isFileMatch(fileName, subjectName) {
+    let fileClean = normalizeText(fileName);
+    let subjectClean = normalizeText(subjectName);
+
+    // تطبيق معالجة الأرقام (تحويل I إلى 1 و II إلى 2)
+    let fileMapped = mapRomanNumbers(fileClean);
+    let subjectMapped = mapRomanNumbers(subjectClean);
+
+    // --- (أ) قواعد صارمة للتفريق بين المواد المتشابهة ---
+
+    // 1. قاعدة "Affaires" (للتفريق بين Anglais I و Anglais des affaires)
+    if (subjectClean.includes("affaires")) {
+        // إذا المادة فيها Affaires، الملف *يجب* أن يكون فيه Affaires
+        if (!fileClean.includes("affaires")) return false;
+    } 
+    else if (subjectClean.includes("anglais") && !subjectClean.includes("affaires")) {
+        // إذا المادة هي Anglais فقط (بدون affaires)، والملف فيه Affaires -> ارفضه
+        if (fileClean.includes("affaires")) return false;
+    }
+
+    // 2. قاعدة الأرقام (للتفريق بين I و II)
+    // نستخدم النسخ التي حولنا فيها الأرقام الرومانية
+    if (subjectMapped.includes(" 1 ")) {
+        if (!fileMapped.includes(" 1 ")) return false; // المادة 1، الملف ليس 1
+        if (fileMapped.includes(" 2 ")) return false; // الملف فيه 2 (خطأ)
+    }
+    if (subjectMapped.includes(" 2 ")) {
+        if (!fileMapped.includes(" 2 ")) return false; // المادة 2، الملف ليس 2
+        if (fileMapped.includes(" 1 ")) return false; // الملف فيه 1 (خطأ)
+    }
+
+    // --- (ب) البحث العام بالكلمات المفتاحية ---
     const stopWords = ["le", "la", "les", "de", "des", "du", "et", "en", "au", "aux", "un", "une", "pour", "a", "l", "d"];
 
-    // تقسيم اسم المادة إلى كلمات مفتاحية
-    const subjectKeywords = subjectClean.split(/\s+/)
-        .filter(w => w.length > 0 && !stopWords.includes(w));
+    const subjectKeywords = subjectClean.split(/\s+/).filter(w => w.length > 1 && !stopWords.includes(w));
 
-    // إذا لم تبق أي كلمة (حالة نادرة)، نعود للمطابقة المباشرة
     if (subjectKeywords.length === 0) return fileClean.includes(subjectClean);
 
     let matchCount = 0;
     subjectKeywords.forEach(keyword => {
-        // البحث عن الكلمة المفتاحية داخل اسم الملف
+        // بحث عن الكلمة داخل اسم الملف
         if (fileClean.includes(keyword)) matchCount++;
     });
 
-    // القواعد:
-    // إذا كانت المادة قصيرة (كلمة أو كلمتين)، نشترط تطابق الجميع لتقليل الخطأ
     if (subjectKeywords.length <= 2) {
         return matchCount === subjectKeywords.length;
     }
-    // للمواد الطويلة، يكفي تطابق 70% من الكلمات
     return matchCount >= Math.ceil(subjectKeywords.length * 0.7); 
 }
 
