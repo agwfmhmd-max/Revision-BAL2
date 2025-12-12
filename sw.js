@@ -1,4 +1,4 @@
-const CACHE_NAME = 'revision-ba-v17'; // ✅ تحديث جديد لتطبيق الهيكلة الجديدة
+const CACHE_NAME = 'revision-ba-v18'; // ✅ تحديث مهم
 const assetsToCache = [
   './',
   './index.html',

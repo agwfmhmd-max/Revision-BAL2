@@ -4,7 +4,7 @@ const branchName = "main";
 const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/`;
 
 let allFiles = []; 
-let currentLevel = ''; // لتخزين المستوى الحالي (l1, l2, l3) عند الرجوع
+let currentLevel = '';
 
 document.addEventListener("DOMContentLoaded", () => {
     fetchFilesFromGitHub();
@@ -14,97 +14,95 @@ function fetchFilesFromGitHub() {
     fetch(apiUrl + "?t=" + new Date().getTime())
         .then(res => res.json())
         .then(data => allFiles = data)
-        .catch(err => console.error("Error fetching files:", err));
+        .catch(err => console.error("Error:", err));
 }
 
-// 1. عرض الفصول بناءً على المستوى (L1, L2, L3)
+// ---------------- التنقل ----------------
 function showSemesters(level) {
-    currentLevel = level; // حفظ المستوى الحالي للرجوع
+    currentLevel = level;
     document.getElementById('level-selection').classList.add('hidden');
-    
-    // إخفاء جميع الفصول أولاً
-    document.getElementById('semesters-l1').classList.add('hidden');
-    document.getElementById('semesters-l2').classList.add('hidden');
-    document.getElementById('semesters-l3').classList.add('hidden');
-
-    // إظهار الفصل المطلوب
+    ['l1','l2','l3'].forEach(l => {
+        const div = document.getElementById(`semesters-${l}`);
+        if(div) div.classList.add('hidden');
+    });
     const targetDiv = document.getElementById(`semesters-${level}`);
-    if (targetDiv) {
+    if(targetDiv) {
         targetDiv.classList.remove('hidden');
         targetDiv.classList.add('fade-in');
     }
 }
 
-// 2. الرجوع من الفصول إلى المستويات
 function goBackToLevels() {
-    document.getElementById('semesters-l1').classList.add('hidden');
-    document.getElementById('semesters-l2').classList.add('hidden');
-    document.getElementById('semesters-l3').classList.add('hidden');
-    
+    ['l1','l2','l3'].forEach(l => document.getElementById(`semesters-${l}`).classList.add('hidden'));
     const levelSelection = document.getElementById('level-selection');
     levelSelection.classList.remove('hidden');
     levelSelection.classList.add('fade-in');
 }
 
-// 3. عرض المواد بناءً على الفصل (S1, S2, ...)
 function showSubjects(semester) {
-    // إخفاء حاويات الفصول
-    document.getElementById('semesters-l1').classList.add('hidden');
-    document.getElementById('semesters-l2').classList.add('hidden');
-    document.getElementById('semesters-l3').classList.add('hidden');
-
+    ['l1','l2','l3'].forEach(l => document.getElementById(`semesters-${l}`).classList.add('hidden'));
+    
     const subjectsContainer = document.getElementById('subjects-container');
     subjectsContainer.classList.remove('hidden');
     subjectsContainer.classList.add('fade-in');
 
-    // إخفاء كل قوائم المواد
     ['s1','s2','s3','s4','s5','s6'].forEach(s => {
         const div = document.getElementById(`${s}-list`);
         if(div) div.classList.add('hidden');
     });
 
-    // إظهار القائمة المطلوبة
     const targetList = document.getElementById(`${semester}-list`);
     const title = document.getElementById('current-semester-title');
-    
-    if (targetList) targetList.classList.remove('hidden');
-    title.textContent = `مواد الفصل (${semester.toUpperCase()})`;
+    if(targetList) targetList.classList.remove('hidden');
+    title.textContent = `المواد (${semester.toUpperCase()})`;
 }
 
-// 4. الرجوع من المواد إلى الفصول
 function goBackToSemesters() {
     document.getElementById('subjects-container').classList.add('hidden');
     document.getElementById('file-list-container').classList.add('hidden');
-    
-    // العودة لقائمة الفصول بناءً على المستوى المحفوظ
-    if (currentLevel) {
-        showSemesters(currentLevel);
-    } else {
-        goBackToLevels(); // احتياط
-    }
+    if (currentLevel) showSemesters(currentLevel);
+    else goBackToLevels();
 }
 
-// --- بقية دوال البحث والعرض (لم تتغير) ---
+// ---------------- البحث الذكي ----------------
 
+// 1. تنظيف النص: إزالة الحركات، استبدال الرموز ( _ . - ' ) بمسافات
 function normalizeText(text) {
     return text.toLowerCase()
-        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-        .replace(/[_.-]/g, " ")
-        .replace(/[^a-z0-9\s]/g, "").trim();
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // إزالة الـ accents (é -> e)
+        .replace(/['’]/g, " ") // استبدال الفاصلة العلوية بمسافة (مهم لـ d'aide, l'economie)
+        .replace(/[_.-]/g, " ") // استبدال الفواصل بمسافة
+        .replace(/[^a-z0-9\s]/g, "") // إبقاء الأرقام والحروف فقط
+        .trim();
 }
 
+// 2. المطابقة
 function isFileMatch(fileName, subjectName) {
     const fileClean = normalizeText(fileName);
     const subjectClean = normalizeText(subjectName);
-    const stopWords = ["le", "la", "les", "de", "des", "du", "et", "en", "au", "aux", "un", "une", "pour", "a", "l"];
 
-    const subjectKeywords = subjectClean.split(/\s+/).filter(w => w.length > 1 && !stopWords.includes(w));
+    // قائمة الكلمات المستبعدة (Stop Words) التي لا تهم في البحث
+    const stopWords = ["le", "la", "les", "de", "des", "du", "et", "en", "au", "aux", "un", "une", "pour", "a", "l", "d"];
+
+    // تقسيم اسم المادة إلى كلمات مفتاحية
+    const subjectKeywords = subjectClean.split(/\s+/)
+        .filter(w => w.length > 0 && !stopWords.includes(w));
+
+    // إذا لم تبق أي كلمة (حالة نادرة)، نعود للمطابقة المباشرة
+    if (subjectKeywords.length === 0) return fileClean.includes(subjectClean);
+
     let matchCount = 0;
     subjectKeywords.forEach(keyword => {
+        // البحث عن الكلمة المفتاحية داخل اسم الملف
         if (fileClean.includes(keyword)) matchCount++;
     });
 
-    if (subjectKeywords.length <= 2) return matchCount === subjectKeywords.length;
+    // القواعد:
+    // إذا كانت المادة قصيرة (كلمة أو كلمتين)، نشترط تطابق الجميع لتقليل الخطأ
+    if (subjectKeywords.length <= 2) {
+        return matchCount === subjectKeywords.length;
+    }
+    // للمواد الطويلة، يكفي تطابق 70% من الكلمات
     return matchCount >= Math.ceil(subjectKeywords.length * 0.7); 
 }
 
@@ -127,7 +125,9 @@ function loadFiles(subjectName) {
     }
     spinner.classList.add('hidden');
 
-    const filteredFiles = allFiles.filter(file => isFileMatch(file.name, subjectName) && file.name.toLowerCase().endsWith(".pdf"));
+    const filteredFiles = allFiles.filter(file => {
+        return isFileMatch(file.name, subjectName) && file.name.toLowerCase().endsWith(".pdf");
+    });
 
     if (filteredFiles.length === 0) {
         noFilesMsg.classList.remove('hidden');
@@ -142,6 +142,7 @@ function loadFiles(subjectName) {
     }
 }
 
+// ---------------- العارض (Viewer) ----------------
 function openSmartViewer(fileName) {
     const viewerOverlay = document.getElementById('pdf-viewer-overlay');
     const renderArea = document.getElementById('pdf-render-area');

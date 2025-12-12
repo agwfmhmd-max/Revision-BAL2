@@ -5,13 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Révision BA - Banques et Assurances</title>
     
-    <!-- PWA Setup -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#003366">
     <link rel="apple-touch-icon" href="icon-192.png">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-    <!-- Fonts & Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -41,40 +39,29 @@
 
     <div class="container">
         
-        <!-- زر التثبيت -->
         <button id="install-btn" class="hidden install-btn-style">
             <i class="fas fa-download"></i> تثبيت التطبيق على الهاتف
         </button>
 
-        <!-- =========================================
-             1. القائمة الرئيسية (اختيار المستوى)
-           ========================================= -->
+        <!-- 1. اختيار المستوى -->
         <div id="level-selection" class="section-box fade-in">
             <h2 class="section-title">اختر المستوى الدراسي</h2>
             <div class="semesters-grid">
-                
-                <!-- BA L1 -->
                 <div class="semester-card" onclick="showSemesters('l1')">
                     <div class="icon-box"><i class="fas fa-user-graduate"></i></div>
                     <h3>BA L1</h3>
                     <p>Première Année</p>
                 </div>
-
-                <!-- BA L2 -->
                 <div class="semester-card" onclick="showSemesters('l2')">
                     <div class="icon-box"><i class="fas fa-university"></i></div>
                     <h3>BA L2</h3>
                     <p>Deuxième Année</p>
                 </div>
-
-                <!-- BA L3 -->
                 <div class="semester-card" onclick="showSemesters('l3')">
                     <div class="icon-box"><i class="fas fa-graduation-cap"></i></div>
                     <h3>BA L3</h3>
                     <p>Troisième Année</p>
                 </div>
-
-                <!-- زر النتائج -->
                 <div class="semester-card result-card" onclick="window.location.href='https://resultat-iscae.vercel.app/'">
                     <div class="icon-box"><i class="fas fa-chart-line"></i></div>
                     <h3>النتائج</h3>
@@ -83,11 +70,9 @@
             </div>
         </div>
 
-        <!-- =========================================
-             2. قوائم الفصول (Semesters) - مخفية
-           ========================================= -->
+        <!-- 2. الفصول (Semesters) -->
         
-        <!-- فصول L1 -->
+        <!-- L1 -->
         <div id="semesters-l1" class="section-box hidden">
             <div class="header-with-back">
                 <button class="back-btn" onclick="goBackToLevels()"><i class="fas fa-arrow-right"></i> المستويات</button>
@@ -105,7 +90,7 @@
             </div>
         </div>
 
-        <!-- فصول L2 -->
+        <!-- L2 -->
         <div id="semesters-l2" class="section-box hidden">
             <div class="header-with-back">
                 <button class="back-btn" onclick="goBackToLevels()"><i class="fas fa-arrow-right"></i> المستويات</button>
@@ -123,7 +108,7 @@
             </div>
         </div>
 
-        <!-- فصول L3 -->
+        <!-- L3 -->
         <div id="semesters-l3" class="section-box hidden">
             <div class="header-with-back">
                 <button class="back-btn" onclick="goBackToLevels()"><i class="fas fa-arrow-right"></i> المستويات</button>
@@ -141,34 +126,32 @@
             </div>
         </div>
 
-        <!-- =========================================
-             3. قوائم المواد (Subjects) - مخفية
-           ========================================= -->
+        <!-- 3. المواد (Subjects) -->
         <div id="subjects-container" class="section-box hidden">
             <div class="header-with-back">
                 <button class="back-btn" onclick="goBackToSemesters()"><i class="fas fa-arrow-right"></i> الفصول</button>
                 <h2 id="current-semester-title" class="section-title">المواد</h2>
             </div>
 
-            <!-- مواد S1 (حسب الصورة) -->
+            <!-- ✅ S1 LIST -->
             <div id="s1-list" class="buttons-grid hidden">
                 <button onclick="loadFiles('Principe de gestion')">Principe de gestion</button>
                 <button onclick="loadFiles('Comptabilité financière I')">Comptabilité financière I</button>
                 <button onclick="loadFiles('Statistique descriptive I')">Statistique descriptive I</button>
                 <button onclick="loadFiles('Mathématique')">Mathématique</button>
                 <button onclick="loadFiles('Anglais I')">Anglais I</button>
-                <button onclick="loadFiles('Méthodologie du travail universitaire')">Méthodologie du travail</button>
+                <button onclick="loadFiles('Méthodologie du travail universitaire')">Méthodologie du travail universitaire</button>
                 <button onclick="loadFiles('MS office')">MS office</button>
-                <button onclick="loadFiles('Introduction à l’économie')">Introduction à l’économie</button>
+                <button onclick="loadFiles('Introduction à l’économie')">Introduction à l'économie</button>
                 <button onclick="loadFiles('Introduction au droit')">Introduction au droit</button>
                 <button onclick="loadFiles('Technique de communication')">Technique de communication</button>
             </div>
 
-            <!-- مواد S2 (حسب الصورة) -->
+            <!-- ✅ S2 LIST -->
             <div id="s2-list" class="buttons-grid hidden">
                 <button onclick="loadFiles('Comptabilité financière II')">Comptabilité financière II</button>
                 <button onclick="loadFiles('Micro-finance')">Micro-finance</button>
-                <button onclick="loadFiles('Economie d’entreprise')">Economie d’entreprise</button>
+                <button onclick="loadFiles('Economie d’entreprise')">Economie d'entreprise</button>
                 <button onclick="loadFiles('Statistique descriptive II')">Statistique descriptive II</button>
                 <button onclick="loadFiles('Mathématiques financières')">Mathématiques financières</button>
                 <button onclick="loadFiles('Anglais II')">Anglais II</button>
@@ -178,24 +161,24 @@
                 <button onclick="loadFiles('Droit des affaires')">Droit des affaires</button>
             </div>
 
-            <!-- مواد S3 (الموجودة سابقاً) -->
+            <!-- ✅ S3 LIST -->
             <div id="s3-list" class="buttons-grid hidden">
-                <button onclick="loadFiles('Anglais des affaires')">Anglais des affaires</button>
-                <button onclick="loadFiles('Méthodes d’aide à la décision')">Méthodes d’aide à la décision</button>
-                <button onclick="loadFiles('Logiciels Bancaire')">Logiciels Bancaire</button>
-                <button onclick="loadFiles('Marketing')">Marketing</button>
-                <button onclick="loadFiles('Comptabilité des Sociétés')">Comptabilité des Sociétés</button>
-                <button onclick="loadFiles('Droit administrative')">Droit administrative</button>
                 <button onclick="loadFiles('Technique Bancaire')">Technique Bancaire</button>
-                <button onclick="loadFiles('Macroéconomie')">Macroéconomie</button>
-                <button onclick="loadFiles('Gestion Financière')">Gestion Financière</button>
                 <button onclick="loadFiles('Système financier mauritanien')">Système financier mauritanien</button>
+                <button onclick="loadFiles('Gestion Financière')">Gestion Financière</button>
+                <button onclick="loadFiles('Comptabilité des Sociétés')">Comptabilité des Sociétés</button>
+                <button onclick="loadFiles('Anglais des affaires')">Anglais des affaires</button>
+                <button onclick="loadFiles('Logiciels Bancaire et d’assurances')">Logiciels Bancaire et d'assurances</button>
+                <button onclick="loadFiles('Marketing')">Marketing</button>
+                <button onclick="loadFiles('Droit administrative')">Droit administrative</button>
+                <button onclick="loadFiles('Macroéconomie')">Macroéconomie</button>
+                <button onclick="loadFiles('Méthodes d’aide à la décision')">Méthodes d'aide à la décision</button>
             </div>
 
-            <!-- مواد S4 (الموجودة سابقاً) -->
+            <!-- ✅ S4 LIST -->
             <div id="s4-list" class="buttons-grid hidden">
-                <button onclick="loadFiles('Comptabilité des Société assurance')">Comptabilité des Assurances</button>
-                <button onclick="loadFiles('Assurances des biens')">Assurances des biens</button>
+                <button onclick="loadFiles('Comptabilité des Sociétés d’assurance')">Comptabilité des Sociétés d'assurance</button>
+                <button onclick="loadFiles('Assurances des biens et des personnes')">Assurances des biens et des personnes</button>
                 <button onclick="loadFiles('Comptabilité Bancaire')">Comptabilité Bancaire</button>
                 <button onclick="loadFiles('Comptabilité de Gestion')">Comptabilité de Gestion</button>
                 <button onclick="loadFiles('Finance des marchés')">Finance des marchés</button>
@@ -206,28 +189,18 @@
                 <button onclick="loadFiles('Commerce international')">Commerce international</button>
             </div>
 
-            <!-- مواد S5 (أضف المواد هنا عند توفرها) -->
-            <div id="s5-list" class="buttons-grid hidden">
-                <p style="width:100%; text-align:center; color:#666;">سيتم إضافة المواد قريباً...</p>
-                <!-- مثال: <button onclick="loadFiles('Audit')">Audit</button> -->
-            </div>
-
-            <!-- مواد S6 (أضف المواد هنا عند توفرها) -->
-            <div id="s6-list" class="buttons-grid hidden">
-                <p style="width:100%; text-align:center; color:#666;">سيتم إضافة المواد قريباً...</p>
-            </div>
+            <!-- Placeholder for S5/S6 -->
+            <div id="s5-list" class="buttons-grid hidden"><p style="width:100%; text-align:center; color:#666;">قريباً...</p></div>
+            <div id="s6-list" class="buttons-grid hidden"><p style="width:100%; text-align:center; color:#666;">قريباً...</p></div>
         </div>
 
-        <!-- =========================================
-             4. قسم الملفات والعرض (كما هو)
-           ========================================= -->
+        <!-- عرض الملفات -->
         <div id="file-list-container" class="section-box hidden">
             <h3>📂 الملفات المتاحة: <span id="selected-subject-name" class="highlight-text"></span></h3>
             <ul id="pdf-list"></ul>
             <div id="loading-spinner" class="spinner hidden"></div>
             <p id="no-files-msg" class="hidden error-msg">⚠️ لا توجد ملفات تطابق البحث.</p>
         </div>
-
     </div>
 
     <!-- واجهة القراءة -->
@@ -247,21 +220,19 @@
         </div>
     </div>
 
-    <!-- نافذة الأيفون -->
     <div id="ios-install-modal" class="hidden">
         <div class="ios-modal-content">
             <h3>📱 التثبيت على الأيفون</h3>
             <p>لتثبيت التطبيق، اتبع الخطوات التالية:</p>
             <ol>
                 <li>اضغط على زر <strong>المشاركة</strong> <i class="fas fa-share-square"></i>.</li>
-                <li>اختر <strong>"إضافة إلى الصفحة الرئيسية"</strong> (Add to Home Screen).</li>
+                <li>اختر <strong>"إضافة إلى الصفحة الرئيسية"</strong>.</li>
                 <li>اضغط على <strong>إضافة</strong>.</li>
             </ol>
             <button onclick="document.getElementById('ios-install-modal').classList.add('hidden')">حسناً</button>
         </div>
     </div>
 
-    <!-- التذييل -->
     <footer class="main-footer">
         <div class="footer-content">
             <p class="validation-text">✨ اتدورو تفاليدو إن شاء الله ✨</p>
@@ -280,8 +251,6 @@
     </footer>
 
     <script src="script.js"></script>
-
-    <!-- سكربت PWA والآيفون -->
     <script>
         document.getElementById('current-year').textContent = new Date().getFullYear();
         if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(console.error);
