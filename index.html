@@ -44,6 +44,7 @@
         <div id="semester-selection" class="section-box fade-in">
             <h2 class="section-title">القائمة الرئيسية</h2>
             
+            <!-- زر التثبيت (يتم التحكم فيه عبر JS) -->
             <button id="install-btn" class="hidden install-btn-style">
                 <i class="fas fa-download"></i> تثبيت التطبيق على الهاتف
             </button>
@@ -122,7 +123,6 @@
                 <button onclick="closePdfViewer()" class="close-viewer-btn"><i class="fas fa-times"></i> إغلاق</button>
                 <span id="viewer-filename" style="font-size:0.9rem; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; max-width:150px; color:#ddd;">اسم الملف</span>
             </div>
-            <!-- زر فتح خارجي -->
             <button id="viewer-action-btn" class="external-btn"><i class="fas fa-external-link-alt"></i> فتح خارجي</button>
         </div>
         <div id="pdf-render-area"></div>
@@ -133,7 +133,21 @@
         </div>
     </div>
 
-    <!-- التذييل الاحترافي (تم تحديث السنة) -->
+    <!-- نافذة تعليمات الأيفون -->
+    <div id="ios-install-modal" class="hidden">
+        <div class="ios-modal-content">
+            <h3>📱 التثبيت على الأيفون</h3>
+            <p>لتثبيت التطبيق، اتبع الخطوات التالية:</p>
+            <ol>
+                <li>اضغط على زر <strong>المشاركة</strong> <i class="fas fa-share-square"></i> في أسفل المتصفح.</li>
+                <li>اختر <strong>"إضافة إلى الصفحة الرئيسية"</strong> <br> (Add to Home Screen).</li>
+                <li>اضغط على <strong>إضافة</strong>.</li>
+            </ol>
+            <button onclick="document.getElementById('ios-install-modal').classList.add('hidden')">حسناً، فهمت</button>
+        </div>
+    </div>
+
+    <!-- التذييل الاحترافي -->
     <footer class="main-footer">
         <div class="footer-content">
             <p class="validation-text">✨ اتدورو تفاليدو إن شاء الله ✨</p>
@@ -147,32 +161,54 @@
                     </a>
                 </p>
             </div>
-            <!-- السنة محدثة وتلقائية -->
+            <!-- السنة تتحدث تلقائياً -->
             <p class="copyright">جميع الحقوق محفوظة © <span id="current-year">2025</span></p>
         </div>
     </footer>
 
     <script src="script.js"></script>
 
-    <!-- PWA Installer & Year Script -->
+    <!-- PWA & Device Detection Script -->
     <script>
-        // تحديث السنة تلقائياً
         document.getElementById('current-year').textContent = new Date().getFullYear();
 
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('sw.js').catch(console.error);
         }
-        let deferredPrompt;
+
         const installBtn = document.getElementById('install-btn');
+        let deferredPrompt;
+
+        // 1. اكتشاف الأيفون
+        const isIos = /iphone|ipad|ipod/.test(window.navigator.userAgent.toLowerCase());
+        const isInStandaloneMode = ('standalone' in window.navigator) && (window.navigator.standalone);
+
+        // إذا كان أيفون ولم يثبت التطبيق
+        if (isIos && !isInStandaloneMode) {
+            installBtn.classList.remove('hidden');
+            installBtn.innerHTML = '<i class="fab fa-apple"></i> تثبيت التطبيق (iPhone)';
+            installBtn.addEventListener('click', () => {
+                document.getElementById('ios-install-modal').classList.remove('hidden');
+            });
+        }
+
+        // 2. أندرويد
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
             installBtn.classList.remove('hidden');
+            installBtn.innerHTML = '<i class="fas fa-download"></i> تثبيت التطبيق على الهاتف';
         });
-        installBtn.addEventListener('click', () => {
-            installBtn.classList.add('hidden');
-            deferredPrompt.prompt();
-        });
+
+        if (!isIos) {
+            installBtn.addEventListener('click', () => {
+                if (deferredPrompt) {
+                    installBtn.classList.add('hidden');
+                    deferredPrompt.prompt();
+                    deferredPrompt = null;
+                }
+            });
+        }
     </script>
 </body>
 </html>

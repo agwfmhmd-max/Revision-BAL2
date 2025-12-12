@@ -45,13 +45,13 @@ function goBackToSemesters() {
     document.getElementById('semester-selection').classList.remove('hidden');
 }
 
-// 🧠 1. دالة تنظيف النصوص (تحويل _ إلى مسافة)
+// 🧠 1. دالة تنظيف النصوص (للبحث المرن)
 function normalizeText(text) {
     return text
         .toLowerCase()
         .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // حذف الحركات
-        .replace(/[_.-]/g, " ") // ✅ استبدال الرموز بمسافات
-        .replace(/[^a-z0-9\s]/g, "") // تنظيف الباقي
+        .replace(/[_.-]/g, " ") // استبدال الرموز بمسافات
+        .replace(/[^a-z0-9\s]/g, "")
         .trim();
 }
 
@@ -60,20 +60,16 @@ function isFileMatch(fileName, subjectName) {
     const fileClean = normalizeText(fileName);
     const subjectClean = normalizeText(subjectName);
 
-    // قائمة الكلمات المستبعدة
     const stopWords = ["le", "la", "les", "de", "des", "du", "et", "en", "au", "aux", "un", "une", "pour", "a"];
 
-    // استخراج الكلمات الأساسية من المادة
     const subjectKeywords = subjectClean.split(/\s+/)
         .filter(w => w.length > 1 && !stopWords.includes(w));
 
-    // عد الكلمات المتطابقة
     let matchCount = 0;
     subjectKeywords.forEach(keyword => {
         if (fileClean.includes(keyword)) matchCount++;
     });
 
-    // القواعد:
     if (subjectKeywords.length <= 2) {
         return matchCount === subjectKeywords.length;
     }
@@ -116,7 +112,7 @@ function loadFiles(subjectName) {
     }
 }
 
-// العارض (فتح خارجي بدون تنزيل)
+// العارض (Google Drive Viewer)
 function openSmartViewer(fileName) {
     const viewerOverlay = document.getElementById('pdf-viewer-overlay');
     const renderArea = document.getElementById('pdf-render-area');
@@ -131,13 +127,14 @@ function openSmartViewer(fileName) {
     
     const cdnUrl = `https://cdn.jsdelivr.net/gh/${repoOwner}/${repoName}@${branchName}/${encodeURIComponent(fileName)}`;
     
-    // ✅ هذا الرابط يجبر المتصفح على عرض الملف في Google Drive Viewer بدلاً من تنزيله
+    // رابط Google Viewer في وضع العرض فقط
     const googleViewerUrl = `https://drive.google.com/viewerng/viewer?url=${cdnUrl}`;
 
     actionBtn.onclick = () => window.open(googleViewerUrl, '_blank');
     actionBtn.style.display = 'block'; 
 
     const iframe = document.createElement('iframe');
+    // embedded=true للعرض داخل الموقع
     iframe.src = `https://drive.google.com/viewerng/viewer?embedded=true&url=${cdnUrl}`;
     
     iframe.onload = function() { msgDiv.style.display = 'none'; };

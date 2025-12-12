@@ -1,4 +1,4 @@
-const CACHE_NAME = 'revision-ba-v13'; // ✅ تحديث جديد لتطبيق السنة
+const CACHE_NAME = 'revision-ba-v15'; // ✅ تحديث جديد
 const assetsToCache = [
   './',
   './index.html',
