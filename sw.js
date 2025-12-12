@@ -1,4 +1,4 @@
-const CACHE_NAME = 'revision-ba-v21'; // ✅ الإصدار النهائي
+const CACHE_NAME = 'revision-ba-v22'; // ✅ تحديث جديد لإضافة مواد L3
 const assetsToCache = [
   './',
   './index.html',
