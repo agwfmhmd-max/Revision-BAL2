@@ -44,7 +44,7 @@
         <div id="semester-selection" class="section-box fade-in">
             <h2 class="section-title">القائمة الرئيسية</h2>
             
-            <!-- زر التثبيت (يتم التحكم فيه عبر JS) -->
+            <!-- زر التثبيت -->
             <button id="install-btn" class="hidden install-btn-style">
                 <i class="fas fa-download"></i> تثبيت التطبيق على الهاتف
             </button>
@@ -140,8 +140,8 @@
             <p>لتثبيت التطبيق، اتبع الخطوات التالية:</p>
             <ol>
                 <li>اضغط على زر <strong>المشاركة</strong> <i class="fas fa-share-square"></i> في أسفل المتصفح.</li>
-                <li>اختر <strong>"إضافة إلى الصفحة الرئيسية"</strong> <br> (Add to Home Screen).</li>
-                <li>اضغط على <strong>إضافة</strong>.</li>
+                <li>انزل للأسفل واختر <br> <strong>"إضافة إلى الصفحة الرئيسية"</strong> <br> (Add to Home Screen).</li>
+                <li>اضغط على <strong>إضافة</strong> (Add).</li>
             </ol>
             <button onclick="document.getElementById('ios-install-modal').classList.add('hidden')">حسناً، فهمت</button>
         </div>
@@ -161,14 +161,13 @@
                     </a>
                 </p>
             </div>
-            <!-- السنة تتحدث تلقائياً -->
             <p class="copyright">جميع الحقوق محفوظة © <span id="current-year">2025</span></p>
         </div>
     </footer>
 
     <script src="script.js"></script>
 
-    <!-- PWA & Device Detection Script -->
+    <!-- سكربت التثبيت (المحدث للأيفون) -->
     <script>
         document.getElementById('current-year').textContent = new Date().getFullYear();
 
@@ -179,28 +178,36 @@
         const installBtn = document.getElementById('install-btn');
         let deferredPrompt;
 
-        // 1. اكتشاف الأيفون
-        const isIos = /iphone|ipad|ipod/.test(window.navigator.userAgent.toLowerCase());
+        // ✅ خوارزمية اكتشاف الأيفون القوية
+        // نتحقق إذا كان المستخدم يستخدم iPhone أو iPad (حتى الآيباد الحديث الذي يدعي أنه ماك)
+        const isIos = /iphone|ipad|ipod/.test(window.navigator.userAgent.toLowerCase()) || 
+                      (window.navigator.userAgent.includes("Mac") && "ontouchend" in document);
+
+        // هل التطبيق مثبت بالفعل؟
         const isInStandaloneMode = ('standalone' in window.navigator) && (window.navigator.standalone);
 
-        // إذا كان أيفون ولم يثبت التطبيق
+        // ✅ تنفيذ المنطق
         if (isIos && !isInStandaloneMode) {
+            // إذا كان أيفون ولم يثبت -> أظهر الزر فوراً
             installBtn.classList.remove('hidden');
+            installBtn.style.display = "block"; // فرض الظهور
             installBtn.innerHTML = '<i class="fab fa-apple"></i> تثبيت التطبيق (iPhone)';
+            
+            // عند الضغط، افتح نافذة التعليمات
             installBtn.addEventListener('click', () => {
                 document.getElementById('ios-install-modal').classList.remove('hidden');
             });
-        }
+        } 
+        else {
+            // منطق الأندرويد والكمبيوتر (كما هو)
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                installBtn.classList.remove('hidden');
+                installBtn.style.display = "block";
+                installBtn.innerHTML = '<i class="fas fa-download"></i> تثبيت التطبيق على الهاتف';
+            });
 
-        // 2. أندرويد
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            installBtn.classList.remove('hidden');
-            installBtn.innerHTML = '<i class="fas fa-download"></i> تثبيت التطبيق على الهاتف';
-        });
-
-        if (!isIos) {
             installBtn.addEventListener('click', () => {
                 if (deferredPrompt) {
                     installBtn.classList.add('hidden');
