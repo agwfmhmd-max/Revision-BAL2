@@ -1,4 +1,4 @@
-const CACHE_NAME = 'revision-ba-v23'; // ✅ تحديث لتغيير اسم التطبيق
+const CACHE_NAME = 'revision-ba-v24'; // ✅ إصدار نهائي وجديد
 const assetsToCache = [
   './',
   './index.html',

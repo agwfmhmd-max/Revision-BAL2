@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Révision BA - Banques et Assurances</title>
+    <title>Révision BA</title>
     
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#003366">
@@ -43,7 +43,7 @@
             <i class="fas fa-download"></i> تثبيت التطبيق على الهاتف
         </button>
 
-        <!-- 1. المستويات -->
+        <!-- المستويات -->
         <div id="level-selection" class="section-box fade-in">
             <h2 class="section-title">اختر المستوى الدراسي</h2>
             <div class="semesters-grid">
@@ -70,9 +70,7 @@
             </div>
         </div>
 
-        <!-- 2. الفصول -->
-        
-        <!-- L1 -->
+        <!-- الفصول -->
         <div id="semesters-l1" class="section-box hidden">
             <div class="header-with-back">
                 <button class="back-btn" onclick="goBackToLevels()"><i class="fas fa-arrow-right"></i> المستويات</button>
@@ -90,7 +88,6 @@
             </div>
         </div>
 
-        <!-- L2 -->
         <div id="semesters-l2" class="section-box hidden">
             <div class="header-with-back">
                 <button class="back-btn" onclick="goBackToLevels()"><i class="fas fa-arrow-right"></i> المستويات</button>
@@ -108,7 +105,6 @@
             </div>
         </div>
 
-        <!-- L3 -->
         <div id="semesters-l3" class="section-box hidden">
             <div class="header-with-back">
                 <button class="back-btn" onclick="goBackToLevels()"><i class="fas fa-arrow-right"></i> المستويات</button>
@@ -126,7 +122,7 @@
             </div>
         </div>
 
-        <!-- 3. المواد -->
+        <!-- المواد -->
         <div id="subjects-container" class="section-box hidden">
             <div class="header-with-back">
                 <button class="back-btn" onclick="goBackToSemesters()"><i class="fas fa-arrow-right"></i> الفصول</button>
@@ -193,7 +189,7 @@
                 <button onclick="loadFiles('Archive S4')" class="archive-btn"><i class="fas fa-archive"></i> L'archive</button>
             </div>
 
-            <!-- ✅ S5 (مواد L3 الجديدة) -->
+            <!-- S5 -->
             <div id="s5-list" class="buttons-grid hidden">
                 <button onclick="loadFiles('Gestion de portefeuille')">Gestion de portefeuille</button>
                 <button onclick="loadFiles('Comptabilité bancaire II')">Comptabilité bancaire II</button>
@@ -205,21 +201,18 @@
                 <button onclick="loadFiles('Politiques et choix d’investissement')">Politiques d'investissement</button>
                 <button onclick="loadFiles('Droit bancaire et financier')">Droit bancaire et financier</button>
                 <button onclick="loadFiles('Rapport de stage de la 2ème année')">Rapport de stage (L2)</button>
-                <!-- أرشيف S5 -->
                 <button onclick="loadFiles('Archive S5')" class="archive-btn"><i class="fas fa-archive"></i> L'archive</button>
             </div>
 
-            <!-- ✅ S6 (مواد L3 الجديدة) -->
+            <!-- S6 -->
             <div id="s6-list" class="buttons-grid hidden">
                 <button onclick="loadFiles('Méthodologie de recherche')">Méthodologie de recherche</button>
                 <button onclick="loadFiles('Séminaire sur l\'entrepreneuriat')">Séminaire sur l'entrepreneuriat</button>
                 <button onclick="loadFiles('Mémoire de fin d\'études')">Mémoire de fin d'études</button>
-                <!-- أرشيف S6 -->
                 <button onclick="loadFiles('Archive S6')" class="archive-btn"><i class="fas fa-archive"></i> L'archive</button>
             </div>
         </div>
 
-        <!-- عرض الملفات -->
         <div id="file-list-container" class="section-box hidden">
             <h3>📂 الملفات المتاحة: <span id="selected-subject-name" class="highlight-text"></span></h3>
             <ul id="pdf-list"></ul>
@@ -241,7 +234,7 @@
         <div id="rendering-msg">
             <div class="spinner"></div>
             <p>جاري تحضير الملف...</p>
-            <p style="font-size:0.8rem; opacity:0.8; margin-top:5px;">إذا لم يظهر، اضغط على "فتح خارجي"</p>
+            <p style="font-size:0.8rem; opacity:0.8; margin-top:5px;">إذا تأخر التحميل، استخدم الزر الأخضر في الأعلى ☝️</p>
         </div>
     </div>
 

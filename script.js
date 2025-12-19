@@ -10,11 +10,22 @@ document.addEventListener("DOMContentLoaded", () => {
     fetchFilesFromGitHub();
 });
 
+// ✅ ميزة التحميل السريع: التحقق من التخزين المحلي أولاً
 function fetchFilesFromGitHub() {
+    const cachedFiles = sessionStorage.getItem('ba_files_cache');
+    if (cachedFiles) {
+        allFiles = JSON.parse(cachedFiles);
+        console.log("تم تحميل الملفات من الذاكرة (سريع)");
+    }
+
+    // جلب التحديثات في الخلفية دائماً
     fetch(apiUrl + "?t=" + new Date().getTime())
         .then(res => res.json())
-        .then(data => allFiles = data)
-        .catch(err => console.error("Error:", err));
+        .then(data => {
+            allFiles = data;
+            sessionStorage.setItem('ba_files_cache', JSON.stringify(data)); // تحديث الذاكرة
+        })
+        .catch(err => console.error("Error fetching files:", err));
 }
 
 // ---------------- التنقل ----------------
@@ -66,18 +77,16 @@ function goBackToSemesters() {
 
 // ---------------- البحث الذكي والدقيق ----------------
 
-// 1. تنظيف النص: إزالة الحركات، واستبدال _ - . ' بمسافات
 function normalizeText(text) {
     return text.toLowerCase()
-        .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // إزالة الحركات
-        .replace(/['’]/g, " ") // استبدال الفواصل بمسافات (d'economie -> d economie)
-        .replace(/[_.-]/g, " ") // استبدال الرموز بمسافات
-        .replace(/[^a-z0-9\s]/g, "") // إبقاء الأحرف والأرقام
-        .replace(/\s+/g, " ") // إزالة المسافات المتكررة
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+        .replace(/['’]/g, " ")
+        .replace(/[_.-]/g, " ")
+        .replace(/[^a-z0-9\s]/g, "")
+        .replace(/\s+/g, " ")
         .trim();
 }
 
-// 2. معالجة الأرقام الرومانية (I -> 1, II -> 2)
 function mapRomanNumbers(text) {
     let safeText = " " + text + " ";
     safeText = safeText.replace(/\s(i|1)\s/g, " 1 ");
@@ -85,17 +94,13 @@ function mapRomanNumbers(text) {
     return safeText;
 }
 
-// 3. خوارزمية المطابقة
 function isFileMatch(fileName, subjectName) {
     let fileClean = normalizeText(fileName);
     let subjectClean = normalizeText(subjectName);
-
-    // تطبيق معالجة الأرقام
     let fileMapped = mapRomanNumbers(fileClean);
     let subjectMapped = mapRomanNumbers(subjectClean);
 
-    // (أ) قواعد صارمة للتفريق
-    // 1. Anglais I vs Affaires
+    // 1. القواعد الصارمة
     if (subjectClean.includes("affaires")) {
         if (!fileClean.includes("affaires")) return false;
     } 
@@ -103,7 +108,6 @@ function isFileMatch(fileName, subjectName) {
         if (fileClean.includes("affaires")) return false;
     }
 
-    // 2. الأرقام (1 vs 2)
     if (subjectMapped.includes(" 1 ")) {
         if (!fileMapped.includes(" 1 ")) return false; 
         if (fileMapped.includes(" 2 ")) return false; 
@@ -113,7 +117,7 @@ function isFileMatch(fileName, subjectName) {
         if (fileMapped.includes(" 1 ")) return false; 
     }
 
-    // (ب) البحث بالكلمات المفتاحية
+    // 2. مطابقة الكلمات
     const stopWords = ["le", "la", "les", "de", "des", "du", "et", "en", "au", "aux", "un", "une", "pour", "a", "l", "d"];
     const subjectKeywords = subjectClean.split(/\s+/).filter(w => w.length > 1 && !stopWords.includes(w));
 
@@ -142,31 +146,32 @@ function loadFiles(subjectName) {
     subjectTitle.textContent = subjectName;
     noFilesMsg.classList.add('hidden');
 
-    if (allFiles.length === 0) {
-        spinner.classList.remove('hidden');
-        setTimeout(() => loadFiles(subjectName), 1000);
-        return;
-    }
-    spinner.classList.add('hidden');
+    // إظهار السبينر فوراً
+    spinner.classList.remove('hidden');
 
-    const filteredFiles = allFiles.filter(file => {
-        return isFileMatch(file.name, subjectName) && file.name.toLowerCase().endsWith(".pdf");
-    });
-
-    if (filteredFiles.length === 0) {
-        noFilesMsg.classList.remove('hidden');
-    } else {
-        filteredFiles.forEach(file => {
-            const li = document.createElement('li');
-            li.textContent = file.name.replace('.pdf', ''); 
-            li.onclick = () => openSmartViewer(file.name);
-            pdfList.appendChild(li);
+    // استخدام setTimeout للسماح للواجهة بالتحديث قبل بدء البحث الثقيل
+    setTimeout(() => {
+        const filteredFiles = allFiles.filter(file => {
+            return isFileMatch(file.name, subjectName) && file.name.toLowerCase().endsWith(".pdf");
         });
-        listContainer.scrollIntoView({ behavior: 'smooth' });
-    }
+
+        spinner.classList.add('hidden'); // إخفاء السبينر
+
+        if (filteredFiles.length === 0) {
+            noFilesMsg.classList.remove('hidden');
+        } else {
+            filteredFiles.forEach(file => {
+                const li = document.createElement('li');
+                li.textContent = file.name.replace('.pdf', ''); 
+                li.onclick = () => openSmartViewer(file.name);
+                pdfList.appendChild(li);
+            });
+            listContainer.scrollIntoView({ behavior: 'smooth' });
+        }
+    }, 50); // تأخير بسيط جداً لضمان سلاسة الواجهة
 }
 
-// العارض (Google Drive Viewer)
+// ---------------- العارض (Viewer) السريع ----------------
 function openSmartViewer(fileName) {
     const viewerOverlay = document.getElementById('pdf-viewer-overlay');
     const renderArea = document.getElementById('pdf-render-area');
@@ -174,28 +179,33 @@ function openSmartViewer(fileName) {
     const filenameLabel = document.getElementById('viewer-filename');
     const actionBtn = document.getElementById('viewer-action-btn');
 
+    // تنظيف المنطقة فوراً
+    renderArea.innerHTML = "";
+    
     viewerOverlay.classList.remove('hidden');
     filenameLabel.textContent = fileName.replace('.pdf', '');
-    renderArea.innerHTML = ""; 
     msgDiv.style.display = 'block';
     
     const cdnUrl = `https://cdn.jsdelivr.net/gh/${repoOwner}/${repoName}@${branchName}/${encodeURIComponent(fileName)}`;
     const googleViewerUrl = `https://drive.google.com/viewerng/viewer?url=${cdnUrl}`;
 
-    // الزر الخارجي يفتح Google Drive Viewer في نافذة جديدة (لا ينزل الملف مباشرة)
     actionBtn.onclick = () => window.open(googleViewerUrl, '_blank');
     actionBtn.style.display = 'block'; 
 
     const iframe = document.createElement('iframe');
+    // إضافة خاصية loading="lazy" لتحسين الأداء
+    iframe.setAttribute('loading', 'lazy');
     iframe.src = `https://drive.google.com/viewerng/viewer?embedded=true&url=${cdnUrl}`;
     
     iframe.onload = function() { msgDiv.style.display = 'none'; };
-    setTimeout(() => { msgDiv.style.display = 'none'; }, 5000);
+    
+    // تقليل وقت الانتظار لـ 3 ثواني
+    setTimeout(() => { msgDiv.style.display = 'none'; }, 3000);
 
     renderArea.appendChild(iframe);
 }
 
 function closePdfViewer() {
     document.getElementById('pdf-viewer-overlay').classList.add('hidden');
-    document.getElementById('pdf-render-area').innerHTML = "";
+    document.getElementById('pdf-render-area').innerHTML = ""; // تفريغ الذاكرة
 }
