@@ -8,7 +8,24 @@ let currentLevel = '';
 
 document.addEventListener("DOMContentLoaded", () => {
     fetchFilesFromGitHub();
+    checkWelcome(); // ✅ فحص الترحيب
 });
+
+// ---------------- منطق الترحيب ----------------
+function checkWelcome() {
+    // نستخدم sessionStorage لكي تظهر الرسالة مرة واحدة في الجلسة (عند إغلاق المتصفح وفتحه تظهر مجدداً)
+    // إذا أردتها مرة واحدة للأبد، استخدم localStorage بدلاً من sessionStorage
+    if (!sessionStorage.getItem('welcome_seen')) {
+        document.getElementById('welcome-modal').classList.remove('hidden');
+    }
+}
+
+function closeWelcomeModal() {
+    document.getElementById('welcome-modal').classList.add('hidden');
+    sessionStorage.setItem('welcome_seen', 'true');
+}
+
+// ---------------------------------------------
 
 function fetchFilesFromGitHub() {
     const cachedFiles = sessionStorage.getItem('ba_files_cache');
@@ -26,7 +43,6 @@ function fetchFilesFromGitHub() {
 
 // ---------------- التنقل الرئيسي ----------------
 
-// 1. إظهار قسم اختيار المستوى (L1, L2, L3)
 function showLevelSelection() {
     document.getElementById('main-menu').classList.add('hidden');
     const levelSection = document.getElementById('level-selection');
@@ -34,7 +50,6 @@ function showLevelSelection() {
     levelSection.classList.add('fade-in');
 }
 
-// 2. إظهار قسم النتائج
 function showResultsSection() {
     document.getElementById('main-menu').classList.add('hidden');
     const resultsSection = document.getElementById('results-selection');
@@ -42,7 +57,6 @@ function showResultsSection() {
     resultsSection.classList.add('fade-in');
 }
 
-// 3. الرجوع للقائمة الرئيسية
 function goBackToMainMenu() {
     document.getElementById('level-selection').classList.add('hidden');
     document.getElementById('results-selection').classList.add('hidden');
@@ -52,7 +66,6 @@ function goBackToMainMenu() {
     mainMenu.classList.add('fade-in');
 }
 
-// 4. إظهار الفصول (S1..)
 function showSemesters(level) {
     currentLevel = level;
     document.getElementById('level-selection').classList.add('hidden');
@@ -67,7 +80,6 @@ function showSemesters(level) {
     }
 }
 
-// 5. الرجوع للمستويات
 function goBackToLevels() {
     ['l1','l2','l3'].forEach(l => document.getElementById(`semesters-${l}`).classList.add('hidden'));
     const levelSelection = document.getElementById('level-selection');
@@ -75,7 +87,6 @@ function goBackToLevels() {
     levelSelection.classList.add('fade-in');
 }
 
-// 6. إظهار المواد
 function showSubjects(semester) {
     ['l1','l2','l3'].forEach(l => document.getElementById(`semesters-${l}`).classList.add('hidden'));
     
