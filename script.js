@@ -47,7 +47,7 @@ function fetchFilesFromGitHub() {
         .catch(err => console.error("Error:", err));
 }
 
-// ---------------- ✅ البحث الشامل (الجديد) ----------------
+// ---------------- ✅ البحث الشامل (مع التمرير التلقائي) ----------------
 function handleGlobalSearch(query) {
     const fileListContainer = document.getElementById('file-list-container');
     const pdfList = document.getElementById('pdf-list');
@@ -55,9 +55,7 @@ function handleGlobalSearch(query) {
     const closeBtn = document.getElementById('close-search-btn');
     const noFilesMsg = document.getElementById('no-files-msg');
     
-    // إذا كان هناك نص للبحث
     if (query.trim().length > 0) {
-        // إخفاء جميع الواجهات الأخرى
         document.getElementById('main-menu').classList.add('hidden');
         document.getElementById('level-selection').classList.add('hidden');
         document.getElementById('specialization-selection').classList.add('hidden');
@@ -65,14 +63,12 @@ function handleGlobalSearch(query) {
         document.getElementById('semesters-container').classList.add('hidden');
         document.getElementById('subjects-container').classList.add('hidden');
         
-        // إظهار واجهة النتائج
         fileListContainer.classList.remove('hidden');
-        closeBtn.classList.remove('hidden'); // زر الإغلاق
+        closeBtn.classList.remove('hidden');
         selectedTitle.textContent = `نتائج البحث عن: "${query}"`;
         
         pdfList.innerHTML = "";
         
-        // البحث في الملفات (تنظيف النص والمقارنة)
         const searchClean = normalizeText(query);
         const results = allFiles.filter(file => {
             const fileNameClean = normalizeText(file.name);
@@ -89,19 +85,26 @@ function handleGlobalSearch(query) {
                 li.onclick = () => openSmartViewer(file.name);
                 pdfList.appendChild(li);
             });
+
+            // ✅ التعديل الجديد: التمرير التلقائي للنتائج
+            // نستخدم setTimeout لضمان أن العناصر ظهرت قبل التمرير
+            setTimeout(() => {
+                fileListContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
         }
     } else {
-        // إذا مسح المستخدم النص، نعود للقائمة الرئيسية
         closeSearch();
     }
 }
 
 function closeSearch() {
-    document.getElementById('global-search').value = ""; // تفريغ الخانة
+    document.getElementById('global-search').value = ""; 
     document.getElementById('file-list-container').classList.add('hidden');
-    // العودة للقائمة الرئيسية
     document.getElementById('main-menu').classList.remove('hidden');
     document.getElementById('main-menu').classList.add('fade-in');
+    
+    // عند الإغلاق، نعود لأعلى الصفحة
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 // ---------------- التنقل ----------------
@@ -210,7 +213,7 @@ function goBackToSemesters() {
     showSemesters(currentLevel);
 }
 
-// ---------------- البحث والعرض ----------------
+// ---------------- البحث الذكي ----------------
 
 function normalizeText(text) {
     return text.toLowerCase()
@@ -293,8 +296,7 @@ function loadFiles(subjectName) {
     noFilesMsg.classList.add('hidden');
     spinner.classList.remove('hidden');
     
-    // إخفاء زر إغلاق البحث (لأننا في وضع التصفح العادي)
-    closeBtn.classList.add('hidden'); 
+    closeBtn.classList.add('hidden');
 
     setTimeout(() => {
         const filteredFiles = allFiles.filter(file => {
