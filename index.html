@@ -31,7 +31,6 @@
     <header class="main-header">
         <div class="header-overlay">
             <h1>Révision BA & FC</h1>
-            <!-- ✅ تم تحديث النص هنا -->
             <p>المراجعة الشاملة - Banques Assurances & Finance Comptabilité</p>
             <p style="font-size: 0.9rem; opacity: 0.8;">UNEM/ISCAE</p>
         </div>
@@ -43,23 +42,28 @@
             <i class="fas fa-download"></i> تثبيت التطبيق على الهاتف
         </button>
 
+        <!-- ✅ شريط البحث الشامل (الجديد) -->
+        <div class="search-wrapper fade-in">
+            <div class="search-box">
+                <input type="text" id="global-search" placeholder="بحث عن مادة، درس، أو ملف..." oninput="handleGlobalSearch(this.value)">
+                <i class="fas fa-search search-icon"></i>
+            </div>
+        </div>
+
         <!-- 1. القائمة الرئيسية -->
         <div id="main-menu" class="section-box fade-in">
             <h2 class="section-title">القائمة الرئيسية</h2>
             <div class="semesters-grid">
-                
                 <div class="semester-card main-option-card" onclick="showSpecializationSelection()">
                     <div class="icon-box"><i class="fas fa-book-reader"></i></div>
                     <h3>المراجعة والدروس</h3>
                     <p>دروس، ملخصات، وامتحانات (L1, L2, L3)</p>
                 </div>
-
                 <div class="semester-card main-option-card" onclick="showResultsSection()">
                     <div class="icon-box"><i class="fas fa-trophy"></i></div>
                     <h3>النتائج والمسابقات</h3>
                     <p>نتائج المعهد والمسابقات الوطنية</p>
                 </div>
-
             </div>
         </div>
 
@@ -124,133 +128,23 @@
                 <h2 id="current-semester-title" class="section-title">المواد</h2>
             </div>
 
-            <!-- ===== BA (Banques et Assurances) ===== -->
-            
+            <!-- BA -->
             <div id="ba-s1-list" class="buttons-grid hidden">
-                <button onclick="loadFiles('Principe de gestion')">Principe de gestion</button>
-                <button onclick="loadFiles('Comptabilité financière I')">Comptabilité financière I</button>
-                <button onclick="loadFiles('Statistique descriptive I')">Statistique descriptive I</button>
-                <button onclick="loadFiles('Mathématique')">Mathématique</button>
-                <button onclick="loadFiles('Anglais I')">Anglais I</button>
-                <button onclick="loadFiles('Méthodologie du travail universitaire')">Méthodologie</button>
-                <button onclick="loadFiles('MS office')">MS office</button>
-                <button onclick="loadFiles('Introduction à l’économie')">Introduction à l'économie</button>
-                <button onclick="loadFiles('Introduction au droit')">Introduction au droit</button>
-                <button onclick="loadFiles('Technique de communication')">Technique de communication</button>
-                <button onclick="loadFiles('Archive S1')" class="archive-btn"><i class="fas fa-archive"></i> L'archive</button>
+                <button onclick="loadFiles('Principe de gestion')">Principe de gestion</button><button onclick="loadFiles('Comptabilité financière I')">Comptabilité financière I</button><button onclick="loadFiles('Statistique descriptive I')">Statistique descriptive I</button><button onclick="loadFiles('Mathématique')">Mathématique</button><button onclick="loadFiles('Anglais I')">Anglais I</button><button onclick="loadFiles('Méthodologie du travail universitaire')">Méthodologie</button><button onclick="loadFiles('MS office')">MS office</button><button onclick="loadFiles('Introduction à l’économie')">Introduction à l'économie</button><button onclick="loadFiles('Introduction au droit')">Introduction au droit</button><button onclick="loadFiles('Technique de communication')">Technique de communication</button><button onclick="loadFiles('Archive S1')" class="archive-btn"><i class="fas fa-archive"></i> L'archive</button>
             </div>
+            <div id="ba-s2-list" class="buttons-grid hidden"><button onclick="loadFiles('Comptabilité financière II')">Comptabilité financière II</button><button onclick="loadFiles('Micro-finance')">Micro-finance</button><button onclick="loadFiles('Economie d’entreprise')">Economie d'entreprise</button><button onclick="loadFiles('Statistique descriptive II')">Statistique descriptive II</button><button onclick="loadFiles('Mathématiques financières')">Mathématiques financières</button><button onclick="loadFiles('Anglais II')">Anglais II</button><button onclick="loadFiles('Aptitudes en TIC')">Aptitudes en TIC</button><button onclick="loadFiles('Développement personnel')">Développement personnel</button><button onclick="loadFiles('Microéconomie')">Microéconomie</button><button onclick="loadFiles('Droit des affaires')">Droit des affaires</button><button onclick="loadFiles('Archive S2')" class="archive-btn"><i class="fas fa-archive"></i> L'archive</button></div>
+            <div id="ba-s3-list" class="buttons-grid hidden"><button onclick="loadFiles('Technique Bancaire')">Technique Bancaire</button><button onclick="loadFiles('Système financier mauritanien')">Système financier mauritanien</button><button onclick="loadFiles('Gestion Financière')">Gestion Financière</button><button onclick="loadFiles('Comptabilité des Sociétés')">Comptabilité des Sociétés</button><button onclick="loadFiles('Anglais des affaires')">Anglais des affaires</button><button onclick="loadFiles('Logiciels Bancaire')">Logiciels Bancaire</button><button onclick="loadFiles('Marketing')">Marketing</button><button onclick="loadFiles('Droit administrative')">Droit administrative</button><button onclick="loadFiles('Macroéconomie')">Macroéconomie</button><button onclick="loadFiles('Méthodes d’aide à la décision')">Méthodes d'aide à la décision</button><button onclick="loadFiles('Archive S3')" class="archive-btn"><i class="fas fa-archive"></i> L'archive</button></div>
+            <div id="ba-s4-list" class="buttons-grid hidden"><button onclick="loadFiles('Comptabilité des Société assurance')">Comptabilité des Assurances</button><button onclick="loadFiles('Assurances des biens')">Assurances des biens</button><button onclick="loadFiles('Comptabilité Bancaire')">Comptabilité Bancaire</button><button onclick="loadFiles('Comptabilité de Gestion')">Comptabilité de Gestion</button><button onclick="loadFiles('Finance des marchés')">Finance des marchés</button><button onclick="loadFiles('Analyse Financière')">Analyse Financière</button><button onclick="loadFiles('Gestion de la trésorerie')">Gestion de la trésorerie</button><button onclick="loadFiles('GRH')">GRH</button><button onclick="loadFiles('Droit des assurances')">Droit des assurances</button><button onclick="loadFiles('Commerce international')">Commerce international</button><button onclick="loadFiles('Archive S4')" class="archive-btn"><i class="fas fa-archive"></i> L'archive</button></div>
+            <div id="ba-s5-list" class="buttons-grid hidden"><button onclick="loadFiles('Gestion de portefeuille')">Gestion de portefeuille</button><button onclick="loadFiles('Comptabilité bancaire II')">Comptabilité bancaire II</button><button onclick="loadFiles('Gestion des risques')">Gestion des risques</button><button onclick="loadFiles('Finance islamique')">Finance islamique</button><button onclick="loadFiles('Stratégie d’entreprise')">Stratégie d’entreprise</button><button onclick="loadFiles('Gestion de patrimoine')">Gestion de patrimoine</button><button onclick="loadFiles('Fiscalité')">Fiscalité</button><button onclick="loadFiles('Politiques et choix d’investissement')">Politiques d'investissement</button><button onclick="loadFiles('Droit bancaire et financier')">Droit bancaire et financier</button><button onclick="loadFiles('Rapport de stage de la 2ème année')">Rapport de stage (L2)</button><button onclick="loadFiles('Archive S5')" class="archive-btn"><i class="fas fa-archive"></i> L'archive</button></div>
+            <div id="ba-s6-list" class="buttons-grid hidden"><button onclick="loadFiles('Méthodologie de recherche')">Méthodologie de recherche</button><button onclick="loadFiles('Séminaire sur l\'entrepreneuriat')">Séminaire sur l'entrepreneuriat</button><button onclick="loadFiles('Mémoire de fin d\'études')">Mémoire de fin d'études</button><button onclick="loadFiles('Archive S6')" class="archive-btn"><i class="fas fa-archive"></i> L'archive</button></div>
 
-            <div id="ba-s2-list" class="buttons-grid hidden">
-                <button onclick="loadFiles('Comptabilité financière II')">Comptabilité financière II</button>
-                <button onclick="loadFiles('Micro-finance')">Micro-finance</button>
-                <button onclick="loadFiles('Economie d’entreprise')">Economie d'entreprise</button>
-                <button onclick="loadFiles('Statistique descriptive II')">Statistique descriptive II</button>
-                <button onclick="loadFiles('Mathématiques financières')">Mathématiques financières</button>
-                <button onclick="loadFiles('Anglais II')">Anglais II</button>
-                <button onclick="loadFiles('Aptitudes en TIC')">Aptitudes en TIC</button>
-                <button onclick="loadFiles('Développement personnel')">Développement personnel</button>
-                <button onclick="loadFiles('Microéconomie')">Microéconomie</button>
-                <button onclick="loadFiles('Droit des affaires')">Droit des affaires</button>
-                <button onclick="loadFiles('Archive S2')" class="archive-btn"><i class="fas fa-archive"></i> L'archive</button>
-            </div>
-
-            <div id="ba-s3-list" class="buttons-grid hidden">
-                <button onclick="loadFiles('Technique Bancaire')">Technique Bancaire</button>
-                <button onclick="loadFiles('Système financier mauritanien')">Système financier mauritanien</button>
-                <button onclick="loadFiles('Gestion Financière')">Gestion Financière</button>
-                <button onclick="loadFiles('Comptabilité des Sociétés')">Comptabilité des Sociétés</button>
-                <button onclick="loadFiles('Anglais des affaires')">Anglais des affaires</button>
-                <button onclick="loadFiles('Logiciels Bancaire')">Logiciels Bancaire</button>
-                <button onclick="loadFiles('Marketing')">Marketing</button>
-                <button onclick="loadFiles('Droit administrative')">Droit administrative</button>
-                <button onclick="loadFiles('Macroéconomie')">Macroéconomie</button>
-                <button onclick="loadFiles('Méthodes d’aide à la décision')">Méthodes d'aide à la décision</button>
-                <button onclick="loadFiles('Archive S3')" class="archive-btn"><i class="fas fa-archive"></i> L'archive</button>
-            </div>
-
-            <div id="ba-s4-list" class="buttons-grid hidden">
-                <button onclick="loadFiles('Comptabilité des Société assurance')">Comptabilité des Assurances</button>
-                <button onclick="loadFiles('Assurances des biens')">Assurances des biens</button>
-                <button onclick="loadFiles('Comptabilité Bancaire')">Comptabilité Bancaire</button>
-                <button onclick="loadFiles('Comptabilité de Gestion')">Comptabilité de Gestion</button>
-                <button onclick="loadFiles('Finance des marchés')">Finance des marchés</button>
-                <button onclick="loadFiles('Analyse Financière')">Analyse Financière</button>
-                <button onclick="loadFiles('Gestion de la trésorerie')">Gestion de la trésorerie</button>
-                <button onclick="loadFiles('GRH')">GRH</button>
-                <button onclick="loadFiles('Droit des assurances')">Droit des assurances</button>
-                <button onclick="loadFiles('Commerce international')">Commerce international</button>
-                <button onclick="loadFiles('Archive S4')" class="archive-btn"><i class="fas fa-archive"></i> L'archive</button>
-            </div>
-
-            <div id="ba-s5-list" class="buttons-grid hidden">
-                <button onclick="loadFiles('Gestion de portefeuille')">Gestion de portefeuille</button>
-                <button onclick="loadFiles('Comptabilité bancaire II')">Comptabilité bancaire II</button>
-                <button onclick="loadFiles('Gestion des risques')">Gestion des risques</button>
-                <button onclick="loadFiles('Finance islamique')">Finance islamique</button>
-                <button onclick="loadFiles('Stratégie d’entreprise')">Stratégie d’entreprise</button>
-                <button onclick="loadFiles('Gestion de patrimoine')">Gestion de patrimoine</button>
-                <button onclick="loadFiles('Fiscalité')">Fiscalité</button>
-                <button onclick="loadFiles('Politiques et choix d’investissement')">Politiques d'investissement</button>
-                <button onclick="loadFiles('Droit bancaire et financier')">Droit bancaire et financier</button>
-                <button onclick="loadFiles('Rapport de stage de la 2ème année')">Rapport de stage (L2)</button>
-                <button onclick="loadFiles('Archive S5')" class="archive-btn"><i class="fas fa-archive"></i> L'archive</button>
-            </div>
-
-            <div id="ba-s6-list" class="buttons-grid hidden">
-                <button onclick="loadFiles('Méthodologie de recherche')">Méthodologie de recherche</button>
-                <button onclick="loadFiles('Séminaire sur l\'entrepreneuriat')">Séminaire sur l'entrepreneuriat</button>
-                <button onclick="loadFiles('Mémoire de fin d\'études')">Mémoire de fin d'études</button>
-                <button onclick="loadFiles('Archive S6')" class="archive-btn"><i class="fas fa-archive"></i> L'archive</button>
-            </div>
-
-            <!-- ===== FC (Finance et Comptabilité) ===== -->
-            
-            <div id="fc-s1-list" class="buttons-grid hidden">
-                <button onclick="loadFiles('Principe de gestion')">Principe de gestion</button>
-                <button onclick="loadFiles('Comptabilité financière I')">Comptabilité financière I</button>
-                <button onclick="loadFiles('Statistique descriptive I')">Statistique descriptive I</button>
-                <button onclick="loadFiles('Mathématique')">Mathématique</button>
-                <button onclick="loadFiles('Anglais I')">Anglais I</button>
-                <button onclick="loadFiles('Méthodologie du travail universitaire')">Méthodologie</button>
-                <button onclick="loadFiles('MS office')">MS office</button>
-                <button onclick="loadFiles('Introduction à l’économie')">Introduction à l'économie</button>
-                <button onclick="loadFiles('Introduction au droit')">Introduction au droit</button>
-                <button onclick="loadFiles('Technique de communication')">Technique de communication</button>
-                <button onclick="loadFiles('Archive S1')" class="archive-btn"><i class="fas fa-archive"></i> L'archive</button>
-            </div>
-
-            <div id="fc-s2-list" class="buttons-grid hidden">
-                <button onclick="loadFiles('Comptabilité financière II')">Comptabilité financière II</button>
-                <button onclick="loadFiles('Micro-finance')">Micro-finance</button>
-                <button onclick="loadFiles('Economie d’entreprise')">Economie d'entreprise</button>
-                <button onclick="loadFiles('Statistique descriptive II')">Statistique descriptive II</button>
-                <button onclick="loadFiles('Mathématiques financières')">Mathématiques financières</button>
-                <button onclick="loadFiles('Anglais II')">Anglais II</button>
-                <button onclick="loadFiles('Aptitudes en TIC')">Aptitudes en TIC</button>
-                <button onclick="loadFiles('Développement personnel')">Développement personnel</button>
-                <button onclick="loadFiles('Microéconomie')">Microéconomie</button>
-                <button onclick="loadFiles('Droit des affaires')">Droit des affaires</button>
-                <button onclick="loadFiles('Archive S2')" class="archive-btn"><i class="fas fa-archive"></i> L'archive</button>
-            </div>
-
-            <div id="fc-s3-list" class="buttons-grid hidden">
-                <button onclick="loadFiles('Technique Bancaire')">Technique Bancaire</button>
-                <button onclick="loadFiles('Système financier mauritanien')">Système financier mauritanien</button>
-                <button onclick="loadFiles('Gestion Financière')">Gestion Financière</button>
-                <button onclick="loadFiles('Comptabilité des Sociétés')">Comptabilité des Sociétés</button>
-                <button onclick="loadFiles('Anglais des affaires')">Anglais des affaires</button>
-                <button onclick="loadFiles('Logiciels Comptables')">Logiciels Comptables</button>
-                <button onclick="loadFiles('Marketing')">Marketing</button>
-                <button onclick="loadFiles('Droit administrative')">Droit administrative</button>
-                <button onclick="loadFiles('Macroéconomie')">Macroéconomie</button>
-                <button onclick="loadFiles('Méthodes d’aide à la décision')">Méthodes d'aide à la décision</button>
-                <button onclick="loadFiles('Archive S3')" class="archive-btn"><i class="fas fa-archive"></i> L'archive</button>
-            </div>
-
+            <!-- FC -->
+            <div id="fc-s1-list" class="buttons-grid hidden"><button onclick="loadFiles('Principe de gestion')">Principe de gestion</button><button onclick="loadFiles('Comptabilité financière I')">Comptabilité financière I</button><button onclick="loadFiles('Statistique descriptive I')">Statistique descriptive I</button><button onclick="loadFiles('Mathématique')">Mathématique</button><button onclick="loadFiles('Anglais I')">Anglais I</button><button onclick="loadFiles('Méthodologie du travail universitaire')">Méthodologie</button><button onclick="loadFiles('MS office')">MS office</button><button onclick="loadFiles('Introduction à l’économie')">Introduction à l'économie</button><button onclick="loadFiles('Introduction au droit')">Introduction au droit</button><button onclick="loadFiles('Technique de communication')">Technique de communication</button><button onclick="loadFiles('Archive S1')" class="archive-btn"><i class="fas fa-archive"></i> L'archive</button></div>
+            <div id="fc-s2-list" class="buttons-grid hidden"><button onclick="loadFiles('Comptabilité financière II')">Comptabilité financière II</button><button onclick="loadFiles('Micro-finance')">Micro-finance</button><button onclick="loadFiles('Economie d’entreprise')">Economie d'entreprise</button><button onclick="loadFiles('Statistique descriptive II')">Statistique descriptive II</button><button onclick="loadFiles('Mathématiques financières')">Mathématiques financières</button><button onclick="loadFiles('Anglais II')">Anglais II</button><button onclick="loadFiles('Aptitudes en TIC')">Aptitudes en TIC</button><button onclick="loadFiles('Développement personnel')">Développement personnel</button><button onclick="loadFiles('Microéconomie')">Microéconomie</button><button onclick="loadFiles('Droit des affaires')">Droit des affaires</button><button onclick="loadFiles('Archive S2')" class="archive-btn"><i class="fas fa-archive"></i> L'archive</button></div>
+            <div id="fc-s3-list" class="buttons-grid hidden"><button onclick="loadFiles('Technique Bancaire')">Technique Bancaire</button><button onclick="loadFiles('Système financier mauritanien')">Système financier mauritanien</button><button onclick="loadFiles('Gestion Financière')">Gestion Financière</button><button onclick="loadFiles('Comptabilité des Sociétés')">Comptabilité des Sociétés</button><button onclick="loadFiles('Anglais des affaires')">Anglais des affaires</button><button onclick="loadFiles('Logiciels Comptables')">Logiciels Comptables</button><button onclick="loadFiles('Marketing')">Marketing</button><button onclick="loadFiles('Droit administrative')">Droit administrative</button><button onclick="loadFiles('Macroéconomie')">Macroéconomie</button><button onclick="loadFiles('Méthodes d’aide à la décision')">Méthodes d'aide à la décision</button><button onclick="loadFiles('Archive S3')" class="archive-btn"><i class="fas fa-archive"></i> L'archive</button></div>
             <div id="fc-s4-list" class="buttons-grid hidden"><p style="text-align:center;color:#666">قريباً...</p></div>
             <div id="fc-s5-list" class="buttons-grid hidden"><p style="text-align:center;color:#666">قريباً...</p></div>
             <div id="fc-s6-list" class="buttons-grid hidden"><p style="text-align:center;color:#666">قريباً...</p></div>
-
         </div>
 
         <!-- قسم النتائج -->
@@ -273,8 +167,12 @@
             </div>
         </div>
 
-        <!-- حاوية عرض الملفات -->
+        <!-- حاوية الملفات (تستخدم للمواد وللبحث) -->
         <div id="file-list-container" class="section-box hidden">
+            <!-- زر إغلاق البحث (يظهر فقط عند استخدام البحث) -->
+            <button id="close-search-btn" class="back-btn hidden" onclick="closeSearch()" style="margin-bottom:15px; width:100%; text-align:center;">
+                <i class="fas fa-times"></i> إغلاق البحث والعودة
+            </button>
             <h3>📂 الملفات المتاحة: <span id="selected-subject-name" class="highlight-text"></span></h3>
             <ul id="pdf-list"></ul>
             <div id="loading-spinner" class="spinner hidden"></div>
@@ -299,7 +197,7 @@
         </div>
     </div>
 
-    <!-- نافذة الأيفون -->
+    <!-- نافذة iOS -->
     <div id="ios-install-modal" class="hidden">
         <div class="ios-modal-content">
             <h3>📱 التثبيت على الأيفون</h3>
@@ -313,7 +211,7 @@
         </div>
     </div>
 
-    <!-- النافذة الترحيبية -->
+    <!-- ✅ النافذة الترحيبية المعدلة -->
     <div id="welcome-modal" class="hidden">
         <div class="welcome-content fade-in">
             <div class="welcome-icon"><i class="fas fa-graduation-cap"></i></div>
@@ -323,11 +221,10 @@
                 <br>
                 <strong>تخصص البنوك والتأمين & المالية والمحاسبة</strong>
                 <br><br>
-                <span style="font-size: 0.9em; color: #0d47a1;">
-                    تم التطوير بواسطة: <strong>Mohamed Dah Agove</strong>
+                <!-- ✅ النص الأخضر الواضح -->
+                <span style="font-size: 1.2em; color: #2e7d32; font-weight: 800; border-bottom: 2px solid #2e7d32; padding-bottom: 3px;">
+                    🤲 لا تنسونا من صالح الدعاء
                 </span>
-                <br>
-                <span style="font-size: 0.9em; color: #e91e63;">❤️ لا تنسونا من صالح الدعاء</span>
             </p>
             <button onclick="closeWelcomeModal()" class="welcome-btn">ابدأ التصفح</button>
         </div>

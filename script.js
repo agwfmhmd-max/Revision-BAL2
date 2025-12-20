@@ -47,6 +47,63 @@ function fetchFilesFromGitHub() {
         .catch(err => console.error("Error:", err));
 }
 
+// ---------------- ✅ البحث الشامل (الجديد) ----------------
+function handleGlobalSearch(query) {
+    const fileListContainer = document.getElementById('file-list-container');
+    const pdfList = document.getElementById('pdf-list');
+    const selectedTitle = document.getElementById('selected-subject-name');
+    const closeBtn = document.getElementById('close-search-btn');
+    const noFilesMsg = document.getElementById('no-files-msg');
+    
+    // إذا كان هناك نص للبحث
+    if (query.trim().length > 0) {
+        // إخفاء جميع الواجهات الأخرى
+        document.getElementById('main-menu').classList.add('hidden');
+        document.getElementById('level-selection').classList.add('hidden');
+        document.getElementById('specialization-selection').classList.add('hidden');
+        document.getElementById('results-selection').classList.add('hidden');
+        document.getElementById('semesters-container').classList.add('hidden');
+        document.getElementById('subjects-container').classList.add('hidden');
+        
+        // إظهار واجهة النتائج
+        fileListContainer.classList.remove('hidden');
+        closeBtn.classList.remove('hidden'); // زر الإغلاق
+        selectedTitle.textContent = `نتائج البحث عن: "${query}"`;
+        
+        pdfList.innerHTML = "";
+        
+        // البحث في الملفات (تنظيف النص والمقارنة)
+        const searchClean = normalizeText(query);
+        const results = allFiles.filter(file => {
+            const fileNameClean = normalizeText(file.name);
+            return fileNameClean.includes(searchClean) && file.name.toLowerCase().endsWith(".pdf");
+        });
+
+        if (results.length === 0) {
+            noFilesMsg.classList.remove('hidden');
+        } else {
+            noFilesMsg.classList.add('hidden');
+            results.forEach(file => {
+                const li = document.createElement('li');
+                li.textContent = file.name.replace('.pdf', ''); 
+                li.onclick = () => openSmartViewer(file.name);
+                pdfList.appendChild(li);
+            });
+        }
+    } else {
+        // إذا مسح المستخدم النص، نعود للقائمة الرئيسية
+        closeSearch();
+    }
+}
+
+function closeSearch() {
+    document.getElementById('global-search').value = ""; // تفريغ الخانة
+    document.getElementById('file-list-container').classList.add('hidden');
+    // العودة للقائمة الرئيسية
+    document.getElementById('main-menu').classList.remove('hidden');
+    document.getElementById('main-menu').classList.add('fade-in');
+}
+
 // ---------------- التنقل ----------------
 
 function showSpecializationSelection() {
@@ -153,7 +210,7 @@ function goBackToSemesters() {
     showSemesters(currentLevel);
 }
 
-// ---------------- البحث الذكي (مشترك + تخصص) ----------------
+// ---------------- البحث والعرض ----------------
 
 function normalizeText(text) {
     return text.toLowerCase()
@@ -228,12 +285,16 @@ function loadFiles(subjectName) {
     const subjectTitle = document.getElementById('selected-subject-name');
     const noFilesMsg = document.getElementById('no-files-msg');
     const spinner = document.getElementById('loading-spinner');
+    const closeBtn = document.getElementById('close-search-btn');
 
     pdfList.innerHTML = "";
     listContainer.classList.remove('hidden');
     subjectTitle.textContent = subjectName;
     noFilesMsg.classList.add('hidden');
     spinner.classList.remove('hidden');
+    
+    // إخفاء زر إغلاق البحث (لأننا في وضع التصفح العادي)
+    closeBtn.classList.add('hidden'); 
 
     setTimeout(() => {
         const filteredFiles = allFiles.filter(file => {
