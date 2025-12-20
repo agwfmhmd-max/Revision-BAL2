@@ -20,11 +20,15 @@ body { font-family: 'Tajawal', sans-serif; margin: 0; padding: 0; background-col
 .semester-card { background: white; border: 2px solid var(--accent-color); border-radius: 15px; padding: 30px; text-align: center; cursor: pointer; transition: all 0.3s ease; }
 .semester-card:hover { transform: translateY(-5px); border-color: var(--primary-color); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
 
-/* تنسيقات البطاقات الخاصة */
-.landing-card { border: 2px solid #0d47a1; background: #e3f2fd; }
-.landing-card:hover { background: #bbdefb; }
-.result-mode { border-color: #009688; background: #e0f2f1; }
-.result-mode:hover { background: #b2dfdb; }
+/* ✅ تنسيق الأزرار الرئيسية الكبيرة */
+.main-option-card {
+    border-color: #0d47a1;
+    background: linear-gradient(145deg, #ffffff, #f0f8ff);
+    min-height: 180px; /* جعلها أطول */
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+}
+.main-option-card .icon-box { font-size: 4rem; margin-bottom: 20px; color: #0d47a1; }
+.main-option-card h3 { font-size: 1.3rem; margin: 0; }
 
 .result-card { border-color: #ffeb3b; background: #fffde7; }
 .result-rim-card { border-color: #009688; background: #e0f2f1; }

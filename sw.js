@@ -1,4 +1,4 @@
-const CACHE_NAME = 'revision-ba-v26'; // ✅ إصدار نهائي وجديد
+const CACHE_NAME = 'revision-ba-v26'; // ✅ تحديث مهم للواجهة الجديدة
 const assetsToCache = [
   './',
   './index.html',

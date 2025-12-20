@@ -24,37 +24,35 @@ function fetchFilesFromGitHub() {
         .catch(err => console.error("Error:", err));
 }
 
-// ===================================
-// دوال التنقل الرئيسية (Landing Page Logic)
-// ===================================
+// ---------------- التنقل الرئيسي ----------------
 
-function showRevisionFlow() {
-    document.getElementById('landing-page').classList.add('hidden');
-    document.getElementById('level-selection').classList.remove('hidden');
-    document.getElementById('level-selection').classList.add('fade-in');
+// 1. إظهار قسم اختيار المستوى (L1, L2, L3)
+function showLevelSelection() {
+    document.getElementById('main-menu').classList.add('hidden');
+    const levelSection = document.getElementById('level-selection');
+    levelSection.classList.remove('hidden');
+    levelSection.classList.add('fade-in');
 }
 
-function showResultsFlow() {
-    document.getElementById('landing-page').classList.add('hidden');
-    document.getElementById('results-selection').classList.remove('hidden');
-    document.getElementById('results-selection').classList.add('fade-in');
+// 2. إظهار قسم النتائج
+function showResultsSection() {
+    document.getElementById('main-menu').classList.add('hidden');
+    const resultsSection = document.getElementById('results-selection');
+    resultsSection.classList.remove('hidden');
+    resultsSection.classList.add('fade-in');
 }
 
-function goBackToLanding() {
+// 3. الرجوع للقائمة الرئيسية
+function goBackToMainMenu() {
     document.getElementById('level-selection').classList.add('hidden');
     document.getElementById('results-selection').classList.add('hidden');
-    document.getElementById('semesters-l1').classList.add('hidden');
-    document.getElementById('semesters-l2').classList.add('hidden');
-    document.getElementById('semesters-l3').classList.add('hidden');
     
-    document.getElementById('landing-page').classList.remove('hidden');
-    document.getElementById('landing-page').classList.add('fade-in');
+    const mainMenu = document.getElementById('main-menu');
+    mainMenu.classList.remove('hidden');
+    mainMenu.classList.add('fade-in');
 }
 
-// ===================================
-// دوال الفصول والمواد (Levels Logic)
-// ===================================
-
+// 4. إظهار الفصول (S1..)
 function showSemesters(level) {
     currentLevel = level;
     document.getElementById('level-selection').classList.add('hidden');
@@ -69,6 +67,7 @@ function showSemesters(level) {
     }
 }
 
+// 5. الرجوع للمستويات
 function goBackToLevels() {
     ['l1','l2','l3'].forEach(l => document.getElementById(`semesters-${l}`).classList.add('hidden'));
     const levelSelection = document.getElementById('level-selection');
@@ -76,6 +75,7 @@ function goBackToLevels() {
     levelSelection.classList.add('fade-in');
 }
 
+// 6. إظهار المواد
 function showSubjects(semester) {
     ['l1','l2','l3'].forEach(l => document.getElementById(`semesters-${l}`).classList.add('hidden'));
     
@@ -101,9 +101,7 @@ function goBackToSemesters() {
     else goBackToLevels();
 }
 
-// ===================================
-// خوارزمية البحث الذكية
-// ===================================
+// ---------------- البحث والعرض ----------------
 
 function normalizeText(text) {
     return text.toLowerCase()
@@ -171,7 +169,6 @@ function loadFiles(subjectName) {
     listContainer.classList.remove('hidden');
     subjectTitle.textContent = subjectName;
     noFilesMsg.classList.add('hidden');
-
     spinner.classList.remove('hidden');
 
     setTimeout(() => {
