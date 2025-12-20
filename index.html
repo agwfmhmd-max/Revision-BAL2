@@ -43,12 +43,39 @@
             <i class="fas fa-download"></i> تثبيت التطبيق على الهاتف
         </button>
 
-        <!-- 1. القائمة الرئيسية -->
-        <div id="level-selection" class="section-box fade-in">
-            <h2 class="section-title">القائمة الرئيسية</h2>
+        <!-- =========================================
+             1. الشاشة الافتتاحية (Landing Page) - تظهر أولاً
+           ========================================= -->
+        <div id="landing-page" class="section-box fade-in">
+            <h2 class="section-title">مرحباً بك، ماذا تريد أن تفعل؟</h2>
             <div class="semesters-grid">
                 
-                <!-- المستويات الدراسية -->
+                <!-- زر المراجعة الشاملة -->
+                <div class="semester-card landing-card" onclick="showRevisionFlow()">
+                    <div class="icon-box"><i class="fas fa-book-reader"></i></div>
+                    <h3>المراجعة والدروس</h3>
+                    <p>دروس، ملخصات، وامتحانات (L1, L2, L3)</p>
+                </div>
+
+                <!-- زر النتائج -->
+                <div class="semester-card landing-card result-mode" onclick="showResultsFlow()">
+                    <div class="icon-box"><i class="fas fa-trophy"></i></div>
+                    <h3>النتائج والمسابقات</h3>
+                    <p>نتائج المعهد والمسابقات الوطنية</p>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- =========================================
+             2. مسار المراجعة (اختيار المستوى) - مخفي
+           ========================================= -->
+        <div id="level-selection" class="section-box hidden">
+            <div class="header-with-back">
+                <button class="back-btn" onclick="goBackToLanding()"><i class="fas fa-arrow-right"></i> القائمة الرئيسية</button>
+                <h2 class="section-title">اختر المستوى الدراسي</h2>
+            </div>
+            <div class="semesters-grid">
                 <div class="semester-card" onclick="showSemesters('l1')">
                     <div class="icon-box"><i class="fas fa-user-graduate"></i></div>
                     <h3>BA L1</h3>
@@ -64,25 +91,39 @@
                     <h3>BA L3</h3>
                     <p>Troisième Année</p>
                 </div>
-
-                <!-- نتائج ISCAE -->
-                <div class="semester-card result-card" onclick="window.location.href='https://resultat-iscae.vercel.app/'">
-                    <div class="icon-box"><i class="fas fa-chart-line"></i></div>
-                    <h3>نتائج المعهد</h3>
-                    <p>عرض نتائج ISCAE</p>
-                </div>
-
-                <!-- ✅ الزر الجديد: نتائج المسابقات الوطنية -->
-                <div class="semester-card result-rim-card" onclick="window.location.href='https://resultat-rim.vercel.app/'">
-                    <div class="icon-box"><i class="fas fa-flag"></i></div>
-                    <h3>المسابقات الوطنية</h3>
-                    <p>عرض نتائج المسابقات</p>
-                </div>
-
             </div>
         </div>
 
-        <!-- 2. الفصول (L1, L2, L3) -->
+        <!-- =========================================
+             3. مسار النتائج (اختيار النوع) - مخفي
+           ========================================= -->
+        <div id="results-selection" class="section-box hidden">
+            <div class="header-with-back">
+                <button class="back-btn" onclick="goBackToLanding()"><i class="fas fa-arrow-right"></i> القائمة الرئيسية</button>
+                <h2 class="section-title">بوابة النتائج</h2>
+            </div>
+            <div class="semesters-grid">
+                <!-- نتائج المعهد -->
+                <div class="semester-card result-card" onclick="window.location.href='https://resultat-iscae.vercel.app/'">
+                    <div class="icon-box"><i class="fas fa-chart-line"></i></div>
+                    <h3>نتائج ISCAE</h3>
+                    <p>الموقع الرسمي لنتائج المعهد</p>
+                </div>
+
+                <!-- المسابقات الوطنية -->
+                <div class="semester-card result-rim-card" onclick="window.location.href='https://resultat-rim.vercel.app/'">
+                    <div class="icon-box"><i class="fas fa-flag"></i></div>
+                    <h3>المسابقات الوطنية</h3>
+                    <p>نتائج المسابقات (Mauritanie)</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- =========================================
+             4. الفصول (L1, L2, L3)
+           ========================================= -->
+        
+        <!-- L1 -->
         <div id="semesters-l1" class="section-box hidden">
             <div class="header-with-back">
                 <button class="back-btn" onclick="goBackToLevels()"><i class="fas fa-arrow-right"></i> المستويات</button>
@@ -100,6 +141,7 @@
             </div>
         </div>
 
+        <!-- L2 -->
         <div id="semesters-l2" class="section-box hidden">
             <div class="header-with-back">
                 <button class="back-btn" onclick="goBackToLevels()"><i class="fas fa-arrow-right"></i> المستويات</button>
@@ -117,6 +159,7 @@
             </div>
         </div>
 
+        <!-- L3 -->
         <div id="semesters-l3" class="section-box hidden">
             <div class="header-with-back">
                 <button class="back-btn" onclick="goBackToLevels()"><i class="fas fa-arrow-right"></i> المستويات</button>
@@ -134,7 +177,7 @@
             </div>
         </div>
 
-        <!-- 3. المواد (S1 - S6) -->
+        <!-- 5. المواد -->
         <div id="subjects-container" class="section-box hidden">
             <div class="header-with-back">
                 <button class="back-btn" onclick="goBackToSemesters()"><i class="fas fa-arrow-right"></i> الفصول</button>
@@ -188,7 +231,7 @@
 
             <!-- S4 -->
             <div id="s4-list" class="buttons-grid hidden">
-                <button onclick="loadFiles('Comptabilité des Sociétés d’assurance')">Comptabilité des Assurances</button>
+                <button onclick="loadFiles('Comptabilité des Sociétés d’assurance')">Comptabilité des Sociétés d'assurance</button>
                 <button onclick="loadFiles('Assurances des biens et des personnes')">Assurances des biens</button>
                 <button onclick="loadFiles('Comptabilité Bancaire')">Comptabilité Bancaire</button>
                 <button onclick="loadFiles('Comptabilité de Gestion')">Comptabilité de Gestion</button>
@@ -225,6 +268,7 @@
             </div>
         </div>
 
+        <!-- عرض الملفات -->
         <div id="file-list-container" class="section-box hidden">
             <h3>📂 الملفات المتاحة: <span id="selected-subject-name" class="highlight-text"></span></h3>
             <ul id="pdf-list"></ul>

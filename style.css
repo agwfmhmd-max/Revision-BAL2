@@ -20,10 +20,13 @@ body { font-family: 'Tajawal', sans-serif; margin: 0; padding: 0; background-col
 .semester-card { background: white; border: 2px solid var(--accent-color); border-radius: 15px; padding: 30px; text-align: center; cursor: pointer; transition: all 0.3s ease; }
 .semester-card:hover { transform: translateY(-5px); border-color: var(--primary-color); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
 
-/* زر نتائج المعهد (أصفر) */
-.result-card { border-color: #ffeb3b; background: #fffde7; }
+/* تنسيقات البطاقات الخاصة */
+.landing-card { border: 2px solid #0d47a1; background: #e3f2fd; }
+.landing-card:hover { background: #bbdefb; }
+.result-mode { border-color: #009688; background: #e0f2f1; }
+.result-mode:hover { background: #b2dfdb; }
 
-/* ✅ زر المسابقات الوطنية (أخضر فيروزي) */
+.result-card { border-color: #ffeb3b; background: #fffde7; }
 .result-rim-card { border-color: #009688; background: #e0f2f1; }
 .result-rim-card:hover { box-shadow: 0 10px 20px rgba(0, 150, 136, 0.2); transform: translateY(-5px); }
 
