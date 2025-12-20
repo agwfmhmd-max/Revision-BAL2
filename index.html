@@ -31,8 +31,8 @@
     <header class="main-header">
         <div class="header-overlay">
             <h1>Révision BA & FC</h1>
-            <p>المراجعة الشاملة - ISCAE</p>
-            <p style="font-size: 0.9rem; opacity: 0.8;">Banques Assurances & Finance Comptabilité</p>
+            <p>المراجعة الشاملة - Banques et Assurances</p>
+            <p style="font-size: 0.9rem; opacity: 0.8;">UNEM/ISCAE</p>
         </div>
     </header>
 
@@ -62,26 +62,23 @@
             </div>
         </div>
 
-        <!-- 2. اختيار التخصص (جديد) -->
+        <!-- 2. اختيار التخصص -->
         <div id="specialization-selection" class="section-box hidden">
             <div class="header-with-back">
                 <button class="back-btn" onclick="goBackToMainMenu()"><i class="fas fa-arrow-right"></i> القائمة</button>
                 <h2 class="section-title">اختر التخصص</h2>
             </div>
             <div class="semesters-grid">
-                
                 <div class="semester-card" onclick="selectSpecialization('ba')">
                     <div class="icon-box"><i class="fas fa-university"></i></div>
                     <h3>Banques et Assurances</h3>
                     <p>BA</p>
                 </div>
-
                 <div class="semester-card" onclick="selectSpecialization('fc')">
                     <div class="icon-box"><i class="fas fa-calculator"></i></div>
                     <h3>Finance et Comptabilité</h3>
                     <p>FC</p>
                 </div>
-
             </div>
         </div>
 
@@ -110,27 +107,23 @@
             </div>
         </div>
 
-        <!-- 4. الفصول (يتم تحديث العناوين ديناميكياً) -->
+        <!-- 4. الفصول -->
         <div id="semesters-container" class="section-box hidden">
             <div class="header-with-back">
                 <button class="back-btn" onclick="goBackToLevels()"><i class="fas fa-arrow-right"></i> المستويات</button>
                 <h2 id="semesters-title" class="section-title">الفصول</h2>
             </div>
-            
-            <!-- أزرار الفصول (ستظهر حسب المستوى المختار) -->
-            <div id="semesters-grid-view" class="semesters-grid">
-                <!-- سيتم ملؤها بواسطة JavaScript -->
-            </div>
+            <div id="semesters-grid-view" class="semesters-grid"></div>
         </div>
 
-        <!-- 5. المواد (تم تقسيمها حسب التخصص) -->
+        <!-- 5. المواد -->
         <div id="subjects-container" class="section-box hidden">
             <div class="header-with-back">
                 <button class="back-btn" onclick="goBackToSemesters()"><i class="fas fa-arrow-right"></i> الفصول</button>
                 <h2 id="current-semester-title" class="section-title">المواد</h2>
             </div>
 
-            <!-- ================= BA (Banques et Assurances) ================= -->
+            <!-- ===== BA (Banques et Assurances) ===== -->
             
             <div id="ba-s1-list" class="buttons-grid hidden">
                 <button onclick="loadFiles('Principe de gestion')">Principe de gestion</button>
@@ -166,7 +159,7 @@
                 <button onclick="loadFiles('Gestion Financière')">Gestion Financière</button>
                 <button onclick="loadFiles('Comptabilité des Sociétés')">Comptabilité des Sociétés</button>
                 <button onclick="loadFiles('Anglais des affaires')">Anglais des affaires</button>
-                <button onclick="loadFiles('Logiciels Bancaire')">Logiciels Bancaire</button>
+                <button onclick="loadFiles('Logiciels Bancaire et d’assurances')">Logiciels Bancaire</button>
                 <button onclick="loadFiles('Marketing')">Marketing</button>
                 <button onclick="loadFiles('Droit administrative')">Droit administrative</button>
                 <button onclick="loadFiles('Macroéconomie')">Macroéconomie</button>
@@ -209,7 +202,7 @@
                 <button onclick="loadFiles('Archive S6')" class="archive-btn"><i class="fas fa-archive"></i> L'archive</button>
             </div>
 
-            <!-- ================= FC (Finance et Comptabilité) ================= -->
+            <!-- ===== FC (Finance et Comptabilité) ===== -->
             
             <div id="fc-s1-list" class="buttons-grid hidden">
                 <button onclick="loadFiles('Principe de gestion')">Principe de gestion</button>
@@ -239,13 +232,15 @@
                 <button onclick="loadFiles('Archive S2')" class="archive-btn"><i class="fas fa-archive"></i> L'archive</button>
             </div>
 
+            <!-- ✅ S3 FC (تم تعديل اسم Logiciels) -->
             <div id="fc-s3-list" class="buttons-grid hidden">
                 <button onclick="loadFiles('Technique Bancaire')">Technique Bancaire</button>
                 <button onclick="loadFiles('Système financier mauritanien')">Système financier mauritanien</button>
                 <button onclick="loadFiles('Gestion Financière')">Gestion Financière</button>
                 <button onclick="loadFiles('Comptabilité des Sociétés')">Comptabilité des Sociétés</button>
                 <button onclick="loadFiles('Anglais des affaires')">Anglais des affaires</button>
-                <button onclick="loadFiles('Logiciels Bancaire et d\'assurances')">Logiciels Bancaire</button>
+                <!-- التعديل هنا -->
+                <button onclick="loadFiles('Logiciels Comptables')">Logiciels Comptables</button>
                 <button onclick="loadFiles('Marketing')">Marketing</button>
                 <button onclick="loadFiles('Droit administrative')">Droit administrative</button>
                 <button onclick="loadFiles('Macroéconomie')">Macroéconomie</button>
