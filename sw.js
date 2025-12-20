@@ -1,4 +1,4 @@
-const CACHE_NAME = 'revision-ba-v36'; // ✅ تحديث مهم: حفظ حالة الترحيب الدائمة
+const CACHE_NAME = 'revision-ba-v38'; // ✅ إصدار نهائي لإصلاح العربية
 const assetsToCache = [
   './',
   './index.html',
