@@ -47,19 +47,15 @@
             <h2 class="section-title">القائمة الرئيسية</h2>
             <div class="semesters-grid">
                 
-                <!-- زر المراجعة والدروس -->
                 <div class="semester-card main-option-card" onclick="showLevelSelection()">
                     <div class="icon-box"><i class="fas fa-book-reader"></i></div>
                     <h3>المراجعة والدروس</h3>
-                    <!-- ✅ النص المعدل -->
                     <p>دروس، ملخصات، وامتحانات (L1, L2, L3)</p>
                 </div>
 
-                <!-- زر النتائج والمسابقات -->
                 <div class="semester-card main-option-card" onclick="showResultsSection()">
                     <div class="icon-box"><i class="fas fa-trophy"></i></div>
                     <h3>النتائج والمسابقات</h3>
-                    <!-- ✅ النص المعدل -->
                     <p>نتائج المعهد والمسابقات الوطنية</p>
                 </div>
 
@@ -111,7 +107,7 @@
             </div>
         </div>
 
-        <!-- 4. الفصول (L1, L2, L3) -->
+        <!-- 4. الفصول -->
         <div id="semesters-l1" class="section-box hidden">
             <div class="header-with-back">
                 <button class="back-btn" onclick="goBackToLevels()"><i class="fas fa-arrow-right"></i> المستويات</button>
@@ -163,7 +159,7 @@
             </div>
         </div>
 
-        <!-- 5. المواد (Subjects) -->
+        <!-- 5. المواد -->
         <div id="subjects-container" class="section-box hidden">
             <div class="header-with-back">
                 <button class="back-btn" onclick="goBackToSemesters()"><i class="fas fa-arrow-right"></i> الفصول</button>
@@ -279,7 +275,7 @@
         </div>
     </div>
 
-    <!-- نافذة الأيفون -->
+    <!-- نافذة iOS -->
     <div id="ios-install-modal" class="hidden">
         <div class="ios-modal-content">
             <h3>📱 التثبيت على الأيفون</h3>
@@ -293,15 +289,23 @@
         </div>
     </div>
 
-    <!-- ✅ النافذة الترحيبية الجديدة (Welcome Modal) -->
+    <!-- ✅ النافذة الترحيبية (تم تعديل النص) -->
     <div id="welcome-modal" class="hidden">
         <div class="welcome-content fade-in">
             <div class="welcome-icon"><i class="fas fa-graduation-cap"></i></div>
             <h2>مرحباً بكم في منصة Révision BA</h2>
             <p class="welcome-text">
-                المنصة الشاملة لطلاب المعهد العالي للمحاسبة وإدارة المؤسسات. 
+                المنصة الشاملة لطلاب المعهد العالي للمحاسبة وإدارة المؤسسات 
+                <br>
+                <strong>تخصص البنوك والتأمين</strong>
                 <br><br>
                 نوفر لكم جميع الدروس، الملخصات، الامتحانات، والنتائج في مكان واحد لتسهيل مسيرتكم الدراسية.
+                <br><br>
+                <span style="font-size: 0.9em; color: #0d47a1;">
+                    تم التطوير بواسطة: <strong>Mohamed Dah Agove</strong>
+                </span>
+                <br>
+                <span style="font-size: 0.9em; color: #e91e63;">❤️ لا تنسونا من صالح الدعاء</span>
             </p>
             <button onclick="closeWelcomeModal()" class="welcome-btn">ابدأ التصفح</button>
         </div>
