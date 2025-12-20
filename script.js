@@ -4,8 +4,18 @@ const branchName = "main";
 const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/`;
 
 let allFiles = []; 
-let currentSpecialization = ''; // 'ba' or 'fc'
+let currentSpecialization = ''; 
 let currentLevel = '';
+
+const commonSubjects = [
+    "Statistique descriptive I",
+    "Mathématique",
+    "Méthodologie du travail universitaire",
+    "Introduction au droit",
+    "Statistique descriptive II",
+    "Comptabilité des Sociétés",
+    "Méthodes d’aide à la décision"
+];
 
 document.addEventListener("DOMContentLoaded", () => {
     fetchFilesFromGitHub();
@@ -37,7 +47,7 @@ function fetchFilesFromGitHub() {
         .catch(err => console.error("Error:", err));
 }
 
-// ---------------- التنقل الجديد ----------------
+// ---------------- التنقل ----------------
 
 function showSpecializationSelection() {
     document.getElementById('main-menu').classList.add('hidden');
@@ -82,7 +92,7 @@ function showSemesters(level) {
     container.classList.add('fade-in');
     
     const grid = document.getElementById('semesters-grid-view');
-    grid.innerHTML = ''; // تنظيف
+    grid.innerHTML = ''; 
 
     let semesters = [];
     if (level === 'l1') semesters = ['s1', 's2'];
@@ -118,19 +128,15 @@ function showSubjects(semester) {
     subjectsContainer.classList.remove('hidden');
     subjectsContainer.classList.add('fade-in');
 
-    // إخفاء جميع قوائم المواد
     const allLists = document.querySelectorAll('.buttons-grid');
     allLists.forEach(list => list.classList.add('hidden'));
 
-    // تحديد القائمة الصحيحة بناءً على التخصص والفصل
-    // مثال: ba-s1-list أو fc-s1-list
     const targetId = `${currentSpecialization}-${semester}-list`;
     const targetList = document.getElementById(targetId);
     
     if (targetList) {
         targetList.classList.remove('hidden');
     } else {
-        // إذا لم توجد القائمة (مثل FC S4)
         const placeholder = document.createElement('div');
         placeholder.id = targetId;
         placeholder.className = 'buttons-grid';
@@ -147,7 +153,7 @@ function goBackToSemesters() {
     showSemesters(currentLevel);
 }
 
-// ---------------- البحث والعرض (نفس المنطق السابق) ----------------
+// ---------------- البحث الذكي (مشترك + تخصص) ----------------
 
 function normalizeText(text) {
     return text.toLowerCase()
@@ -171,6 +177,18 @@ function isFileMatch(fileName, subjectName) {
     let subjectClean = normalizeText(subjectName);
     let fileMapped = mapRomanNumbers(fileClean);
     let subjectMapped = mapRomanNumbers(subjectClean);
+
+    const isCommonSubject = commonSubjects.some(common => 
+        normalizeText(common) === subjectClean
+    );
+
+    if (!isCommonSubject) {
+        if (currentSpecialization === 'fc') {
+            if (!fileClean.includes("fc")) return false;
+        } else if (currentSpecialization === 'ba') {
+            if (fileClean.includes("fc")) return false;
+        }
+    }
 
     if (subjectClean.includes("affaires")) {
         if (!fileClean.includes("affaires")) return false;
