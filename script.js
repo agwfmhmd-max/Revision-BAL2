@@ -22,15 +22,18 @@ document.addEventListener("DOMContentLoaded", () => {
     checkWelcome();
 });
 
+// ✅ التعديل هنا: استخدام localStorage بدلاً من sessionStorage
 function checkWelcome() {
-    if (!sessionStorage.getItem('welcome_seen')) {
+    // نتحقق مما إذا كان المستخدم قد رأى الرسالة سابقاً (تخزين دائم)
+    if (!localStorage.getItem('welcome_seen_permanent')) {
         document.getElementById('welcome-modal').classList.remove('hidden');
     }
 }
 
 function closeWelcomeModal() {
     document.getElementById('welcome-modal').classList.add('hidden');
-    sessionStorage.setItem('welcome_seen', 'true');
+    // نحفظ في ذاكرة الهاتف أن المستخدم قد رأى الرسالة (لن تظهر مجدداً أبداً)
+    localStorage.setItem('welcome_seen_permanent', 'true');
 }
 
 function fetchFilesFromGitHub() {
@@ -47,7 +50,7 @@ function fetchFilesFromGitHub() {
         .catch(err => console.error("Error:", err));
 }
 
-// ---------------- ✅ البحث الشامل (مع التمرير التلقائي) ----------------
+// ---------------- البحث الشامل ----------------
 function handleGlobalSearch(query) {
     const fileListContainer = document.getElementById('file-list-container');
     const pdfList = document.getElementById('pdf-list');
@@ -86,8 +89,6 @@ function handleGlobalSearch(query) {
                 pdfList.appendChild(li);
             });
 
-            // ✅ التعديل الجديد: التمرير التلقائي للنتائج
-            // نستخدم setTimeout لضمان أن العناصر ظهرت قبل التمرير
             setTimeout(() => {
                 fileListContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }, 100);
@@ -103,7 +104,6 @@ function closeSearch() {
     document.getElementById('main-menu').classList.remove('hidden');
     document.getElementById('main-menu').classList.add('fade-in');
     
-    // عند الإغلاق، نعود لأعلى الصفحة
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 

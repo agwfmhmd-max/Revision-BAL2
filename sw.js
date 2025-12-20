@@ -1,4 +1,4 @@
-const CACHE_NAME = 'revision-ba-v35'; // ✅ إصدار التمرير التلقائي
+const CACHE_NAME = 'revision-ba-v36'; // ✅ تحديث مهم: حفظ حالة الترحيب الدائمة
 const assetsToCache = [
   './',
   './index.html',
