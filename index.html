@@ -43,10 +43,12 @@
             <i class="fas fa-download"></i> تثبيت التطبيق على الهاتف
         </button>
 
-        <!-- المستويات -->
+        <!-- 1. القائمة الرئيسية -->
         <div id="level-selection" class="section-box fade-in">
-            <h2 class="section-title">اختر المستوى الدراسي</h2>
+            <h2 class="section-title">القائمة الرئيسية</h2>
             <div class="semesters-grid">
+                
+                <!-- المستويات الدراسية -->
                 <div class="semester-card" onclick="showSemesters('l1')">
                     <div class="icon-box"><i class="fas fa-user-graduate"></i></div>
                     <h3>BA L1</h3>
@@ -62,15 +64,25 @@
                     <h3>BA L3</h3>
                     <p>Troisième Année</p>
                 </div>
+
+                <!-- نتائج ISCAE -->
                 <div class="semester-card result-card" onclick="window.location.href='https://resultat-iscae.vercel.app/'">
                     <div class="icon-box"><i class="fas fa-chart-line"></i></div>
-                    <h3>النتائج</h3>
+                    <h3>نتائج المعهد</h3>
                     <p>عرض نتائج ISCAE</p>
                 </div>
+
+                <!-- ✅ الزر الجديد: نتائج المسابقات الوطنية -->
+                <div class="semester-card result-rim-card" onclick="window.location.href='https://resultat-rim.vercel.app/'">
+                    <div class="icon-box"><i class="fas fa-flag"></i></div>
+                    <h3>المسابقات الوطنية</h3>
+                    <p>عرض نتائج المسابقات</p>
+                </div>
+
             </div>
         </div>
 
-        <!-- الفصول -->
+        <!-- 2. الفصول (L1, L2, L3) -->
         <div id="semesters-l1" class="section-box hidden">
             <div class="header-with-back">
                 <button class="back-btn" onclick="goBackToLevels()"><i class="fas fa-arrow-right"></i> المستويات</button>
@@ -122,7 +134,7 @@
             </div>
         </div>
 
-        <!-- المواد -->
+        <!-- 3. المواد (S1 - S6) -->
         <div id="subjects-container" class="section-box hidden">
             <div class="header-with-back">
                 <button class="back-btn" onclick="goBackToSemesters()"><i class="fas fa-arrow-right"></i> الفصول</button>
@@ -234,7 +246,7 @@
         <div id="rendering-msg">
             <div class="spinner"></div>
             <p>جاري تحضير الملف...</p>
-            <p style="font-size:0.8rem; opacity:0.8; margin-top:5px;">إذا تأخر التحميل، استخدم الزر الأخضر في الأعلى ☝️</p>
+            <p style="font-size:0.8rem; opacity:0.8; margin-top:5px;">إذا لم يظهر، اضغط على "فتح خارجي"</p>
         </div>
     </div>
 

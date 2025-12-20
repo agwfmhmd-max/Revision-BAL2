@@ -19,7 +19,14 @@ body { font-family: 'Tajawal', sans-serif; margin: 0; padding: 0; background-col
 .semesters-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 20px; }
 .semester-card { background: white; border: 2px solid var(--accent-color); border-radius: 15px; padding: 30px; text-align: center; cursor: pointer; transition: all 0.3s ease; }
 .semester-card:hover { transform: translateY(-5px); border-color: var(--primary-color); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+
+/* زر نتائج المعهد (أصفر) */
 .result-card { border-color: #ffeb3b; background: #fffde7; }
+
+/* ✅ زر المسابقات الوطنية (أخضر فيروزي) */
+.result-rim-card { border-color: #009688; background: #e0f2f1; }
+.result-rim-card:hover { box-shadow: 0 10px 20px rgba(0, 150, 136, 0.2); transform: translateY(-5px); }
+
 .icon-box { font-size: 3rem; color: var(--secondary-color); margin-bottom: 15px; }
 .buttons-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-top: 20px; }
 .buttons-grid button { background: var(--accent-color); border: none; color: var(--primary-color); padding: 15px; border-radius: 8px; font-weight: bold; font-family: 'Tajawal', sans-serif; cursor: pointer; transition: 0.2s; font-size: 1rem; }
