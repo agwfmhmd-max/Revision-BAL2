@@ -4,17 +4,15 @@ const branchName = "main";
 const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/`;
 
 let allFiles = []; 
+let currentSpecialization = ''; // 'ba' or 'fc'
 let currentLevel = '';
 
 document.addEventListener("DOMContentLoaded", () => {
     fetchFilesFromGitHub();
-    checkWelcome(); // ✅ فحص الترحيب
+    checkWelcome();
 });
 
-// ---------------- منطق الترحيب ----------------
 function checkWelcome() {
-    // نستخدم sessionStorage لكي تظهر الرسالة مرة واحدة في الجلسة (عند إغلاق المتصفح وفتحه تظهر مجدداً)
-    // إذا أردتها مرة واحدة للأبد، استخدم localStorage بدلاً من sessionStorage
     if (!sessionStorage.getItem('welcome_seen')) {
         document.getElementById('welcome-modal').classList.remove('hidden');
     }
@@ -24,8 +22,6 @@ function closeWelcomeModal() {
     document.getElementById('welcome-modal').classList.add('hidden');
     sessionStorage.setItem('welcome_seen', 'true');
 }
-
-// ---------------------------------------------
 
 function fetchFilesFromGitHub() {
     const cachedFiles = sessionStorage.getItem('ba_files_cache');
@@ -41,78 +37,117 @@ function fetchFilesFromGitHub() {
         .catch(err => console.error("Error:", err));
 }
 
-// ---------------- التنقل الرئيسي ----------------
+// ---------------- التنقل الجديد ----------------
 
-function showLevelSelection() {
+function showSpecializationSelection() {
     document.getElementById('main-menu').classList.add('hidden');
-    const levelSection = document.getElementById('level-selection');
-    levelSection.classList.remove('hidden');
-    levelSection.classList.add('fade-in');
+    document.getElementById('specialization-selection').classList.remove('hidden');
+    document.getElementById('specialization-selection').classList.add('fade-in');
+}
+
+function selectSpecialization(spec) {
+    currentSpecialization = spec;
+    document.getElementById('specialization-selection').classList.add('hidden');
+    document.getElementById('level-selection').classList.remove('hidden');
+    document.getElementById('level-selection').classList.add('fade-in');
 }
 
 function showResultsSection() {
     document.getElementById('main-menu').classList.add('hidden');
-    const resultsSection = document.getElementById('results-selection');
-    resultsSection.classList.remove('hidden');
-    resultsSection.classList.add('fade-in');
+    document.getElementById('results-selection').classList.remove('hidden');
+    document.getElementById('results-selection').classList.add('fade-in');
 }
 
 function goBackToMainMenu() {
-    document.getElementById('level-selection').classList.add('hidden');
+    document.getElementById('specialization-selection').classList.add('hidden');
     document.getElementById('results-selection').classList.add('hidden');
+    document.getElementById('level-selection').classList.add('hidden');
     
-    const mainMenu = document.getElementById('main-menu');
-    mainMenu.classList.remove('hidden');
-    mainMenu.classList.add('fade-in');
+    document.getElementById('main-menu').classList.remove('hidden');
+    document.getElementById('main-menu').classList.add('fade-in');
+}
+
+function goBackToSpecialization() {
+    document.getElementById('level-selection').classList.add('hidden');
+    document.getElementById('specialization-selection').classList.remove('hidden');
+    document.getElementById('specialization-selection').classList.add('fade-in');
 }
 
 function showSemesters(level) {
     currentLevel = level;
     document.getElementById('level-selection').classList.add('hidden');
-    ['l1','l2','l3'].forEach(l => {
-        const div = document.getElementById(`semesters-${l}`);
-        if(div) div.classList.add('hidden');
+    
+    const container = document.getElementById('semesters-container');
+    container.classList.remove('hidden');
+    container.classList.add('fade-in');
+    
+    const grid = document.getElementById('semesters-grid-view');
+    grid.innerHTML = ''; // تنظيف
+
+    let semesters = [];
+    if (level === 'l1') semesters = ['s1', 's2'];
+    else if (level === 'l2') semesters = ['s3', 's4'];
+    else if (level === 'l3') semesters = ['s5', 's6'];
+
+    semesters.forEach(sem => {
+        const div = document.createElement('div');
+        div.className = 'semester-card';
+        div.onclick = () => showSubjects(sem);
+        div.innerHTML = `
+            <div class="icon-box">${sem.toUpperCase()}</div>
+            <h3>Semestre ${sem.replace('s','')}</h3>
+        `;
+        grid.appendChild(div);
     });
-    const targetDiv = document.getElementById(`semesters-${level}`);
-    if(targetDiv) {
-        targetDiv.classList.remove('hidden');
-        targetDiv.classList.add('fade-in');
-    }
+    
+    document.getElementById('semesters-title').textContent = 
+        level === 'l1' ? 'فصول السنة الأولى (L1)' :
+        level === 'l2' ? 'فصول السنة الثانية (L2)' :
+        'فصول السنة الثالثة (L3)';
 }
 
 function goBackToLevels() {
-    ['l1','l2','l3'].forEach(l => document.getElementById(`semesters-${l}`).classList.add('hidden'));
-    const levelSelection = document.getElementById('level-selection');
-    levelSelection.classList.remove('hidden');
-    levelSelection.classList.add('fade-in');
+    document.getElementById('semesters-container').classList.add('hidden');
+    document.getElementById('level-selection').classList.remove('hidden');
+    document.getElementById('level-selection').classList.add('fade-in');
 }
 
 function showSubjects(semester) {
-    ['l1','l2','l3'].forEach(l => document.getElementById(`semesters-${l}`).classList.add('hidden'));
-    
+    document.getElementById('semesters-container').classList.add('hidden');
     const subjectsContainer = document.getElementById('subjects-container');
     subjectsContainer.classList.remove('hidden');
     subjectsContainer.classList.add('fade-in');
 
-    ['s1','s2','s3','s4','s5','s6'].forEach(s => {
-        const div = document.getElementById(`${s}-list`);
-        if(div) div.classList.add('hidden');
-    });
+    // إخفاء جميع قوائم المواد
+    const allLists = document.querySelectorAll('.buttons-grid');
+    allLists.forEach(list => list.classList.add('hidden'));
 
-    const targetList = document.getElementById(`${semester}-list`);
-    const title = document.getElementById('current-semester-title');
-    if(targetList) targetList.classList.remove('hidden');
-    title.textContent = `المواد (${semester.toUpperCase()})`;
+    // تحديد القائمة الصحيحة بناءً على التخصص والفصل
+    // مثال: ba-s1-list أو fc-s1-list
+    const targetId = `${currentSpecialization}-${semester}-list`;
+    const targetList = document.getElementById(targetId);
+    
+    if (targetList) {
+        targetList.classList.remove('hidden');
+    } else {
+        // إذا لم توجد القائمة (مثل FC S4)
+        const placeholder = document.createElement('div');
+        placeholder.id = targetId;
+        placeholder.className = 'buttons-grid';
+        placeholder.innerHTML = '<p style="text-align:center;width:100%;color:#666">قريباً...</p>';
+        subjectsContainer.appendChild(placeholder);
+    }
+
+    document.getElementById('current-semester-title').textContent = `المواد (${currentSpecialization.toUpperCase()} - ${semester.toUpperCase()})`;
 }
 
 function goBackToSemesters() {
     document.getElementById('subjects-container').classList.add('hidden');
     document.getElementById('file-list-container').classList.add('hidden');
-    if (currentLevel) showSemesters(currentLevel);
-    else goBackToLevels();
+    showSemesters(currentLevel);
 }
 
-// ---------------- البحث والعرض ----------------
+// ---------------- البحث والعرض (نفس المنطق السابق) ----------------
 
 function normalizeText(text) {
     return text.toLowerCase()
