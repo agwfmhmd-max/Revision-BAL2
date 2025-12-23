@@ -1,4 +1,4 @@
-const CACHE_NAME = 'revision-ba-v46'; // ✅ إصدار الأخضر
+const CACHE_NAME = 'revision-ba-v47';
 const assetsToCache = ['./', './index.html', './style.css', './script.js', './manifest.json'];
 self.addEventListener('install', e => { self.skipWaiting(); e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(assetsToCache))); });
 self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.map(k => k !== CACHE_NAME && caches.delete(k))))); });

@@ -6,7 +6,6 @@
     <title>Révision BA & FC</title>
     
     <link rel="manifest" href="manifest.json">
-    <!-- ✅ تغيير لون الثيم للأخضر -->
     <meta name="theme-color" content="#1b5e20">
     <link rel="apple-touch-icon" href="icon-192.png">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -21,7 +20,10 @@
         <div class="nav-content">
             <div class="developer-info">
                 <span>تم التطوير بواسطة: </span>
-                <span class="dev-name">Mohamed Dah Agove & Boua</span>
+                <!-- ✅ تم التعديل هنا: إزالة Boua -->
+                <a href="https://wa.me/22220479962" target="_blank" class="dev-name" style="color:#ffeb3b; text-decoration:none;">
+                    Mohamed Dah Agove
+                </a>
             </div>
             <div class="dua-text">❤️ لا تنسونا من صالح الدعاء</div>
         </div>
@@ -65,7 +67,6 @@
                     <p>المعهد & الوطنية</p>
                 </div>
 
-                <!-- ✅ زر من نحن (يفتح نافذة) -->
                 <div class="semester-card about-btn-card" onclick="openAboutModal()">
                     <div class="icon-box"><i class="fas fa-users"></i></div>
                     <h3>من نحن؟</h3>
@@ -178,20 +179,20 @@
             <button id="close-search-btn" class="back-btn hidden" onclick="closeSearch()" style="margin-bottom:15px; width:100%; text-align:center;">
                 <i class="fas fa-times"></i> إغلاق البحث والعودة
             </button>
-            <h3>📂 الملفات: <span id="selected-subject-name"></span></h3>
+            <h3>📂 الملفات المتاحة: <span id="selected-subject-name" class="highlight-text"></span></h3>
             <ul id="pdf-list"></ul>
             <div id="loading-spinner" class="spinner hidden"></div>
             <p id="no-files-msg" class="hidden error-msg">⚠️ لا توجد ملفات تطابق البحث.</p>
         </div>
     </div>
 
-    <!-- ✅ الزر العائم (Vassala IA UNEM) -->
+    <!-- الزر العائم -->
     <div class="floating-ai-btn" onclick="openInternalBrowser('https://vassala-ia.vercel.app/', 'Vassala IA UNEM')">
         <i class="fas fa-robot"></i>
         <span>Vassala IA UNEM</span>
     </div>
 
-    <!-- ✅ متصفح داخلي -->
+    <!-- متصفح داخلي -->
     <div id="web-viewer-overlay" class="hidden">
         <div class="viewer-header">
             <button onclick="closeInternalBrowser()" class="close-viewer-btn"><i class="fas fa-times"></i> إغلاق</button>
@@ -234,7 +235,7 @@
         </div>
     </div>
 
-    <!-- ✅ نافذة من نحن (جديدة) -->
+    <!-- نافذة من نحن -->
     <div id="about-modal" class="hidden">
         <div class="welcome-content fade-in">
             <div class="welcome-icon"><i class="fas fa-users"></i></div>
