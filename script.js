@@ -7,7 +7,7 @@ let allFiles = [];
 let currentSpecialization = ''; 
 let currentLevel = '';
 
-// ✅ قائمة المواد المشتركة بدقة (كما حددتها)
+// قائمة المواد المشتركة
 const commonSubjects = [
     "Statistique descriptive I", 
     "Mathématique", 
@@ -22,6 +22,16 @@ document.addEventListener("DOMContentLoaded", () => {
     fetchFilesFromGitHub();
     checkWelcome();
 });
+
+// ---------------- ✅ دوال "من نحن" (تمت إعادتها) ----------------
+function openAboutModal() {
+    document.getElementById('about-modal').classList.remove('hidden');
+}
+
+function closeAboutModal() {
+    document.getElementById('about-modal').classList.add('hidden');
+}
+// -------------------------------------------------------------
 
 function checkWelcome() {
     if (!localStorage.getItem('welcome_seen_permanent')) {
@@ -57,7 +67,6 @@ function handleGlobalSearch(query) {
     const noFilesMsg = document.getElementById('no-files-msg');
     
     if (query.trim().length > 0) {
-        // إخفاء الواجهات الأخرى
         document.getElementById('main-menu').classList.add('hidden');
         document.getElementById('level-selection').classList.add('hidden');
         document.getElementById('specialization-selection').classList.add('hidden');
@@ -140,7 +149,6 @@ function showSemesters(level) {
     const grid = document.getElementById('semesters-grid-view');
     grid.innerHTML = ''; 
     let semesters = (level === 'l1') ? ['s1', 's2'] : (level === 'l2') ? ['s3', 's4'] : ['s5', 's6'];
-    
     semesters.forEach(sem => {
         const div = document.createElement('div');
         div.className = 'semester-card';
@@ -162,10 +170,8 @@ function showSubjects(semester) {
     subjectsContainer.classList.add('fade-in');
     const allLists = document.querySelectorAll('.buttons-grid');
     allLists.forEach(list => list.classList.add('hidden'));
-    
     const targetId = `${currentSpecialization}-${semester}-list`;
     const targetList = document.getElementById(targetId);
-    
     if (targetList) {
         targetList.classList.remove('hidden');
     } else {
@@ -182,7 +188,7 @@ function goBackToSemesters() {
     showSemesters(currentLevel);
 }
 
-// ---------------- أدوات النصوص ----------------
+// ---------------- أدوات النصوص والفلترة ----------------
 function normalizeText(text) {
     return text.toLowerCase()
         .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
@@ -200,46 +206,33 @@ function mapRomanNumbers(text) {
     return safeText;
 }
 
-// ✅ خوارزمية المطابقة الذكية والدقيقة (The Core Logic)
 function isFileMatch(fileName, subjectName) {
     let fileClean = normalizeText(fileName);
     let subjectClean = normalizeText(subjectName);
     let fileMapped = mapRomanNumbers(fileClean);
     let subjectMapped = mapRomanNumbers(subjectClean);
 
-    // 1️⃣ هل المادة مشتركة؟
-    // نقارن اسم المادة الحالية بقائمة المواد المشتركة
     const isCommon = commonSubjects.some(common => 
         normalizeText(common) === subjectClean
     );
 
     if (isCommon) {
-        // ✅ إذا كانت مشتركة:
-        // لا نهتم بوجود FC أو عدمه، نعرض الملف طالما الاسم مطابق
-        // (أي أننا نتجاوز شرط FC)
+        // مادة مشتركة: تظهر للجميع
     } else {
-        // ⛔ إذا كانت مادة خاصة (غير مشتركة):
         if (currentSpecialization === 'fc') {
-            // تخصص FC: يجب أن يحتوي الملف على "fc"
             if (!fileClean.includes("fc")) return false;
         } else if (currentSpecialization === 'ba') {
-            // تخصص BA: يجب ألا يحتوي الملف على "fc"
             if (fileClean.includes("fc")) return false;
         }
     }
 
-    // 2️⃣ مطابقة الاسم (المنطق العام)
-    
-    // تفريق Anglais I عن Anglais des affaires
     if (subjectClean.includes("affaires")) {
         if (!fileClean.includes("affaires")) return false;
     } 
     else if (subjectClean.includes("anglais") && !subjectClean.includes("affaires")) {
-        // إذا المادة انجليزية عادية، والملف فيه affaires -> رفض
         if (fileClean.includes("affaires")) return false;
     }
 
-    // تفريق الأرقام (1 vs 2)
     if (subjectMapped.includes(" 1 ")) {
         if (!fileMapped.includes(" 1 ")) return false; 
         if (fileMapped.includes(" 2 ")) return false; 
@@ -249,7 +242,6 @@ function isFileMatch(fileName, subjectName) {
         if (fileMapped.includes(" 1 ")) return false; 
     }
 
-    // مطابقة الكلمات المفتاحية
     const stopWords = ["le", "la", "les", "de", "des", "du", "et", "en", "au", "aux", "un", "une", "pour", "a", "l", "d"];
     const subjectKeywords = subjectClean.split(/\s+/).filter(w => w.length > 1 && !stopWords.includes(w));
 
@@ -279,7 +271,6 @@ function loadFiles(subjectName) {
     subjectTitle.textContent = subjectName;
     noFilesMsg.classList.add('hidden');
     spinner.classList.remove('hidden');
-    
     closeBtn.classList.add('hidden');
 
     setTimeout(() => {
@@ -294,7 +285,6 @@ function loadFiles(subjectName) {
         } else {
             filteredFiles.forEach(file => {
                 const li = document.createElement('li');
-                // تنظيف اسم الملف للعرض (إزالة .pdf)
                 li.textContent = file.name.replace('.pdf', ''); 
                 li.onclick = () => openSmartViewer(file.name);
                 pdfList.appendChild(li);
@@ -304,17 +294,6 @@ function loadFiles(subjectName) {
     }, 50);
 }
 
-// العارض والتوابع الأخرى
-function openInternalBrowser(url, title) {
-    const viewer = document.getElementById('web-viewer-overlay');
-    document.getElementById('web-frame').src = url;
-    document.getElementById('web-viewer-title').textContent = title;
-    viewer.classList.remove('hidden');
-}
-function closeInternalBrowser() {
-    document.getElementById('web-viewer-overlay').classList.add('hidden');
-    document.getElementById('web-frame').src = "";
-}
 function openSmartViewer(fileName) {
     const viewerOverlay = document.getElementById('pdf-viewer-overlay');
     const renderArea = document.getElementById('pdf-render-area');
@@ -342,7 +321,22 @@ function openSmartViewer(fileName) {
 
     renderArea.appendChild(iframe);
 }
+
 function closePdfViewer() {
     document.getElementById('pdf-viewer-overlay').classList.add('hidden');
     document.getElementById('pdf-render-area').innerHTML = "";
+}
+
+// دالة لفتح الروابط الخارجية في المتصفح الداخلي
+function openInternalBrowser(url, title) {
+    const viewer = document.getElementById('web-viewer-overlay');
+    const frame = document.getElementById('web-frame');
+    const titleSpan = document.getElementById('web-viewer-title');
+    titleSpan.textContent = title;
+    frame.src = url;
+    viewer.classList.remove('hidden');
+}
+function closeInternalBrowser() {
+    document.getElementById('web-viewer-overlay').classList.add('hidden');
+    document.getElementById('web-frame').src = "";
 }
