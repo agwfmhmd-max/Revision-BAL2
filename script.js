@@ -8,12 +8,8 @@ let currentSpecialization = '';
 let currentLevel = '';
 
 const commonSubjects = [
-    "Statistique descriptive I",
-    "Mathématique",
-    "Méthodologie du travail universitaire",
-    "Introduction au droit",
-    "Statistique descriptive II",
-    "Comptabilité des Sociétés",
+    "Statistique descriptive I", "Mathématique", "Méthodologie du travail universitaire",
+    "Introduction au droit", "Statistique descriptive II", "Comptabilité des Sociétés",
     "Méthodes d’aide à la décision"
 ];
 
@@ -22,9 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
     checkWelcome();
 });
 
-// ✅ التعديل هنا: استخدام localStorage بدلاً من sessionStorage
 function checkWelcome() {
-    // نتحقق مما إذا كان المستخدم قد رأى الرسالة سابقاً (تخزين دائم)
     if (!localStorage.getItem('welcome_seen_permanent')) {
         document.getElementById('welcome-modal').classList.remove('hidden');
     }
@@ -32,7 +26,6 @@ function checkWelcome() {
 
 function closeWelcomeModal() {
     document.getElementById('welcome-modal').classList.add('hidden');
-    // نحفظ في ذاكرة الهاتف أن المستخدم قد رأى الرسالة (لن تظهر مجدداً أبداً)
     localStorage.setItem('welcome_seen_permanent', 'true');
 }
 
@@ -48,6 +41,22 @@ function fetchFilesFromGitHub() {
             sessionStorage.setItem('ba_files_cache', JSON.stringify(data));
         })
         .catch(err => console.error("Error:", err));
+}
+
+// ✅ فتح روابط داخلية (Vassala, النتائج)
+function openInternalBrowser(url, title) {
+    const viewer = document.getElementById('web-viewer-overlay');
+    const frame = document.getElementById('web-frame');
+    const titleSpan = document.getElementById('web-viewer-title');
+    
+    titleSpan.textContent = title;
+    frame.src = url;
+    viewer.classList.remove('hidden');
+}
+
+function closeInternalBrowser() {
+    document.getElementById('web-viewer-overlay').classList.add('hidden');
+    document.getElementById('web-frame').src = ""; // إيقاف التحميل
 }
 
 // ---------------- البحث الشامل ----------------
@@ -88,10 +97,7 @@ function handleGlobalSearch(query) {
                 li.onclick = () => openSmartViewer(file.name);
                 pdfList.appendChild(li);
             });
-
-            setTimeout(() => {
-                fileListContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }, 100);
+            setTimeout(() => { fileListContainer.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 100);
         }
     } else {
         closeSearch();
@@ -103,182 +109,113 @@ function closeSearch() {
     document.getElementById('file-list-container').classList.add('hidden');
     document.getElementById('main-menu').classList.remove('hidden');
     document.getElementById('main-menu').classList.add('fade-in');
-    
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 // ---------------- التنقل ----------------
-
 function showSpecializationSelection() {
     document.getElementById('main-menu').classList.add('hidden');
     document.getElementById('specialization-selection').classList.remove('hidden');
     document.getElementById('specialization-selection').classList.add('fade-in');
 }
-
 function selectSpecialization(spec) {
     currentSpecialization = spec;
     document.getElementById('specialization-selection').classList.add('hidden');
     document.getElementById('level-selection').classList.remove('hidden');
     document.getElementById('level-selection').classList.add('fade-in');
 }
-
 function showResultsSection() {
     document.getElementById('main-menu').classList.add('hidden');
     document.getElementById('results-selection').classList.remove('hidden');
     document.getElementById('results-selection').classList.add('fade-in');
 }
-
 function goBackToMainMenu() {
     document.getElementById('specialization-selection').classList.add('hidden');
     document.getElementById('results-selection').classList.add('hidden');
     document.getElementById('level-selection').classList.add('hidden');
-    
     document.getElementById('main-menu').classList.remove('hidden');
     document.getElementById('main-menu').classList.add('fade-in');
 }
-
 function goBackToSpecialization() {
     document.getElementById('level-selection').classList.add('hidden');
     document.getElementById('specialization-selection').classList.remove('hidden');
     document.getElementById('specialization-selection').classList.add('fade-in');
 }
-
 function showSemesters(level) {
     currentLevel = level;
     document.getElementById('level-selection').classList.add('hidden');
-    
     const container = document.getElementById('semesters-container');
     container.classList.remove('hidden');
     container.classList.add('fade-in');
-    
     const grid = document.getElementById('semesters-grid-view');
     grid.innerHTML = ''; 
-
-    let semesters = [];
-    if (level === 'l1') semesters = ['s1', 's2'];
-    else if (level === 'l2') semesters = ['s3', 's4'];
-    else if (level === 'l3') semesters = ['s5', 's6'];
-
+    let semesters = (level === 'l1') ? ['s1', 's2'] : (level === 'l2') ? ['s3', 's4'] : ['s5', 's6'];
     semesters.forEach(sem => {
         const div = document.createElement('div');
         div.className = 'semester-card';
         div.onclick = () => showSubjects(sem);
-        div.innerHTML = `
-            <div class="icon-box">${sem.toUpperCase()}</div>
-            <h3>Semestre ${sem.replace('s','')}</h3>
-        `;
+        div.innerHTML = `<div class="icon-box">${sem.toUpperCase()}</div><h3>Semestre ${sem.replace('s','')}</h3>`;
         grid.appendChild(div);
     });
-    
-    document.getElementById('semesters-title').textContent = 
-        level === 'l1' ? 'فصول السنة الأولى (L1)' :
-        level === 'l2' ? 'فصول السنة الثانية (L2)' :
-        'فصول السنة الثالثة (L3)';
+    document.getElementById('semesters-title').textContent = level.toUpperCase();
 }
-
 function goBackToLevels() {
     document.getElementById('semesters-container').classList.add('hidden');
     document.getElementById('level-selection').classList.remove('hidden');
     document.getElementById('level-selection').classList.add('fade-in');
 }
-
 function showSubjects(semester) {
     document.getElementById('semesters-container').classList.add('hidden');
     const subjectsContainer = document.getElementById('subjects-container');
     subjectsContainer.classList.remove('hidden');
     subjectsContainer.classList.add('fade-in');
-
     const allLists = document.querySelectorAll('.buttons-grid');
     allLists.forEach(list => list.classList.add('hidden'));
-
     const targetId = `${currentSpecialization}-${semester}-list`;
     const targetList = document.getElementById(targetId);
-    
     if (targetList) {
         targetList.classList.remove('hidden');
     } else {
         const placeholder = document.createElement('div');
-        placeholder.id = targetId;
         placeholder.className = 'buttons-grid';
         placeholder.innerHTML = '<p style="text-align:center;width:100%;color:#666">قريباً...</p>';
         subjectsContainer.appendChild(placeholder);
     }
-
     document.getElementById('current-semester-title').textContent = `المواد (${currentSpecialization.toUpperCase()} - ${semester.toUpperCase()})`;
 }
-
 function goBackToSemesters() {
     document.getElementById('subjects-container').classList.add('hidden');
     document.getElementById('file-list-container').classList.add('hidden');
     showSemesters(currentLevel);
 }
 
-// ---------------- البحث الذكي ----------------
-
-function normalizeText(text) {
-    return text.toLowerCase()
-        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-        .replace(/['’]/g, " ")
-        .replace(/[_.-]/g, " ")
-        .replace(/[^a-z0-9\s]/g, "")
-        .replace(/\s+/g, " ")
-        .trim();
-}
-
+function normalizeText(text) { return text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/['’_.-]/g, " ").replace(/[^a-z0-9\s]/g, "").trim(); }
 function mapRomanNumbers(text) {
     let safeText = " " + text + " ";
     safeText = safeText.replace(/\s(i|1)\s/g, " 1 ");
     safeText = safeText.replace(/\s(ii|2)\s/g, " 2 ");
     return safeText;
 }
-
 function isFileMatch(fileName, subjectName) {
     let fileClean = normalizeText(fileName);
     let subjectClean = normalizeText(subjectName);
     let fileMapped = mapRomanNumbers(fileClean);
     let subjectMapped = mapRomanNumbers(subjectClean);
-
-    const isCommonSubject = commonSubjects.some(common => 
-        normalizeText(common) === subjectClean
-    );
-
+    const isCommonSubject = commonSubjects.some(common => normalizeText(common) === subjectClean);
     if (!isCommonSubject) {
-        if (currentSpecialization === 'fc') {
-            if (!fileClean.includes("fc")) return false;
-        } else if (currentSpecialization === 'ba') {
-            if (fileClean.includes("fc")) return false;
-        }
+        if (currentSpecialization === 'fc') { if (!fileClean.includes("fc")) return false; } 
+        else if (currentSpecialization === 'ba') { if (fileClean.includes("fc")) return false; }
     }
-
-    if (subjectClean.includes("affaires")) {
-        if (!fileClean.includes("affaires")) return false;
-    } 
-    else if (subjectClean.includes("anglais") && !subjectClean.includes("affaires")) {
-        if (fileClean.includes("affaires")) return false;
-    }
-
-    if (subjectMapped.includes(" 1 ")) {
-        if (!fileMapped.includes(" 1 ")) return false; 
-        if (fileMapped.includes(" 2 ")) return false; 
-    }
-    if (subjectMapped.includes(" 2 ")) {
-        if (!fileMapped.includes(" 2 ")) return false; 
-        if (fileMapped.includes(" 1 ")) return false; 
-    }
-
+    if (subjectClean.includes("affaires")) { if (!fileClean.includes("affaires")) return false; } 
+    else if (subjectClean.includes("anglais") && !subjectClean.includes("affaires")) { if (fileClean.includes("affaires")) return false; }
+    if (subjectMapped.includes(" 1 ")) { if (!fileMapped.includes(" 1 ")) return false; if (fileMapped.includes(" 2 ")) return false; }
+    if (subjectMapped.includes(" 2 ")) { if (!fileMapped.includes(" 2 ")) return false; if (fileMapped.includes(" 1 ")) return false; }
     const stopWords = ["le", "la", "les", "de", "des", "du", "et", "en", "au", "aux", "un", "une", "pour", "a", "l", "d"];
     const subjectKeywords = subjectClean.split(/\s+/).filter(w => w.length > 1 && !stopWords.includes(w));
-
     if (subjectKeywords.length === 0) return fileClean.includes(subjectClean);
-
     let matchCount = 0;
-    subjectKeywords.forEach(keyword => {
-        if (fileClean.includes(keyword)) matchCount++;
-    });
-
-    if (subjectKeywords.length <= 2) {
-        return matchCount === subjectKeywords.length;
-    }
+    subjectKeywords.forEach(keyword => { if (fileClean.includes(keyword)) matchCount++; });
+    if (subjectKeywords.length <= 2) return matchCount === subjectKeywords.length;
     return matchCount >= Math.ceil(subjectKeywords.length * 0.7); 
 }
 
@@ -295,16 +232,13 @@ function loadFiles(subjectName) {
     subjectTitle.textContent = subjectName;
     noFilesMsg.classList.add('hidden');
     spinner.classList.remove('hidden');
-    
     closeBtn.classList.add('hidden');
 
     setTimeout(() => {
         const filteredFiles = allFiles.filter(file => {
             return isFileMatch(file.name, subjectName) && file.name.toLowerCase().endsWith(".pdf");
         });
-
         spinner.classList.add('hidden');
-
         if (filteredFiles.length === 0) {
             noFilesMsg.classList.remove('hidden');
         } else {
@@ -340,14 +274,8 @@ function openSmartViewer(fileName) {
     const iframe = document.createElement('iframe');
     iframe.setAttribute('loading', 'lazy');
     iframe.src = `https://drive.google.com/viewerng/viewer?embedded=true&url=${cdnUrl}`;
-    
     iframe.onload = function() { msgDiv.style.display = 'none'; };
     setTimeout(() => { msgDiv.style.display = 'none'; }, 3000);
-
     renderArea.appendChild(iframe);
 }
-
-function closePdfViewer() {
-    document.getElementById('pdf-viewer-overlay').classList.add('hidden');
-    document.getElementById('pdf-render-area').innerHTML = "";
-}
+function closePdfViewer() { document.getElementById('pdf-viewer-overlay').classList.add('hidden'); document.getElementById('pdf-render-area').innerHTML = ""; }
