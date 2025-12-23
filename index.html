@@ -2,11 +2,12 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Révision BA & FC</title>
     
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#003366">
+    <!-- ✅ تغيير لون الثيم للأخضر -->
+    <meta name="theme-color" content="#1b5e20">
     <link rel="apple-touch-icon" href="icon-192.png">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
@@ -20,9 +21,7 @@
         <div class="nav-content">
             <div class="developer-info">
                 <span>تم التطوير بواسطة: </span>
-                <a href="https://wa.me/22220479962" target="_blank" class="dev-name">
-                    <i class="fab fa-whatsapp"></i> Mohamed Dah Agove
-                </a>
+                <span class="dev-name">Mohamed Dah Agove & Boua</span>
             </div>
             <div class="dua-text">❤️ لا تنسونا من صالح الدعاء</div>
         </div>
@@ -32,17 +31,16 @@
         <div class="header-overlay">
             <h1>Révision BA & FC</h1>
             <p>المراجعة الشاملة - Banques Assurances & Finance Comptabilité</p>
-            <p style="font-size: 0.9rem; opacity: 0.8;">UNEM/ISCAE</p>
+            <p style="font-size: 0.9rem; opacity: 0.9;">UNEM/ISCAE</p>
         </div>
     </header>
 
     <div class="container">
         
         <button id="install-btn" class="hidden install-btn-style">
-            <i class="fas fa-download"></i> تثبيت التطبيق على الهاتف
+            <i class="fas fa-download"></i> تثبيت التطبيق
         </button>
 
-        <!-- شريط البحث -->
         <div class="search-wrapper fade-in">
             <div class="search-box">
                 <input type="text" id="global-search" placeholder="بحث عن مادة، درس، أو ملف..." oninput="handleGlobalSearch(this.value)">
@@ -58,29 +56,26 @@
                 <div class="semester-card main-option-card" onclick="showSpecializationSelection()">
                     <div class="icon-box"><i class="fas fa-book-reader"></i></div>
                     <h3>المراجعة والدروس</h3>
-                    <p>دروس، ملخصات، وامتحانات (L1, L2, L3)</p>
+                    <p>دروس، ملخصات (L1, L2, L3)</p>
                 </div>
 
                 <div class="semester-card main-option-card" onclick="showResultsSection()">
                     <div class="icon-box"><i class="fas fa-trophy"></i></div>
                     <h3>النتائج والمسابقات</h3>
-                    <p>نتائج المعهد والمسابقات الوطنية</p>
+                    <p>المعهد & الوطنية</p>
                 </div>
 
-                <!-- ✅ بطاقة من نحن (تشمل Boua) -->
-                <div class="semester-card about-card">
+                <!-- ✅ زر من نحن (يفتح نافذة) -->
+                <div class="semester-card about-btn-card" onclick="openAboutModal()">
                     <div class="icon-box"><i class="fas fa-users"></i></div>
                     <h3>من نحن؟</h3>
-                    <p>نحن طلاب في المعهد العالي للمحاسبة وإدارة المؤسسات (ISCAE)</p>
-                    <p style="font-weight:bold; color:#003366; margin-top:8px; border-top:1px solid #ccc; padding-top:5px;">
-                        Mohamed Dah Agove & Boua
-                    </p>
+                    <p>نبذة عن المطورين</p>
                 </div>
 
             </div>
         </div>
 
-        <!-- 2. اختيار التخصص -->
+        <!-- 2. التخصص -->
         <div id="specialization-selection" class="section-box hidden">
             <div class="header-with-back">
                 <button class="back-btn" onclick="goBackToMainMenu()"><i class="fas fa-arrow-right"></i> القائمة</button>
@@ -100,11 +95,11 @@
             </div>
         </div>
 
-        <!-- 3. اختيار المستوى -->
+        <!-- 3. المستوى -->
         <div id="level-selection" class="section-box hidden">
             <div class="header-with-back">
                 <button class="back-btn" onclick="goBackToSpecialization()"><i class="fas fa-arrow-right"></i> التخصص</button>
-                <h2 class="section-title">اختر المستوى الدراسي</h2>
+                <h2 class="section-title">المستوى</h2>
             </div>
             <div class="semesters-grid">
                 <div class="semester-card" onclick="showSemesters('l1')">
@@ -158,7 +153,7 @@
             <div id="fc-s6-list" class="buttons-grid hidden"><button onclick="loadFiles('Méthodologie de recherche')">Méthodologie de recherche</button><button onclick="loadFiles('Séminaire sur l\'entrepreneuriat')">Séminaire sur l'entrepreneuriat</button><button onclick="loadFiles('Mémoire de fin d\'études')">Mémoire de fin d'études</button><button onclick="loadFiles('Archive S6')" class="archive-btn"><i class="fas fa-archive"></i> L'archive</button></div>
         </div>
 
-        <!-- 6. النتائج (تفتح داخلياً) -->
+        <!-- 6. النتائج -->
         <div id="results-selection" class="section-box hidden">
             <div class="header-with-back">
                 <button class="back-btn" onclick="goBackToMainMenu()"><i class="fas fa-arrow-right"></i> القائمة</button>
@@ -183,17 +178,17 @@
             <button id="close-search-btn" class="back-btn hidden" onclick="closeSearch()" style="margin-bottom:15px; width:100%; text-align:center;">
                 <i class="fas fa-times"></i> إغلاق البحث والعودة
             </button>
-            <h3>📂 الملفات المتاحة: <span id="selected-subject-name" class="highlight-text"></span></h3>
+            <h3>📂 الملفات: <span id="selected-subject-name"></span></h3>
             <ul id="pdf-list"></ul>
             <div id="loading-spinner" class="spinner hidden"></div>
             <p id="no-files-msg" class="hidden error-msg">⚠️ لا توجد ملفات تطابق البحث.</p>
         </div>
     </div>
 
-    <!-- ✅ الزر العائم للذكاء الاصطناعي -->
-    <div class="floating-ai-btn" onclick="openInternalBrowser('https://vassala-ia.vercel.app/', 'Vassala IA')">
+    <!-- ✅ الزر العائم (Vassala IA UNEM) -->
+    <div class="floating-ai-btn" onclick="openInternalBrowser('https://vassala-ia.vercel.app/', 'Vassala IA UNEM')">
         <i class="fas fa-robot"></i>
-        <span>Vassala IA</span>
+        <span>Vassala IA UNEM</span>
     </div>
 
     <!-- ✅ متصفح داخلي -->
@@ -229,6 +224,7 @@
     <div id="ios-install-modal" class="hidden">
         <div class="ios-modal-content">
             <h3>📱 التثبيت على الأيفون</h3>
+            <p>لتثبيت التطبيق، اتبع الخطوات التالية:</p>
             <ol>
                 <li>اضغط على زر <strong>المشاركة</strong> <i class="fas fa-share-square"></i>.</li>
                 <li>اختر <strong>"إضافة إلى الصفحة الرئيسية"</strong>.</li>
@@ -238,7 +234,23 @@
         </div>
     </div>
 
-    <!-- الترحيب -->
+    <!-- ✅ نافذة من نحن (جديدة) -->
+    <div id="about-modal" class="hidden">
+        <div class="welcome-content fade-in">
+            <div class="welcome-icon"><i class="fas fa-users"></i></div>
+            <h2>من نحن؟</h2>
+            <p class="welcome-text">
+                نحن طلاب في المعهد العالي للمحاسبة وإدارة المؤسسات (ISCAE).
+                <br><br>
+                هدفنا توفير منصة شاملة لمساعدة زملائنا في تخصصات البنوك والمالية.
+                <br><br>
+                <strong style="color: #1b5e20; font-size:1.1rem;">Mohamed Dah Agove & Boua</strong>
+            </p>
+            <button onclick="closeAboutModal()" class="welcome-btn">إغلاق</button>
+        </div>
+    </div>
+
+    <!-- النافذة الترحيبية -->
     <div id="welcome-modal" class="hidden">
         <div class="welcome-content fade-in">
             <div class="welcome-icon"><i class="fas fa-graduation-cap"></i></div>
