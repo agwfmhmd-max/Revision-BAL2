@@ -1,4 +1,4 @@
-const CACHE_NAME = 'revision-ba-v50'; // ✅ إصدار تصحيح من نحن
+const CACHE_NAME = 'revision-ba-v52'; // ✅ إصدار الحذف
 const assetsToCache = [
   './',
   './index.html',

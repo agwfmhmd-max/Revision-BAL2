@@ -20,7 +20,6 @@
         <div class="nav-content">
             <div class="developer-info">
                 <span>تم التطوير بواسطة: </span>
-                <!-- ✅ تم التعديل هنا: إزالة Boua -->
                 <a href="https://wa.me/22220479962" target="_blank" class="dev-name" style="color:#ffeb3b; text-decoration:none;">
                     Mohamed Dah Agove
                 </a>
@@ -154,7 +153,7 @@
             <div id="fc-s6-list" class="buttons-grid hidden"><button onclick="loadFiles('Méthodologie de recherche')">Méthodologie de recherche</button><button onclick="loadFiles('Séminaire sur l\'entrepreneuriat')">Séminaire sur l'entrepreneuriat</button><button onclick="loadFiles('Mémoire de fin d\'études')">Mémoire de fin d'études</button><button onclick="loadFiles('Archive S6')" class="archive-btn"><i class="fas fa-archive"></i> L'archive</button></div>
         </div>
 
-        <!-- 6. النتائج -->
+        <!-- 6. النتائج (تفتح داخلياً) -->
         <div id="results-selection" class="section-box hidden">
             <div class="header-with-back">
                 <button class="back-btn" onclick="goBackToMainMenu()"><i class="fas fa-arrow-right"></i> القائمة</button>
@@ -184,12 +183,6 @@
             <div id="loading-spinner" class="spinner hidden"></div>
             <p id="no-files-msg" class="hidden error-msg">⚠️ لا توجد ملفات تطابق البحث.</p>
         </div>
-    </div>
-
-    <!-- الزر العائم -->
-    <div class="floating-ai-btn" onclick="openInternalBrowser('https://vassala-ia.vercel.app/', 'Vassala IA UNEM')">
-        <i class="fas fa-robot"></i>
-        <span>Vassala IA UNEM</span>
     </div>
 
     <!-- متصفح داخلي -->
