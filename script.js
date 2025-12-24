@@ -7,20 +7,36 @@ let allFiles = [];
 let currentSpecialization = ''; 
 let currentLevel = '';
 
-// ✅ قائمة المواد المشتركة (التي لا ينطبق عليها شرط FC)
-// تشمل جميع مواد S1 و S2 + المواد المشتركة في S3
+// ✅ قائمة المواد المشتركة المحدثة (تم حذف المواد التي تختلف بين التخصصين)
+// المواد المتبقية هنا ستظهر للجميع بدون شرط FC
 const commonSubjects = [
-    // S1
-    "Principe de gestion", "Comptabilité financière I", "Statistique descriptive I", 
-    "Mathématique", "Anglais I", "Méthodologie du travail universitaire", 
-    "MS office", "Introduction à l’économie", "Introduction au droit", "Technique de communication",
-    // S2
-    "Comptabilité financière II", "Micro-finance", "Economie d’entreprise", 
-    "Statistique descriptive II", "Mathématiques financières", "Anglais II", 
-    "Aptitudes en TIC", "Développement personnel", "Microéconomie", "Droit des affaires",
+    // S1 (المشترك فقط)
+    "Statistique descriptive I", 
+    "Mathématique", 
+    "Méthodologie du travail universitaire", 
+    "Introduction au droit",
+    "MS office",
+    "Anglais I",
+    
+    // S2 (المشترك فقط)
+    "Statistique descriptive II", 
+    "Anglais II",
+    "Aptitudes en TIC",
+    "Développement personnel",
+    
     // S3 (المشترك فقط)
-    "Comptabilité des Sociétés", "Méthodes d’aide à la décision"
+    "Comptabilité des Sociétés", 
+    "Méthodes d’aide à la décision"
 ];
+
+/* 
+   ملاحظة: المواد التالية تم إخراجها من القائمة المشتركة وسينطبق عليها شرط FC:
+   - Principe de gestion
+   - Comptabilité financière I
+   - Introduction à l’économie
+   - Technique de communication
+   - وغيرها من مواد التخصص...
+*/
 
 document.addEventListener("DOMContentLoaded", () => {
     fetchFilesFromGitHub();
@@ -211,20 +227,19 @@ function isFileMatch(fileName, subjectName) {
     );
 
     if (isCommon) {
-        // مادة مشتركة: تظهر للجميع (نتجاوز شرط البادئة)
+        // مادة مشتركة: تظهر للجميع
     } else {
-        // مادة خاصة (تخصص دقيق)
+        // مادة خاصة: تطبيق شرط FC
         if (currentSpecialization === 'fc') {
-            // ✅ شرط صارم: FC يجب أن يبدأ بـ "fc"
-            // نتحقق من الاسم الأصلي وليس المنظف لضمان الترتيب
+            // تخصص FC: يجب أن يبدأ الملف بـ "fc"
             if (!fileName.toLowerCase().startsWith("fc")) return false;
         } else if (currentSpecialization === 'ba') {
-            // BA: يجب ألا يبدأ بـ FC
+            // تخصص BA: يجب ألا يبدأ بـ FC
             if (fileName.toLowerCase().startsWith("fc")) return false;
         }
     }
 
-    // 2️⃣ مطابقة الاسم (Keywords)
+    // 2️⃣ مطابقة الاسم
     if (subjectClean.includes("affaires")) {
         if (!fileClean.includes("affaires")) return false;
     } 
@@ -273,7 +288,6 @@ function loadFiles(subjectName) {
     spinner.classList.remove('hidden');
     closeBtn.classList.add('hidden');
 
-    // إذا كانت القائمة فارغة، ننتظر الجلب
     if (!allFiles || allFiles.length === 0) {
         fetch(apiUrl + "?t=" + new Date().getTime())
             .then(res => res.json())
