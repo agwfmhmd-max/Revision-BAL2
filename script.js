@@ -18,7 +18,6 @@ document.addEventListener("DOMContentLoaded", () => {
     checkWelcome();
 });
 
-// دوال "من نحن"
 function openAboutModal() { document.getElementById('about-modal').classList.remove('hidden'); }
 function closeAboutModal() { document.getElementById('about-modal').classList.add('hidden'); }
 
@@ -41,22 +40,9 @@ function fetchFilesFromGitHub() {
             allFiles = data;
             sessionStorage.setItem('ba_files_cache', JSON.stringify(data));
         })
-        .catch(err => console.error("Error fetching files:", err));
+        .catch(err => console.error("Error:", err));
 }
 
-// ✅ دالة التحقق من الامتداد (PDF أو PPTX)
-function isValidExtension(filename) {
-    const lower = filename.toLowerCase();
-    return lower.endsWith(".pdf") || lower.endsWith(".pptx") || lower.endsWith(".ppt");
-}
-
-// ✅ تحديد الأيقونة حسب نوع الملف
-function getFileIcon(filename) {
-    if (filename.toLowerCase().endsWith(".pdf")) return "📄"; // أيقونة PDF
-    return "📊"; // أيقونة PowerPoint
-}
-
-// ---------------- البحث الشامل ----------------
 function handleGlobalSearch(query) {
     const fileListContainer = document.getElementById('file-list-container');
     const pdfList = document.getElementById('pdf-list');
@@ -65,87 +51,52 @@ function handleGlobalSearch(query) {
     const noFilesMsg = document.getElementById('no-files-msg');
     
     if (query.trim().length > 0) {
-        document.getElementById('main-menu').classList.add('hidden');
-        document.getElementById('level-selection').classList.add('hidden');
-        document.getElementById('specialization-selection').classList.add('hidden');
-        document.getElementById('results-selection').classList.add('hidden');
-        document.getElementById('semesters-container').classList.add('hidden');
-        document.getElementById('subjects-container').classList.add('hidden');
-        
+        document.querySelectorAll('.section-box').forEach(el => el.classList.add('hidden'));
         fileListContainer.classList.remove('hidden');
         closeBtn.classList.remove('hidden');
-        selectedTitle.textContent = `نتائج البحث عن: "${query}"`;
-        
+        selectedTitle.textContent = `بحث: "${query}"`;
         pdfList.innerHTML = "";
-        
         const searchClean = normalizeText(query);
         const results = allFiles.filter(file => {
-            const fileNameClean = normalizeText(file.name);
-            // ✅ البحث في جميع الامتدادات المسموحة
-            return fileNameClean.includes(searchClean) && isValidExtension(file.name);
+            return normalizeText(file.name).includes(searchClean) && file.name.toLowerCase().endsWith(".pdf");
         });
-
-        if (results.length === 0) {
-            noFilesMsg.classList.remove('hidden');
-        } else {
+        if (results.length === 0) { noFilesMsg.classList.remove('hidden'); } 
+        else {
             noFilesMsg.classList.add('hidden');
             results.forEach(file => {
                 const li = document.createElement('li');
-                // عرض الأيقونة المناسبة
-                li.innerHTML = `${getFileIcon(file.name)} ${file.name.replace(/\.(pdf|pptx|ppt)$/i, '')}`;
+                li.textContent = file.name.replace('.pdf', ''); 
                 li.onclick = () => openSmartViewer(file.name);
                 pdfList.appendChild(li);
             });
             setTimeout(() => { fileListContainer.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 100);
         }
-    } else {
-        closeSearch();
-    }
+    } else { closeSearch(); }
 }
-
 function closeSearch() {
     document.getElementById('global-search').value = ""; 
     document.getElementById('file-list-container').classList.add('hidden');
     document.getElementById('main-menu').classList.remove('hidden');
-    document.getElementById('main-menu').classList.add('fade-in');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
-
-// ---------------- التنقل ----------------
-function showSpecializationSelection() {
-    document.getElementById('main-menu').classList.add('hidden');
-    document.getElementById('specialization-selection').classList.remove('hidden');
-    document.getElementById('specialization-selection').classList.add('fade-in');
+function openInternalBrowser(url, title) {
+    const viewer = document.getElementById('web-viewer-overlay');
+    document.getElementById('web-frame').src = url;
+    document.getElementById('web-viewer-title').textContent = title;
+    viewer.classList.remove('hidden');
 }
-function selectSpecialization(spec) {
-    currentSpecialization = spec;
-    document.getElementById('specialization-selection').classList.add('hidden');
-    document.getElementById('level-selection').classList.remove('hidden');
-    document.getElementById('level-selection').classList.add('fade-in');
+function closeInternalBrowser() {
+    document.getElementById('web-viewer-overlay').classList.add('hidden');
+    document.getElementById('web-frame').src = "";
 }
-function showResultsSection() {
-    document.getElementById('main-menu').classList.add('hidden');
-    document.getElementById('results-selection').classList.remove('hidden');
-    document.getElementById('results-selection').classList.add('fade-in');
-}
-function goBackToMainMenu() {
-    document.getElementById('specialization-selection').classList.add('hidden');
-    document.getElementById('results-selection').classList.add('hidden');
-    document.getElementById('level-selection').classList.add('hidden');
-    document.getElementById('main-menu').classList.remove('hidden');
-    document.getElementById('main-menu').classList.add('fade-in');
-}
-function goBackToSpecialization() {
-    document.getElementById('level-selection').classList.add('hidden');
-    document.getElementById('specialization-selection').classList.remove('hidden');
-    document.getElementById('specialization-selection').classList.add('fade-in');
-}
+function showSpecializationSelection() { hideAll(); document.getElementById('specialization-selection').classList.remove('hidden'); }
+function selectSpecialization(spec) { currentSpecialization = spec; hideAll(); document.getElementById('level-selection').classList.remove('hidden'); }
+function showResultsSection() { hideAll(); document.getElementById('results-selection').classList.remove('hidden'); }
+function goBackToMainMenu() { hideAll(); document.getElementById('main-menu').classList.remove('hidden'); }
+function goBackToSpecialization() { hideAll(); document.getElementById('specialization-selection').classList.remove('hidden'); }
 function showSemesters(level) {
     currentLevel = level;
-    document.getElementById('level-selection').classList.add('hidden');
-    const container = document.getElementById('semesters-container');
-    container.classList.remove('hidden');
-    container.classList.add('fade-in');
+    hideAll();
+    document.getElementById('semesters-container').classList.remove('hidden');
     const grid = document.getElementById('semesters-grid-view');
     grid.innerHTML = ''; 
     let semesters = (level === 'l1') ? ['s1', 's2'] : (level === 'l2') ? ['s3', 's4'] : ['s5', 's6'];
@@ -158,62 +109,38 @@ function showSemesters(level) {
     });
     document.getElementById('semesters-title').textContent = level.toUpperCase();
 }
-function goBackToLevels() {
-    document.getElementById('semesters-container').classList.add('hidden');
-    document.getElementById('level-selection').classList.remove('hidden');
-    document.getElementById('level-selection').classList.add('fade-in');
-}
+function goBackToLevels() { hideAll(); document.getElementById('level-selection').classList.remove('hidden'); }
 function showSubjects(semester) {
-    document.getElementById('semesters-container').classList.add('hidden');
-    const subjectsContainer = document.getElementById('subjects-container');
-    subjectsContainer.classList.remove('hidden');
-    subjectsContainer.classList.add('fade-in');
-    const allLists = document.querySelectorAll('.buttons-grid');
-    allLists.forEach(list => list.classList.add('hidden'));
+    hideAll();
+    document.getElementById('subjects-container').classList.remove('hidden');
+    document.querySelectorAll('.buttons-grid').forEach(list => list.classList.add('hidden'));
     const targetId = `${currentSpecialization}-${semester}-list`;
     const targetList = document.getElementById(targetId);
-    if (targetList) {
-        targetList.classList.remove('hidden');
-    } else {
+    if (targetList) targetList.classList.remove('hidden');
+    else {
         const placeholder = document.createElement('div');
         placeholder.className = 'buttons-grid';
-        placeholder.innerHTML = '<p style="text-align:center;width:100%;color:#666">قريباً...</p>';
-        subjectsContainer.appendChild(placeholder);
+        placeholder.innerHTML = '<p style="text-align:center;color:#666">قريباً...</p>';
+        document.getElementById('subjects-container').appendChild(placeholder);
     }
     document.getElementById('current-semester-title').textContent = `المواد (${currentSpecialization.toUpperCase()} - ${semester.toUpperCase()})`;
 }
-function goBackToSemesters() {
-    document.getElementById('subjects-container').classList.add('hidden');
-    document.getElementById('file-list-container').classList.add('hidden');
-    showSemesters(currentLevel);
-}
-
-// ---------------- الفلترة والمطابقة ----------------
-function normalizeText(text) {
-    return text.toLowerCase()
-        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-        .replace(/['’]/g, " ")
-        .replace(/[_.-]/g, " ")
-        .replace(/[^a-z0-9\s]/g, "")
-        .replace(/\s+/g, " ")
-        .trim();
-}
+function goBackToSemesters() { hideAll(); showSemesters(currentLevel); }
+function hideAll() { document.querySelectorAll('.section-box').forEach(el => el.classList.add('hidden')); }
+function normalizeText(text) { return text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/['’_.-]/g, " ").replace(/[^a-z0-9\s]/g, "").trim(); }
 function mapRomanNumbers(text) {
     let safeText = " " + text + " ";
     safeText = safeText.replace(/\s(i|1)\s/g, " 1 ");
     safeText = safeText.replace(/\s(ii|2)\s/g, " 2 ");
     return safeText;
 }
-
 function isFileMatch(fileName, subjectName) {
     let fileClean = normalizeText(fileName);
     let subjectClean = normalizeText(subjectName);
     let fileMapped = mapRomanNumbers(fileClean);
     let subjectMapped = mapRomanNumbers(subjectClean);
-
-    const isCommon = commonSubjects.some(common => normalizeText(common) === subjectClean);
-
-    if (!isCommon) {
+    const isCommonSubject = commonSubjects.some(common => normalizeText(common) === subjectClean);
+    if (!isCommonSubject) {
         if (currentSpecialization === 'fc') { if (!fileClean.includes("fc")) return false; } 
         else if (currentSpecialization === 'ba') { if (fileClean.includes("fc")) return false; }
     }
@@ -221,101 +148,26 @@ function isFileMatch(fileName, subjectName) {
     else if (subjectClean.includes("anglais") && !subjectClean.includes("affaires")) { if (fileClean.includes("affaires")) return false; }
     if (subjectMapped.includes(" 1 ")) { if (!fileMapped.includes(" 1 ")) return false; if (fileMapped.includes(" 2 ")) return false; }
     if (subjectMapped.includes(" 2 ")) { if (!fileMapped.includes(" 2 ")) return false; if (fileMapped.includes(" 1 ")) return false; }
-
     const stopWords = ["le", "la", "les", "de", "des", "du", "et", "en", "au", "aux", "un", "une", "pour", "a", "l", "d"];
     const subjectKeywords = subjectClean.split(/\s+/).filter(w => w.length > 1 && !stopWords.includes(w));
-
     if (subjectKeywords.length === 0) return fileClean.includes(subjectClean);
-
     let matchCount = 0;
-    subjectKeywords.forEach(keyword => {
-        if (fileClean.includes(keyword)) matchCount++;
-    });
-
-    if (subjectKeywords.length <= 2) { return matchCount === subjectKeywords.length; }
+    subjectKeywords.forEach(keyword => { if (fileClean.includes(keyword)) matchCount++; });
+    if (subjectKeywords.length <= 2) return matchCount === subjectKeywords.length;
     return matchCount >= Math.ceil(subjectKeywords.length * 0.7); 
 }
-
-function loadFiles(subjectName) {
-    const listContainer = document.getElementById('file-list-container');
-    const pdfList = document.getElementById('pdf-list');
-    const subjectTitle = document.getElementById('selected-subject-name');
-    const noFilesMsg = document.getElementById('no-files-msg');
-    const spinner = document.getElementById('loading-spinner');
-    const closeBtn = document.getElementById('close-search-btn');
-
-    pdfList.innerHTML = "";
-    listContainer.classList.remove('hidden');
-    subjectTitle.textContent = subjectName;
-    noFilesMsg.classList.add('hidden');
-    spinner.classList.remove('hidden');
-    closeBtn.classList.add('hidden');
-
-    setTimeout(() => {
-        const filteredFiles = allFiles.filter(file => {
-            // ✅ السماح بـ PDF و PPTX
-            return isFileMatch(file.name, subjectName) && isValidExtension(file.name);
-        });
-
-        spinner.classList.add('hidden');
-
-        if (filteredFiles.length === 0) {
-            noFilesMsg.classList.remove('hidden');
-        } else {
-            filteredFiles.forEach(file => {
-                const li = document.createElement('li');
-                // ✅ إضافة الأيقونة المناسبة
-                li.innerHTML = `${getFileIcon(file.name)} ${file.name.replace(/\.(pdf|pptx|ppt)$/i, '')}`; 
-                li.onclick = () => openSmartViewer(file.name);
-                pdfList.appendChild(li);
-            });
-            listContainer.scrollIntoView({ behavior: 'smooth' });
-        }
-    }, 50);
-}
-
-// دوال فتح الروابط
-function openInternalBrowser(url, title) {
-    const viewer = document.getElementById('web-viewer-overlay');
-    document.getElementById('web-frame').src = url;
-    document.getElementById('web-viewer-title').textContent = title;
-    viewer.classList.remove('hidden');
-}
-function closeInternalBrowser() {
-    document.getElementById('web-viewer-overlay').classList.add('hidden');
-    document.getElementById('web-frame').src = "";
-}
-
 function openSmartViewer(fileName) {
     const viewerOverlay = document.getElementById('pdf-viewer-overlay');
     const renderArea = document.getElementById('pdf-render-area');
-    const msgDiv = document.getElementById('rendering-msg');
-    const filenameLabel = document.getElementById('viewer-filename');
-    const actionBtn = document.getElementById('viewer-action-btn');
-
     renderArea.innerHTML = "";
     viewerOverlay.classList.remove('hidden');
-    filenameLabel.textContent = fileName.replace(/\.(pdf|pptx|ppt)$/i, '');
-    msgDiv.style.display = 'block';
-    
+    document.getElementById('viewer-filename').textContent = fileName.replace('.pdf', '');
     const cdnUrl = `https://cdn.jsdelivr.net/gh/${repoOwner}/${repoName}@${branchName}/${encodeURIComponent(fileName)}`;
     const googleViewerUrl = `https://drive.google.com/viewerng/viewer?url=${cdnUrl}`;
-
-    actionBtn.onclick = () => window.open(googleViewerUrl, '_blank');
-    actionBtn.style.display = 'block'; 
-
+    document.getElementById('viewer-action-btn').onclick = () => window.open(googleViewerUrl, '_blank');
     const iframe = document.createElement('iframe');
     iframe.setAttribute('loading', 'lazy');
-    // ✅ عارض جوجل يدعم PPTX أيضاً
     iframe.src = `https://drive.google.com/viewerng/viewer?embedded=true&url=${cdnUrl}`;
-    
-    iframe.onload = function() { msgDiv.style.display = 'none'; };
-    setTimeout(() => { msgDiv.style.display = 'none'; }, 3000);
-
     renderArea.appendChild(iframe);
 }
-
-function closePdfViewer() {
-    document.getElementById('pdf-viewer-overlay').classList.add('hidden');
-    document.getElementById('pdf-render-area').innerHTML = "";
-}
+function closePdfViewer() { document.getElementById('pdf-viewer-overlay').classList.add('hidden'); document.getElementById('pdf-render-area').innerHTML = ""; }
