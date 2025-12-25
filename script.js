@@ -7,26 +7,32 @@ let allFiles = [];
 let currentSpecialization = ''; 
 let currentLevel = '';
 
-// ✅ المواد المشتركة (تظهر للجميع بدون شرط FC)
+// ✅ القائمة الدقيقة للمواد المشتركة (تظهر للجميع بدون شرط)
 const commonSubjects = [
     // S1
-    "Principe de gestion", "Comptabilité financière I", "Statistique descriptive I", 
-    "Mathématique", "Anglais I", "Méthodologie du travail universitaire", 
-    "MS office", "Introduction à l’économie", "Introduction au droit", "Technique de communication",
+    "Statistique descriptive I", 
+    "Mathématique", 
+    "Méthodologie du travail universitaire", 
+    "Introduction au droit",
+    
     // S2
-    "Comptabilité financière II", "Micro-finance", "Economie d’entreprise", 
-    "Statistique descriptive II", "Mathématiques financières", "Anglais II", 
-    "Aptitudes en TIC", "Développement personnel", "Microéconomie", "Droit des affaires",
+    "Statistique descriptive II",
+    
     // S3
-    "Comptabilité des Sociétés", "Méthodes d’aide à la décision"
+    "Comptabilité des Sociétés", 
+    "Méthodes d’aide à la décision"
 ];
+/* ملاحظة: أي مادة ليست في القائمة أعلاه (مثل Introduction à l’économie أو Principe de gestion)
+   سيتم تطبيق شرط "FC" عليها:
+   - إذا كنت FC: يجب أن يبدأ الملف بـ FC.
+   - إذا كنت BA: يجب ألا يبدأ الملف بـ FC.
+*/
 
 document.addEventListener("DOMContentLoaded", () => {
     fetchFilesFromGitHub();
     checkWelcome();
 });
 
-// النوافذ
 function openAboutModal() { document.getElementById('about-modal').classList.remove('hidden'); }
 function closeAboutModal() { document.getElementById('about-modal').classList.add('hidden'); }
 
@@ -57,7 +63,7 @@ function fetchFilesFromGitHub() {
         .catch(err => console.error("Error:", err));
 }
 
-// ---------------- الفلترة والمطابقة ----------------
+// ---------------- الفلترة والمطابقة (تم الإصلاح) ----------------
 function normalizeText(text) {
     return text.toLowerCase()
         .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
@@ -76,8 +82,8 @@ function mapRomanNumbers(text) {
 }
 
 function isValidExtension(filename) {
-    const ext = filename.split('.').pop().toLowerCase();
-    return ['pdf', 'doc', 'docx', 'ppt', 'pptx'].includes(ext);
+    const lower = filename.toLowerCase();
+    return lower.endsWith(".pdf") || lower.endsWith(".pptx") || lower.endsWith(".ppt") || lower.endsWith(".doc") || lower.endsWith(".docx");
 }
 
 function getFileIconClass(filename) {
@@ -94,23 +100,28 @@ function isFileMatch(fileName, subjectName) {
     let fileMapped = mapRomanNumbers(fileClean);
     let subjectMapped = mapRomanNumbers(subjectClean);
 
-    // 1️⃣ المواد المشتركة
+    // 1️⃣ هل المادة مشتركة؟
     const isCommon = commonSubjects.some(common => 
         normalizeText(common) === subjectClean
     );
 
     if (isCommon) {
-        // تظهر للجميع
+        // مادة مشتركة: تظهر للجميع بغض النظر عن الاسم
     } else {
-        // مواد التخصص
+        // مادة تخصص (تطبق عليها الشروط الصارمة)
+        const fileNameLower = fileName.toLowerCase().trim();
+        
         if (currentSpecialization === 'fc') {
-            if (!fileName.toLowerCase().startsWith("fc")) return false;
-        } else if (currentSpecialization === 'ba') {
-            if (fileName.toLowerCase().startsWith("fc")) return false;
+            // FC: يجب أن يبدأ بـ "fc"
+            if (!fileNameLower.startsWith("fc")) return false;
+        } 
+        else if (currentSpecialization === 'ba') {
+            // BA: يجب ألا يبدأ بـ "fc"
+            if (fileNameLower.startsWith("fc")) return false;
         }
     }
 
-    // 2️⃣ مطابقة الاسم
+    // 2️⃣ مطابقة الاسم (الكلمات المفتاحية)
     if (subjectClean.includes("affaires")) {
         if (!fileClean.includes("affaires")) return false;
     } 
@@ -266,6 +277,8 @@ function openSmartViewer(fileName) {
     msgDiv.style.display = 'block';
     
     const cdnUrl = `https://cdn.jsdelivr.net/gh/${repoOwner}/${repoName}@${branchName}/${encodeURIComponent(fileName)}`;
+    
+    // العارض الذكي: Google للكل
     const googleViewerUrl = `https://docs.google.com/gview?url=${cdnUrl}&embedded=true`;
 
     actionBtn.onclick = () => window.open(`https://docs.google.com/gview?url=${cdnUrl}`, '_blank');
@@ -276,7 +289,7 @@ function openSmartViewer(fileName) {
     iframe.src = googleViewerUrl;
     
     iframe.onload = function() { msgDiv.style.display = 'none'; };
-    setTimeout(() => { msgDiv.style.display = 'none'; }, 3000);
+    setTimeout(() => { msgDiv.style.display = 'none'; }, 4000);
 
     renderArea.appendChild(iframe);
 }
