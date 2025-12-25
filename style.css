@@ -1,7 +1,10 @@
+/* =========================================
+   1. إعدادات عامة وألوان (Theme)
+   ========================================= */
 :root {
-    --primary-color: #1b5e20;
-    --secondary-color: #2e7d32;
-    --accent-color: #e8f5e9;
+    --primary-color: #1b5e20; /* أخضر غامق */
+    --secondary-color: #2e7d32; /* أخضر قياسي */
+    --accent-color: #e8f5e9; /* خلفية فاتحة جداً */
     --text-color: #333;
     --bg-color: #f1f8e9;
     --card-bg: #ffffff;
@@ -9,95 +12,367 @@
 
 body {
     font-family: 'Tajawal', sans-serif;
-    margin: 0; padding: 0;
+    margin: 0;
+    padding: 0;
     background-color: var(--bg-color);
     color: var(--text-color);
     padding-bottom: 50px;
-    overflow-y: auto;
+    overflow-y: auto; /* السماح بالتمرير */
 }
 
-.top-nav { background: linear-gradient(90deg, #004d40, #1b5e20); color: white; padding: 10px 0; font-size: 0.9rem; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-.nav-content { max-width: 1000px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; flex-wrap: wrap; }
-.dev-name { color: #ffeb3b; text-decoration: none; font-weight: bold; margin-right: 5px; }
+/* =========================================
+   2. الشريط العلوي والهيدر
+   ========================================= */
+.top-nav {
+    background: linear-gradient(90deg, #004d40, #1b5e20);
+    color: white;
+    padding: 10px 0;
+    font-size: 0.9rem;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
 
-.main-header { background: linear-gradient(135deg, #1b5e20 0%, #43a047 100%); color: white; padding: 40px 20px; text-align: center; border-radius: 0 0 30px 30px; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(27, 94, 32, 0.3); }
+.nav-content {
+    max-width: 1000px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    flex-wrap: wrap;
+}
+
+.main-header {
+    background: linear-gradient(135deg, #1b5e20 0%, #43a047 100%);
+    color: white;
+    padding: 40px 20px;
+    text-align: center;
+    border-radius: 0 0 30px 30px;
+    margin-bottom: 25px;
+    box-shadow: 0 4px 15px rgba(27, 94, 32, 0.3);
+}
+
 .main-header h1 { margin: 0; font-size: 1.8rem; }
 .main-header p { margin: 5px 0 0; font-size: 0.9rem; opacity: 0.95; }
 
-.container { max-width: 1000px; margin: 0 auto; padding: 0 15px; width: 100%; box-sizing: border-box; }
+/* =========================================
+   3. الحاوية والشبكات (Grid System)
+   ========================================= */
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 15px;
+    width: 100%;
+    box-sizing: border-box;
+}
 
-.section-box { background: var(--card-bg); border-radius: 15px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-.section-title { color: var(--primary-color); border-bottom: 2px solid #a5d6a7; padding-bottom: 10px; margin-top: 0; margin-bottom: 20px; }
+.section-box {
+    background: var(--card-bg);
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
 
-.semesters-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; }
-.semester-card { background: white; border: 1px solid #c8e6c9; border-radius: 15px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-.semester-card:hover { transform: translateY(-5px); border-color: var(--primary-color); box-shadow: 0 8px 20px rgba(27, 94, 32, 0.15); }
+.section-title {
+    color: var(--primary-color);
+    border-bottom: 2px solid #a5d6a7;
+    padding-bottom: 10px;
+    margin-top: 0;
+    margin-bottom: 20px;
+}
 
-.main-option-card { grid-column: span 2; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 160px; background: linear-gradient(145deg, #ffffff, #f1f8e9); border-color: #4caf50; }
-@media (max-width: 400px) { .semesters-grid { grid-template-columns: 1fr; } .main-option-card { grid-column: span 1; } }
-.main-option-card .icon-box { font-size: 3.5rem; color: var(--primary-color); margin-bottom: 15px; }
-.main-option-card h3 { font-size: 1.2rem; margin: 0; color: #333; }
-.main-option-card p { margin: 5px 0 0; color: #666; font-size: 0.9rem; }
+.semesters-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 15px;
+}
 
-.about-btn-card { grid-column: span 2; background: #e0f2f1; border-color: #009688; }
-@media (max-width: 400px) { .about-btn-card { grid-column: span 1; } }
+/* =========================================
+   4. البطاقات (Cards)
+   ========================================= */
+.semester-card {
+    background: white;
+    border: 1px solid #c8e6c9;
+    border-radius: 15px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.semester-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--primary-color);
+    box-shadow: 0 8px 20px rgba(27, 94, 32, 0.15);
+}
+
+.main-option-card {
+    grid-column: span 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 160px;
+    background: linear-gradient(145deg, #ffffff, #f1f8e9);
+    border-color: #4caf50;
+}
+/* تعديل للموبايل الصغير */
+@media (max-width: 400px) {
+    .semesters-grid { grid-template-columns: 1fr; }
+    .main-option-card, .about-btn-card { grid-column: span 1; }
+}
+
+.about-btn-card {
+    grid-column: span 2;
+    background: #e0f2f1;
+    border-color: #009688;
+}
+
 .result-card { border-color: #fbc02d; background: #fffde7; }
 .result-rim-card { border-color: #009688; background: #e0f2f1; }
 .result-rim-card:hover { box-shadow: 0 10px 20px rgba(0, 150, 136, 0.2); transform: translateY(-5px); }
 
 .icon-box { font-size: 2.5rem; color: var(--secondary-color); margin-bottom: 10px; }
+.main-option-card .icon-box { font-size: 3.5rem; color: var(--primary-color); margin-bottom: 15px; }
+.main-option-card h3 { font-size: 1.2rem; margin: 0; color: #333; }
+.main-option-card p { margin: 5px 0 0; color: #666; font-size: 0.9rem; }
 
-.search-wrapper { margin: 0 auto 20px; width: 100%; max-width: 600px; position: relative; }
-.search-box { background: white; border-radius: 50px; padding: 10px 20px; display: flex; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.08); border: 2px solid transparent; transition: 0.3s; }
-.search-box:focus-within { border-color: var(--primary-color); box-shadow: 0 4px 15px rgba(27, 94, 32, 0.2); }
-.search-box input { flex: 1; border: none; outline: none; font-size: 1rem; font-family: inherit; }
+/* =========================================
+   5. شريط البحث
+   ========================================= */
+.search-wrapper {
+    margin: 0 auto 20px;
+    width: 100%;
+    max-width: 600px;
+    position: relative;
+}
+
+.search-box {
+    background: white;
+    border-radius: 50px;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    border: 2px solid transparent;
+    transition: 0.3s;
+}
+
+.search-box:focus-within {
+    border-color: var(--primary-color);
+    box-shadow: 0 4px 15px rgba(27, 94, 32, 0.2);
+}
+
+.search-box input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 1rem;
+    font-family: inherit;
+}
+
 .search-icon { color: var(--primary-color); font-size: 1.2rem; }
-#close-search-btn { background: #d32f2f; color: white; border: none; padding: 10px; border-radius: 8px; width: 100%; cursor: pointer; margin-bottom: 15px; }
 
+#close-search-btn {
+    background: #d32f2f;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    width: 100%;
+    cursor: pointer;
+    margin-bottom: 15px;
+}
+
+/* =========================================
+   6. الأزرار والقوائم
+   ========================================= */
 .buttons-grid { display: flex; flex-direction: column; gap: 10px; }
-.buttons-grid button { background: white; border: 1px solid #c8e6c9; padding: 15px; border-radius: 10px; text-align: right; font-weight: bold; color: #333; cursor: pointer; transition: 0.2s; font-size: 1rem; display: flex; justify-content: space-between; align-items: center; }
-.buttons-grid button:hover { background: #e8f5e9; border-color: var(--primary-color); color: var(--primary-color); }
-.buttons-grid button::after { content: '\f053'; font-family: 'Font Awesome 6 Free'; font-weight: 900; font-size: 0.8rem; opacity: 0.5; }
-.archive-btn { background: #ff9800 !important; color: white !important; text-align: center !important; justify-content: center; border: none !important; }
+
+.buttons-grid button {
+    background: white;
+    border: 1px solid #c8e6c9;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: right;
+    font-weight: bold;
+    color: #333;
+    cursor: pointer;
+    transition: 0.2s;
+    font-size: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.buttons-grid button:hover {
+    background: #e8f5e9;
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.buttons-grid button::after {
+    content: '\f053';
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    font-size: 0.8rem;
+    opacity: 0.5;
+}
+
+/* زر الأرشيف */
+.archive-btn {
+    background: #ff9800 !important;
+    color: white !important;
+    text-align: center !important;
+    justify-content: center;
+    border: none !important;
+}
 .archive-btn::after { content: '' !important; }
 
+/* قائمة الملفات */
 #pdf-list { list-style: none; padding: 0; }
-#pdf-list li { background: white; padding: 15px; border-bottom: 1px solid #eee; cursor: pointer; display: flex; align-items: center; font-size: 1rem; gap: 10px; }
+
+#pdf-list li {
+    background: white;
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    font-size: 1rem;
+}
+
 #pdf-list li:hover { background-color: #f1f8e9; }
-.file-icon { font-size: 1.3rem; width: 25px; text-align: center; }
+
+/* أيقونات الملفات */
+.file-icon { font-size: 1.3rem; margin-left: 10px; width: 25px; text-align: center; }
 .icon-pdf { color: #dc3545; }
 .icon-word { color: #0d6efd; }
 .icon-powerpoint { color: #fd7e14; }
 
+/* أزرار التنقل */
 .header-with-back { display: flex; justify-content: space-between; align-items: center; }
 .back-btn { background: none; border: 1px solid #ccc; padding: 5px 15px; border-radius: 20px; cursor: pointer; color: #666; font-family: 'Tajawal'; }
-.hidden { display: none !important; }
-.fade-in { animation: fadeIn 0.4s ease-in-out; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-#web-viewer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 5000; display: flex; flex-direction: column; }
-.web-viewer-container { flex: 1; width: 100%; height: 100%; }
-.web-viewer-container iframe { width: 100%; height: 100%; border: none; }
-
-#pdf-viewer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #333; z-index: 2000; display: flex; flex-direction: column; }
-.viewer-header { background: var(--primary-color); color: white; padding: 10px; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+/* =========================================
+   7. النوافذ المنبثقة (Modals & Viewers)
+   ========================================= */
+/* عارض PDF */
+#pdf-viewer-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: #333; z-index: 9999; display: flex; flex-direction: column;
+}
+.viewer-header {
+    background: var(--primary-color); color: white; padding: 10px;
+    display: flex; justify-content: space-between; align-items: center; gap: 10px;
+}
 .close-viewer-btn { background: none; border: none; color: white; font-size: 1.2rem; }
 .external-btn { background: #2e7d32; color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; font-weight: bold; font-family: 'Tajawal'; }
 #pdf-render-area { flex: 1; width: 100%; height: 100%; background: #fff; overflow: hidden; }
 iframe { width: 100%; height: 100%; border: none; }
 
-#ios-install-modal, #welcome-modal, #about-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 3000; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
-.welcome-content { background: white; padding: 25px; border-radius: 20px; width: 85%; max-width: 350px; text-align: center; }
-.welcome-icon { font-size: 4rem; color: var(--primary-color); margin-bottom: 15px; }
-.welcome-btn { background: var(--primary-color); color: white; width: 100%; padding: 12px; border: none; border-radius: 50px; font-weight: bold; cursor: pointer; margin-top: 15px; }
-.ios-modal-content ol { text-align: right; padding-right: 20px; }
-.ios-modal-content button { background: #003366; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; width: 100%; }
+/* المتصفح الداخلي */
+#web-viewer-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: white; z-index: 5000; display: flex; flex-direction: column;
+}
+.web-viewer-container { flex: 1; width: 100%; height: 100%; }
 
-.main-footer { background: #1b5e20; color: white; padding: 20px; text-align: center; margin-top: 40px; }
-.validation-text { color: #ffeb3b; font-weight: bold; margin-bottom: 10px; }
-.footer-divider { width: 50px; height: 2px; background: rgba(255,255,255,0.3); margin: 10px auto; }
-.dev-link-pro { display: inline-block; background: rgba(255,255,255,0.1); color: white; padding: 5px 15px; border-radius: 20px; text-decoration: none; margin-top: 5px; }
-.install-btn-style { width: 100%; margin-bottom: 20px; background: #2e7d32; color: white; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
-.spinner { border: 4px solid rgba(255,255,255,0.3); border-top: 4px solid #fff; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 20px auto; }
+/* نوافذ التنبيه والترحيب */
+#ios-install-modal, #welcome-modal, #about-modal {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.85); z-index: 3000;
+    display: flex; justify-content: center; align-items: center;
+    backdrop-filter: blur(5px);
+}
+.welcome-content, .ios-modal-content {
+    background: white; padding: 25px; border-radius: 20px;
+    width: 85%; max-width: 350px; text-align: center;
+    color: #333; box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+}
+.welcome-icon { font-size: 4rem; color: var(--primary-color); margin-bottom: 15px; }
+.welcome-btn, .ios-modal-content button {
+    background: var(--primary-color); color: white; width: 100%;
+    padding: 12px; border: none; border-radius: 50px;
+    font-weight: bold; cursor: pointer; margin-top: 15px;
+}
+.ios-modal-content ol { text-align: right; padding-right: 20px; }
+
+/* زر التثبيت */
+.install-btn-style {
+    width: 100%; margin-bottom: 20px; background: #2e7d32;
+    color: white; padding: 12px; border: none;
+    border-radius: 8px; font-weight: bold; cursor: pointer;
+}
+
+/* التحميل */
+.spinner {
+    border: 4px solid rgba(255,255,255,0.3); border-top: 4px solid #fff;
+    border-radius: 50%; width: 30px; height: 30px;
+    animation: spin 1s linear infinite; margin: 20px auto;
+}
 @keyframes spin { 100% { transform: rotate(360deg); } }
 #rendering-msg { color: white; text-align: center; margin-top: 20px; }
+.hidden { display: none !important; }
+.fade-in { animation: fadeIn 0.4s ease-in-out; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* =========================================
+   8. التذييل وإضاءة اسم المطور (جديد)
+   ========================================= */
+.main-footer {
+    background: #1b5e20;
+    color: white;
+    padding: 20px;
+    text-align: center;
+    margin-top: 40px;
+}
+.validation-text { color: #ffeb3b; font-weight: bold; margin-bottom: 10px; }
+.footer-divider { width: 50px; height: 2px; background: rgba(255,255,255,0.3); margin: 10px auto; }
+
+.dev-credit p { font-size: 1rem; line-height: 1.8; color: #e3f2fd; margin: 0; }
+.pulse-icon { color: #e91e63; margin: 0 5px; animation: pulseHeart 1.5s infinite; }
+.copyright { font-size: 0.8rem; color: rgba(255,255,255,0.5); margin-top: 30px; }
+
+@keyframes pulseHeart { 0% { transform: scale(1); } 50% { transform: scale(1.3); } 100% { transform: scale(1); } }
+
+/* ✅ تأثير الإضاءة الاحترافي (Golden Glow) */
+.dev-name, .dev-link-pro {
+    color: #ffeb3b !important; /* لون ذهبي */
+    font-weight: bold;
+    text-decoration: none;
+    position: relative;
+    transition: all 0.3s ease;
+    
+    /* تشغيل الأنيميشن */
+    animation: goldGlow 2s infinite alternate ease-in-out;
+}
+
+/* تنسيق خاص للرابط في الفوتر ليكون شكله كزر شفاف */
+.dev-link-pro {
+    display: inline-block;
+    background: rgba(255,255,255,0.1);
+    padding: 5px 15px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.2);
+    margin-top: 5px;
+}
+
+/* حركة التوهج */
+@keyframes goldGlow {
+    0% {
+        text-shadow: 0 0 4px rgba(255, 235, 59, 0.2), 
+                     0 0 8px rgba(255, 235, 59, 0.1);
+        color: #fdd835;
+        border-color: rgba(255,255,255,0.2);
+    }
+    100% {
+        text-shadow: 0 0 10px rgba(255, 235, 59, 0.8), 
+                     0 0 20px rgba(255, 235, 59, 0.4), 
+                     0 0 30px rgba(255, 255, 255, 0.2);
+        color: #fff59d;
+        border-color: #ffeb3b;
+        background: rgba(255, 235, 59, 0.1);
+    }
+}
