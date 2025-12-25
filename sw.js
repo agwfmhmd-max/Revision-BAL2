@@ -1,4 +1,4 @@
-const CACHE_NAME = 'revision-ba-v74'; // ✅ إصدار إصلاح المتصفح الداخلي
+const CACHE_NAME = 'revision-ba-v75'; // ✅ إصدار إصلاح شاشة العرض
 const assetsToCache = [
   './',
   './index.html',
