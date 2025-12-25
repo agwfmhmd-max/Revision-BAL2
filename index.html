@@ -20,8 +20,8 @@
         <div class="nav-content">
             <div class="developer-info">
                 <span>تم التطوير بواسطة: </span>
-                <!-- ✅ تم التعديل هنا: إزالة Boua -->
-                <a href="https://wa.me/22220479962" target="_blank" class="dev-name" style="color:#ffeb3b; text-decoration:none;">
+                <!-- ✅ اسم المطور يضيء (بدون Boua هنا) -->
+                <a href="https://wa.me/22220479962" target="_blank" class="dev-name">
                     Mohamed Dah Agove
                 </a>
             </div>
@@ -43,6 +43,7 @@
             <i class="fas fa-download"></i> تثبيت التطبيق
         </button>
 
+        <!-- شريط البحث -->
         <div class="search-wrapper fade-in">
             <div class="search-box">
                 <input type="text" id="global-search" placeholder="بحث عن مادة، درس، أو ملف..." oninput="handleGlobalSearch(this.value)">
@@ -67,6 +68,7 @@
                     <p>المعهد & الوطنية</p>
                 </div>
 
+                <!-- زر من نحن -->
                 <div class="semester-card about-btn-card" onclick="openAboutModal()">
                     <div class="icon-box"><i class="fas fa-users"></i></div>
                     <h3>من نحن؟</h3>
@@ -76,7 +78,7 @@
             </div>
         </div>
 
-        <!-- 2. التخصص -->
+        <!-- 2. اختيار التخصص -->
         <div id="specialization-selection" class="section-box hidden">
             <div class="header-with-back">
                 <button class="back-btn" onclick="goBackToMainMenu()"><i class="fas fa-arrow-right"></i> القائمة</button>
@@ -96,11 +98,11 @@
             </div>
         </div>
 
-        <!-- 3. المستوى -->
+        <!-- 3. اختيار المستوى -->
         <div id="level-selection" class="section-box hidden">
             <div class="header-with-back">
                 <button class="back-btn" onclick="goBackToSpecialization()"><i class="fas fa-arrow-right"></i> التخصص</button>
-                <h2 class="section-title">المستوى</h2>
+                <h2 class="section-title">اختر المستوى الدراسي</h2>
             </div>
             <div class="semesters-grid">
                 <div class="semester-card" onclick="showSemesters('l1')">
@@ -185,7 +187,7 @@
             <p id="no-files-msg" class="hidden error-msg">⚠️ لا توجد ملفات تطابق البحث.</p>
         </div>
     </div>
-    
+
     <!-- متصفح داخلي -->
     <div id="web-viewer-overlay" class="hidden">
         <div class="viewer-header">
@@ -269,10 +271,10 @@
             <div class="footer-divider"></div>
             <div class="dev-credit">
                 <p>
-                    تم التطوير <i class="fas fa-heart pulse-icon"></i> بواسطة
+                    تم التطوير بواسطة
                     <br>
                     <a href="https://wa.me/22220479962" target="_blank" class="dev-link-pro">
-                        <i class="fab fa-whatsapp"></i> Mohamed Dah Agove
+                        Mohamed Dah Agove
                     </a>
                 </p>
             </div>
