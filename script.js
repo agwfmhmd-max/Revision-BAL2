@@ -37,7 +37,6 @@ function fetchFilesFromGitHub() {
     if (cachedFiles) {
         try { allFiles = JSON.parse(cachedFiles); } catch(e){}
     }
-    
     fetch(apiUrl + "?t=" + new Date().getTime())
         .then(res => res.json())
         .then(data => {
@@ -74,15 +73,12 @@ function handleGlobalSearch(query) {
         fileListContainer.classList.remove('hidden');
         closeBtn.classList.remove('hidden');
         selectedTitle.textContent = `نتائج البحث عن: "${query}"`;
-        
         pdfList.innerHTML = "";
-        
         const searchClean = normalizeText(query);
         const results = allFiles.filter(file => {
             const fileNameClean = normalizeText(file.name);
             return fileNameClean.includes(searchClean) && isValidExtension(file.name);
         });
-
         if (results.length === 0) {
             noFilesMsg.classList.remove('hidden');
         } else {
@@ -95,9 +91,7 @@ function handleGlobalSearch(query) {
             });
             setTimeout(() => { fileListContainer.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 100);
         }
-    } else {
-        closeSearch();
-    }
+    } else { closeSearch(); }
 }
 
 function closeSearch() {
@@ -107,28 +101,11 @@ function closeSearch() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// ---------------- التنقل ----------------
-function showSpecializationSelection() {
-    hideAll();
-    document.getElementById('specialization-selection').classList.remove('hidden');
-}
-function selectSpecialization(spec) {
-    currentSpecialization = spec;
-    hideAll();
-    document.getElementById('level-selection').classList.remove('hidden');
-}
-function showResultsSection() {
-    hideAll();
-    document.getElementById('results-selection').classList.remove('hidden');
-}
-function goBackToMainMenu() {
-    hideAll();
-    document.getElementById('main-menu').classList.remove('hidden');
-}
-function goBackToSpecialization() {
-    hideAll();
-    document.getElementById('specialization-selection').classList.remove('hidden');
-}
+function showSpecializationSelection() { hideAll(); document.getElementById('specialization-selection').classList.remove('hidden'); }
+function selectSpecialization(spec) { currentSpecialization = spec; hideAll(); document.getElementById('level-selection').classList.remove('hidden'); }
+function showResultsSection() { hideAll(); document.getElementById('results-selection').classList.remove('hidden'); }
+function goBackToMainMenu() { hideAll(); document.getElementById('main-menu').classList.remove('hidden'); }
+function goBackToSpecialization() { hideAll(); document.getElementById('specialization-selection').classList.remove('hidden'); }
 function showSemesters(level) {
     currentLevel = level;
     hideAll();
@@ -145,19 +122,15 @@ function showSemesters(level) {
     });
     document.getElementById('semesters-title').textContent = level.toUpperCase();
 }
-function goBackToLevels() {
-    hideAll();
-    document.getElementById('level-selection').classList.remove('hidden');
-}
+function goBackToLevels() { hideAll(); document.getElementById('level-selection').classList.remove('hidden'); }
 function showSubjects(semester) {
     hideAll();
     document.getElementById('subjects-container').classList.remove('hidden');
     document.querySelectorAll('.buttons-grid').forEach(list => list.classList.add('hidden'));
     const targetId = `${currentSpecialization}-${semester}-list`;
     const targetList = document.getElementById(targetId);
-    if (targetList) {
-        targetList.classList.remove('hidden');
-    } else {
+    if (targetList) targetList.classList.remove('hidden');
+    else {
         const placeholder = document.createElement('div');
         placeholder.className = 'buttons-grid';
         placeholder.innerHTML = '<p style="text-align:center;width:100%;color:#666">قريباً...</p>';
@@ -165,22 +138,10 @@ function showSubjects(semester) {
     }
     document.getElementById('current-semester-title').textContent = `المواد (${currentSpecialization.toUpperCase()} - ${semester.toUpperCase()})`;
 }
-function goBackToSemesters() {
-    hideAll();
-    showSemesters(currentLevel);
-}
+function goBackToSemesters() { hideAll(); showSemesters(currentLevel); }
 function hideAll() { document.querySelectorAll('.section-box').forEach(el => el.classList.add('hidden')); }
 
-// ---------------- الفلترة ----------------
-function normalizeText(text) {
-    return text.toLowerCase()
-        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-        .replace(/['’]/g, " ")
-        .replace(/[_.-]/g, " ")
-        .replace(/[^a-z0-9\s]/g, "")
-        .replace(/\s+/g, " ")
-        .trim();
-}
+function normalizeText(text) { return text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/['’_.-]/g, " ").replace(/[^a-z0-9\s]/g, "").trim(); }
 function mapRomanNumbers(text) {
     let safeText = " " + text + " ";
     safeText = safeText.replace(/\s(i|1)\s/g, " 1 ");
@@ -192,8 +153,8 @@ function isFileMatch(fileName, subjectName) {
     let subjectClean = normalizeText(subjectName);
     let fileMapped = mapRomanNumbers(fileClean);
     let subjectMapped = mapRomanNumbers(subjectClean);
-    const isCommonSubject = commonSubjects.some(common => normalizeText(common) === subjectClean);
-    if (!isCommonSubject) {
+    const isCommon = commonSubjects.some(common => normalizeText(common) === subjectClean);
+    if (!isCommon) {
         if (currentSpecialization === 'fc') { if (!fileClean.includes("fc")) return false; } 
         else if (currentSpecialization === 'ba') { if (fileClean.includes("fc")) return false; }
     }
@@ -233,7 +194,6 @@ function loadFiles(subjectName) {
         if (filteredFiles.length === 0) {
             noFilesMsg.classList.remove('hidden');
         } else {
-            noFilesMsg.classList.add('hidden');
             filteredFiles.forEach(file => {
                 const li = document.createElement('li');
                 li.innerHTML = `<i class="${getFileIconClass(file.name)} file-icon"></i> ${file.name.replace(/\.[^/.]+$/, "")}`;
@@ -245,7 +205,7 @@ function loadFiles(subjectName) {
     }, 50);
 }
 
-// ✅ العارض الذكي (Google لـ PDF و Microsoft لـ Office)
+// ✅ دالة العرض الذكية (Switching Logic)
 function openSmartViewer(fileName) {
     const viewerOverlay = document.getElementById('pdf-viewer-overlay');
     const renderArea = document.getElementById('pdf-render-area');
@@ -261,19 +221,20 @@ function openSmartViewer(fileName) {
     // رابط CDN للملف
     const cdnUrl = `https://cdn.jsdelivr.net/gh/${repoOwner}/${repoName}@${branchName}/${encodeURIComponent(fileName)}`;
     
-    // تحديد العارض بناءً على الامتداد
-    let viewerUrl = "";
+    // تحديد الامتداد
     const ext = fileName.split('.').pop().toLowerCase();
+    let viewerUrl = "";
 
     if (ext === 'pdf') {
-        // للـ PDF نستخدم Google (أخف وأسرع للـ PDF)
+        // للـ PDF نستخدم Google (أفضل للـ PDF)
         viewerUrl = `https://drive.google.com/viewerng/viewer?embedded=true&url=${cdnUrl}`;
     } else {
-        // للـ Word و PowerPoint نستخدم Microsoft Office Online (ممتاز جداً لـ Docx/Pptx)
+        // للـ DOCX و PPTX نستخدم Microsoft (هو الوحيد الذي يفتحها بشكل صحيح)
+        // ملاحظة: مايكروسوفت تتطلب أن يكون الرابط مشفراً بشكل صحيح
         viewerUrl = `https://view.officeapps.live.com/op/embed.aspx?src=${cdnUrl}`;
     }
 
-    // زر الفتح الخارجي يفتح الملف الأصلي
+    // زر الفتح الخارجي
     actionBtn.onclick = () => window.open(cdnUrl, '_blank');
     actionBtn.style.display = 'block'; 
 
@@ -281,8 +242,10 @@ function openSmartViewer(fileName) {
     iframe.setAttribute('loading', 'lazy');
     iframe.src = viewerUrl;
     
+    // إخفاء رسالة التحميل عند النجاح
     iframe.onload = function() { msgDiv.style.display = 'none'; };
-    setTimeout(() => { msgDiv.style.display = 'none'; }, 4000);
+    // مهلة أمان
+    setTimeout(() => { msgDiv.style.display = 'none'; }, 3000);
 
     renderArea.appendChild(iframe);
 }
