@@ -1,4 +1,4 @@
-const CACHE_NAME = 'revision-ba-v58'; // ✅ إصدار نهائي متكامل
+const CACHE_NAME = 'revision-ba-v59'; // ✅ إصدار دعم Word/PPT
 const assetsToCache = [
   './',
   './index.html',
