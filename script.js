@@ -49,7 +49,19 @@ function fetchFilesFromGitHub() {
         .catch(err => console.error("Error:", err));
 }
 
-// ---------------- البحث الشامل ----------------
+function isValidExtension(filename) {
+    const ext = filename.split('.').pop().toLowerCase();
+    return ['pdf', 'doc', 'docx', 'ppt', 'pptx'].includes(ext);
+}
+
+function getFileIconClass(filename) {
+    const ext = filename.split('.').pop().toLowerCase();
+    if (ext === 'pdf') return 'fas fa-file-pdf icon-pdf';
+    if (ext === 'doc' || ext === 'docx') return 'fas fa-file-word icon-word';
+    if (ext === 'ppt' || ext === 'pptx') return 'fas fa-file-powerpoint icon-powerpoint';
+    return 'fas fa-file';
+}
+
 function handleGlobalSearch(query) {
     const fileListContainer = document.getElementById('file-list-container');
     const pdfList = document.getElementById('pdf-list');
@@ -68,8 +80,7 @@ function handleGlobalSearch(query) {
         const searchClean = normalizeText(query);
         const results = allFiles.filter(file => {
             const fileNameClean = normalizeText(file.name);
-            // ✅ البحث عن PDF فقط
-            return fileNameClean.includes(searchClean) && file.name.toLowerCase().endsWith(".pdf");
+            return fileNameClean.includes(searchClean) && isValidExtension(file.name);
         });
 
         if (results.length === 0) {
@@ -78,8 +89,7 @@ function handleGlobalSearch(query) {
             noFilesMsg.classList.add('hidden');
             results.forEach(file => {
                 const li = document.createElement('li');
-                // ✅ أيقونة PDF فقط
-                li.innerHTML = `<i class="fas fa-file-pdf icon-pdf file-icon"></i> ${file.name.replace('.pdf', '')}`;
+                li.innerHTML = `<i class="${getFileIconClass(file.name)} file-icon"></i> ${file.name.replace(/\.[^/.]+$/, "")}`;
                 li.onclick = () => openSmartViewer(file.name);
                 pdfList.appendChild(li);
             });
@@ -97,7 +107,6 @@ function closeSearch() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// ---------------- التنقل ----------------
 function showSpecializationSelection() { hideAll(); document.getElementById('specialization-selection').classList.remove('hidden'); }
 function selectSpecialization(spec) { currentSpecialization = spec; hideAll(); document.getElementById('level-selection').classList.remove('hidden'); }
 function showResultsSection() { hideAll(); document.getElementById('results-selection').classList.remove('hidden'); }
@@ -138,7 +147,6 @@ function showSubjects(semester) {
 function goBackToSemesters() { hideAll(); showSemesters(currentLevel); }
 function hideAll() { document.querySelectorAll('.section-box').forEach(el => el.classList.add('hidden')); }
 
-// ---------------- الفلترة والمطابقة ----------------
 function normalizeText(text) { return text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/['’_.-]/g, " ").replace(/[^a-z0-9\s]/g, "").trim(); }
 function mapRomanNumbers(text) {
     let safeText = " " + text + " ";
@@ -146,34 +154,25 @@ function mapRomanNumbers(text) {
     safeText = safeText.replace(/\s(ii|2)\s/g, " 2 ");
     return safeText;
 }
-
 function isFileMatch(fileName, subjectName) {
     let fileClean = normalizeText(fileName);
     let subjectClean = normalizeText(subjectName);
     let fileMapped = mapRomanNumbers(fileClean);
     let subjectMapped = mapRomanNumbers(subjectClean);
-
     const isCommon = commonSubjects.some(common => normalizeText(common) === subjectClean);
-
     if (!isCommon) {
         if (currentSpecialization === 'fc') { if (!fileClean.includes("fc")) return false; } 
         else if (currentSpecialization === 'ba') { if (fileClean.includes("fc")) return false; }
     }
-
     if (subjectClean.includes("affaires")) { if (!fileClean.includes("affaires")) return false; } 
     else if (subjectClean.includes("anglais") && !subjectClean.includes("affaires")) { if (fileClean.includes("affaires")) return false; }
-    
     if (subjectMapped.includes(" 1 ")) { if (!fileMapped.includes(" 1 ")) return false; if (fileMapped.includes(" 2 ")) return false; }
     if (subjectMapped.includes(" 2 ")) { if (!fileMapped.includes(" 2 ")) return false; if (fileMapped.includes(" 1 ")) return false; }
-
     const stopWords = ["le", "la", "les", "de", "des", "du", "et", "en", "au", "aux", "un", "une", "pour", "a", "l", "d"];
     const subjectKeywords = subjectClean.split(/\s+/).filter(w => w.length > 1 && !stopWords.includes(w));
-
     if (subjectKeywords.length === 0) return fileClean.includes(subjectClean);
-
     let matchCount = 0;
     subjectKeywords.forEach(keyword => { if (fileClean.includes(keyword)) matchCount++; });
-
     if (subjectKeywords.length <= 2) return matchCount === subjectKeywords.length;
     return matchCount >= Math.ceil(subjectKeywords.length * 0.7); 
 }
@@ -195,8 +194,7 @@ function loadFiles(subjectName) {
 
     setTimeout(() => {
         const filteredFiles = allFiles.filter(file => {
-            // ✅ تصفية PDF فقط
-            return isFileMatch(file.name, subjectName) && file.name.toLowerCase().endsWith(".pdf");
+            return isFileMatch(file.name, subjectName) && isValidExtension(file.name);
         });
         spinner.classList.add('hidden');
         if (filteredFiles.length === 0) {
@@ -205,8 +203,7 @@ function loadFiles(subjectName) {
             noFilesMsg.classList.add('hidden');
             filteredFiles.forEach(file => {
                 const li = document.createElement('li');
-                // ✅ أيقونة PDF ثابتة
-                li.innerHTML = `<i class="fas fa-file-pdf icon-pdf file-icon"></i> ${file.name.replace('.pdf', '')}`;
+                li.innerHTML = `<i class="${getFileIconClass(file.name)} file-icon"></i> ${file.name.replace(/\.[^/.]+$/, "")}`;
                 li.onclick = () => openSmartViewer(file.name);
                 pdfList.appendChild(li);
             });
@@ -215,7 +212,6 @@ function loadFiles(subjectName) {
     }, 50);
 }
 
-// ✅ العارض: Google Drive Viewer فقط (للـ PDF)
 function openSmartViewer(fileName) {
     const viewerOverlay = document.getElementById('pdf-viewer-overlay');
     const renderArea = document.getElementById('pdf-render-area');
@@ -225,33 +221,22 @@ function openSmartViewer(fileName) {
 
     renderArea.innerHTML = "";
     viewerOverlay.classList.remove('hidden');
-    filenameLabel.textContent = fileName.replace('.pdf', '');
+    filenameLabel.textContent = fileName.replace(/\.[^/.]+$/, "");
     msgDiv.style.display = 'block';
     
-    // رابط الملف المباشر من CDN
     const cdnUrl = `https://cdn.jsdelivr.net/gh/${repoOwner}/${repoName}@${branchName}/${encodeURIComponent(fileName)}`;
-    
-    // رابط المشاهدة
     const googleViewerUrl = `https://drive.google.com/viewerng/viewer?url=${cdnUrl}`;
-
-    actionBtn.onclick = () => window.open(googleViewerUrl, '_blank');
-    actionBtn.style.display = 'block'; 
-
+    
+    document.getElementById('viewer-action-btn').onclick = () => window.open(googleViewerUrl, '_blank');
+    
     const iframe = document.createElement('iframe');
     iframe.setAttribute('loading', 'lazy');
-    // ✅ وضع العرض المضمن (Embedded)
     iframe.src = `https://drive.google.com/viewerng/viewer?embedded=true&url=${cdnUrl}`;
-    
     iframe.onload = function() { msgDiv.style.display = 'none'; };
     setTimeout(() => { msgDiv.style.display = 'none'; }, 3000);
-
     renderArea.appendChild(iframe);
 }
-
-function closePdfViewer() {
-    document.getElementById('pdf-viewer-overlay').classList.add('hidden');
-    document.getElementById('pdf-render-area').innerHTML = "";
-}
+function closePdfViewer() { document.getElementById('pdf-viewer-overlay').classList.add('hidden'); document.getElementById('pdf-render-area').innerHTML = ""; }
 
 function openInternalBrowser(url, title) {
     const viewer = document.getElementById('web-viewer-overlay');
