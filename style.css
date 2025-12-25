@@ -1,225 +1,220 @@
-/* =========================================
-   1. إعدادات عامة (Global)
-   ========================================= */
 :root {
     --primary-color: #1b5e20; /* أخضر غامق */
     --secondary-color: #2e7d32; /* أخضر قياسي */
-    --accent-color: #e8f5e9; /* خلفية فاتحة */
+    --accent-color: #e8f5e9; /* خلفية فاتحة جداً */
     --text-color: #333;
-    --bg-color: #f4f6f8;
+    --bg-color: #f1f8e9;
     --card-bg: #ffffff;
-    --shadow: 0 4px 6px rgba(0,0,0,0.05);
 }
-
-* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
 body {
     font-family: 'Tajawal', sans-serif;
-    margin: 0; padding: 0;
+    margin: 0;
+    padding: 0;
     background-color: var(--bg-color);
     color: var(--text-color);
-    padding-bottom: 60px;
-    overflow-y: auto; /* سكرول طبيعي */
+    padding-bottom: 80px; /* مساحة للزر العائم */
+    overflow-y: auto;
 }
 
-/* =========================================
-   2. الهيدر والشريط العلوي
-   ========================================= */
+/* الشريط العلوي */
 .top-nav {
     background: linear-gradient(90deg, #004d40, #1b5e20);
-    color: white; padding: 10px; font-size: 0.9rem; text-align: center;
+    color: white;
+    padding: 8px 15px;
+    font-size: 0.9rem;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
+.nav-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+.dev-name { color: #ffeb3b; font-weight: bold; }
 
-/* إضاءة اسم المطور */
-.dev-name {
-    color: #ffeb3b; font-weight: bold; text-decoration: none;
-    animation: goldGlow 2s infinite alternate;
-}
-@keyframes goldGlow {
-    from { text-shadow: 0 0 5px rgba(255,235,59,0.2); }
-    to { text-shadow: 0 0 15px rgba(255,235,59,0.8); }
-}
-
+/* الهيدر */
 .main-header {
     background: linear-gradient(135deg, #1b5e20 0%, #43a047 100%);
-    color: white; padding: 40px 20px; text-align: center;
-    border-radius: 0 0 30px 30px; margin-bottom: 25px;
-    box-shadow: 0 4px 15px rgba(27,94,32,0.2);
+    color: white;
+    padding: 30px 20px;
+    text-align: center;
+    border-radius: 0 0 30px 30px;
+    margin-bottom: 25px;
+    box-shadow: 0 4px 15px rgba(27, 94, 32, 0.3);
 }
 .main-header h1 { margin: 0; font-size: 1.8rem; }
-.main-header p { margin: 5px 0 0; font-size: 0.9rem; opacity: 0.9; }
+.main-header p { margin: 5px 0 0; font-size: 0.9rem; opacity: 0.95; }
 
-/* =========================================
-   3. الحاوية (Layout)
-   ========================================= */
+/* الحاوية */
 .container {
-    width: 95%; /* يناسب الموبايل */
-    max-width: 1000px; /* لا يتوسع كثيراً في الكمبيوتر */
+    max-width: 1000px;
     margin: 0 auto;
-    padding: 0 10px;
+    padding: 0 15px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
-/* الصناديق */
+/* الأقسام والشبكات */
 .section-box {
     background: var(--card-bg);
-    border-radius: 16px;
+    border-radius: 15px;
     padding: 20px;
     margin-bottom: 20px;
-    box-shadow: var(--shadow);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
-
 .section-title {
     color: var(--primary-color);
     border-bottom: 2px solid #a5d6a7;
-    padding-bottom: 10px; margin-top: 0; margin-bottom: 20px;
-    font-size: 1.2rem;
+    padding-bottom: 10px;
+    margin-top: 0;
+    margin-bottom: 20px;
 }
 
-/* =========================================
-   4. الشبكات (Grids) - سر التجاوب
-   ========================================= */
-
-/* الشبكة العامة (للفصول والمستويات) */
+/* ✅ الشبكة المتجاوبة الذكية */
 .semesters-grid {
     display: grid;
-    gap: 15px;
-    /* في الموبايل: عمودين (للفصول)، في الكمبيوتر: 3 أو 4 */
+    /* هذا السطر هو سر التجاوب: يتمدد ويتقلص تلقائياً */
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 15px;
 }
 
-/* البطاقات */
 .semester-card {
-    background: white; border: 1px solid #e0e0e0;
-    border-radius: 12px; padding: 20px; text-align: center;
-    cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
+    background: white;
+    border: 1px solid #c8e6c9;
+    border-radius: 15px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
-.semester-card:active { transform: scale(0.98); } /* تأثير ضغط للموبايل */
 .semester-card:hover {
+    transform: translateY(-5px);
     border-color: var(--primary-color);
-    box-shadow: 0 5px 15px rgba(27,94,32,0.1);
+    box-shadow: 0 8px 20px rgba(27, 94, 32, 0.15);
 }
 
-/* بطاقات القائمة الرئيسية (كبيرة وواضحة) */
+/* بطاقات القائمة الرئيسية */
 .main-option-card {
-    display: flex; flex-direction: column;
-    justify-content: center; align-items: center;
+    grid-column: span 2; /* تأخذ مساحة مزدوجة إذا أمكن */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     min-height: 160px;
     background: linear-gradient(145deg, #ffffff, #f1f8e9);
-    border-left: 5px solid var(--primary-color); /* زخرفة */
+    border-color: #4caf50;
 }
-.main-option-card .icon-box { font-size: 3rem; color: var(--primary-color); margin-bottom: 10px; }
-.main-option-card h3 { margin: 0; font-size: 1.2rem; color: #333; }
+/* إصلاح للموبايل الصغير جداً: اجعلها عمود واحد */
+@media (max-width: 400px) {
+    .semesters-grid { grid-template-columns: 1fr; }
+    .main-option-card { grid-column: span 1; }
+}
+
+.main-option-card .icon-box { font-size: 3.5rem; color: var(--primary-color); margin-bottom: 15px; }
+.main-option-card h3 { font-size: 1.2rem; margin: 0; color: #333; }
 .main-option-card p { margin: 5px 0 0; color: #666; font-size: 0.9rem; }
 
-/* ✅ تخصيص للموبايل (شاشة صغيرة) */
-@media (max-width: 600px) {
-    /* جعل بطاقات القائمة الرئيسية تحت بعضها في الموبايل */
-    .semesters-grid {
-        grid-template-columns: 1fr; /* عمود واحد */
-    }
-    /* استثناء: الفصول (S1, S2) تبقى عمودين لأنها صغيرة */
-    #semesters-grid-view {
-        grid-template-columns: 1fr 1fr;
-    }
-    .main-header { padding: 30px 15px; }
-    .main-header h1 { font-size: 1.5rem; }
+/* بطاقة من نحن */
+.about-btn-card {
+    grid-column: span 2;
+    background: #e0f2f1;
+    border-color: #009688;
 }
+@media (max-width: 400px) { .about-btn-card { grid-column: span 1; } }
 
-/* =========================================
-   5. أزرار المواد والبحث
-   ========================================= */
+.result-card { border-color: #fbc02d; background: #fffde7; }
+.result-rim-card { border-color: #009688; background: #e0f2f1; }
+
+.icon-box { font-size: 2.5rem; color: var(--secondary-color); margin-bottom: 10px; }
+
+/* شريط البحث */
 .search-wrapper { margin: 0 auto 20px; width: 100%; max-width: 600px; }
 .search-box {
     background: white; border-radius: 50px; padding: 10px 20px;
-    display: flex; align-items: center; box-shadow: var(--shadow);
+    display: flex; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    border: 2px solid transparent; transition: 0.3s;
 }
+.search-box:focus-within { border-color: var(--primary-color); box-shadow: 0 4px 15px rgba(27, 94, 32, 0.2); }
 .search-box input { flex: 1; border: none; outline: none; font-size: 1rem; font-family: inherit; }
-.search-icon { color: var(--primary-color); }
+.search-icon { color: var(--primary-color); font-size: 1.2rem; }
+#close-search-btn { background: #d32f2f; color: white; border: none; padding: 10px; border-radius: 8px; width: 100%; cursor: pointer; margin-bottom: 15px; }
 
+/* أزرار المواد */
 .buttons-grid { display: flex; flex-direction: column; gap: 10px; }
 .buttons-grid button {
-    background: white; border: 1px solid #eee; padding: 15px;
+    background: white; border: 1px solid #c8e6c9; padding: 15px;
     border-radius: 10px; text-align: right; font-weight: bold;
-    color: #333; cursor: pointer; display: flex;
-    justify-content: space-between; align-items: center;
-    font-size: 1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+    color: #333; cursor: pointer; transition: 0.2s;
+    font-size: 1rem; display: flex; justify-content: space-between; align-items: center;
 }
-.buttons-grid button:active { background: #e8f5e9; } /* لون عند اللمس */
+.buttons-grid button:hover { background: #e8f5e9; border-color: var(--primary-color); color: var(--primary-color); }
+.buttons-grid button::after { content: '\f053'; font-family: 'Font Awesome 6 Free'; font-weight: 900; font-size: 0.8rem; opacity: 0.5; }
 
-/* ألوان خاصة */
-.archive-btn { background: #ff9800 !important; color: white !important; justify-content: center; }
-.result-card { border-color: #ffeb3b; background: #fffde7; }
-.result-rim-card { border-color: #009688; background: #e0f2f1; }
+/* زر الأرشيف */
+.archive-btn { background: #ff9800 !important; color: white !important; text-align: center !important; justify-content: center; border: none !important; }
+.archive-btn::after { content: '' !important; } /* إخفاء السهم */
 
-/* =========================================
-   6. العرض والقوائم (Lists)
-   ========================================= */
-#pdf-list { list-style: none; padding: 0; }
-#pdf-list li {
-    background: white; padding: 15px; margin-bottom: 8px;
-    border-radius: 8px; border: 1px solid #eee;
-    cursor: pointer; display: flex; align-items: center; gap: 12px;
+/* الزر العائم للذكاء الاصطناعي */
+.floating-ai-btn {
+    position: fixed; bottom: 20px; left: 20px;
+    background: linear-gradient(135deg, #009688 0%, #004d40 100%);
+    color: white; padding: 12px 20px; border-radius: 50px;
+    box-shadow: 0 5px 15px rgba(0, 77, 64, 0.4);
+    display: flex; align-items: center; gap: 10px; cursor: pointer;
+    font-weight: bold; z-index: 1000; transition: transform 0.3s;
 }
-.file-icon { font-size: 1.4rem; }
-.icon-pdf { color: #dc3545; }
-.icon-word { color: #0d6efd; }
-.icon-powerpoint { color: #fd7e14; }
+.floating-ai-btn:hover { transform: scale(1.05); }
+.floating-ai-btn i { font-size: 1.2rem; }
 
-/* =========================================
-   7. النوافذ المنبثقة (Modals)
-   ========================================= */
-.hidden { display: none !important; }
-.fade-in { animation: fadeIn 0.4s ease-out; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-/* طبقة الخلفية */
-#pdf-viewer-overlay, #web-viewer-overlay, #ios-install-modal, #welcome-modal, #about-modal {
+/* المتصفح الداخلي */
+#web-viewer-overlay {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: #f4f6f8; z-index: 5000;
-    display: flex; flex-direction: column;
+    background: white; z-index: 5000; display: flex; flex-direction: column;
 }
-/* النوافذ الصغيرة (من نحن، ترحيب) تكون في المنتصف مع خلفية شفافة */
-#ios-install-modal, #welcome-modal, #about-modal {
-    background: rgba(0,0,0,0.85);
-    justify-content: center; align-items: center;
-}
+.web-viewer-container { flex: 1; width: 100%; height: 100%; }
+.web-viewer-container iframe { width: 100%; height: 100%; border: none; }
 
-.welcome-content, .ios-modal-content {
-    background: white; padding: 30px; border-radius: 20px;
-    width: 85%; max-width: 400px; text-align: center;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-}
-
-/* هيدر العوارض */
-.viewer-header {
-    background: var(--primary-color); color: white; padding: 12px 15px;
-    display: flex; justify-content: space-between; align-items: center;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1); flex-shrink: 0;
-}
-.close-viewer-btn { background: none; border: none; color: white; font-size: 1.1rem; font-weight: bold; }
-.external-btn { background: rgba(255,255,255,0.2); color: white; border: none; padding: 5px 12px; border-radius: 20px; font-size: 0.9rem; }
-
-/* منطقة العرض */
-#pdf-render-area, .web-viewer-container {
-    flex: 1; width: 100%; height: 100%; background: #eee;
-    overflow: hidden;
-}
+/* عارض PDF */
+#pdf-viewer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #333; z-index: 2000; display: flex; flex-direction: column; }
+.viewer-header { background: var(--primary-color); color: white; padding: 10px; display: flex; justify-content: space-between; align-items: center; }
+.close-viewer-btn { background: none; border: none; color: white; font-size: 1.2rem; }
+#pdf-render-area { flex: 1; width: 100%; background: #525659; }
 iframe { width: 100%; height: 100%; border: none; }
 
-/* =========================================
-   8. التذييل
-   ========================================= */
+/* التذييل */
 .main-footer {
-    background: #1b5e20; color: white; padding: 25px;
+    background: #1b5e20; color: white; padding: 20px;
     text-align: center; margin-top: 40px;
 }
-.footer-divider { width: 50px; height: 2px; background: rgba(255,255,255,0.3); margin: 15px auto; }
-.copyright { font-size: 0.85rem; opacity: 0.7; }
-
-/* زر التثبيت */
-.install-btn-style {
-    width: 100%; margin-bottom: 20px; background: #2e7d32;
-    color: white; padding: 12px; border: none;
-    border-radius: 10px; font-weight: bold; font-size: 1rem;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+.validation-text { color: #ffeb3b; font-weight: bold; margin-bottom: 10px; }
+.footer-divider { width: 50px; height: 2px; background: rgba(255,255,255,0.3); margin: 10px auto; }
+.dev-link-pro {
+    display: inline-block; background: rgba(255,255,255,0.1); color: white;
+    padding: 5px 15px; border-radius: 20px; text-decoration: none; margin-top: 5px;
 }
+
+/* Modals */
+#welcome-modal, #ios-install-modal, #about-modal {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.85); z-index: 3000;
+    display: flex; justify-content: center; align-items: center;
+    backdrop-filter: blur(5px);
+}
+.welcome-content { background: white; padding: 25px; border-radius: 20px; width: 85%; max-width: 350px; text-align: center; }
+.welcome-icon { font-size: 4rem; color: var(--primary-color); margin-bottom: 15px; }
+.welcome-btn { background: var(--primary-color); color: white; width: 100%; padding: 12px; border: none; border-radius: 50px; font-weight: bold; cursor: pointer; margin-top: 15px; }
+
+/* قائمة الملفات */
+#pdf-list { list-style: none; padding: 0; }
+#pdf-list li { background: white; padding: 15px; border-bottom: 1px solid #eee; cursor: pointer; display: flex; align-items: center; }
+#pdf-list li::before { content: '📄'; margin-left: 10px; font-size: 1.2rem; }
+
+/* أدوات مساعدة */
+.hidden { display: none !important; }
+.fade-in { animation: fadeIn 0.4s ease-in-out; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.install-btn-style { width: 100%; margin-bottom: 20px; background: #2e7d32; color: white; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }

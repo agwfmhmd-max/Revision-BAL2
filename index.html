@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Révision BA & FC</title>
     
     <link rel="manifest" href="manifest.json">
@@ -20,8 +20,8 @@
         <div class="nav-content">
             <div class="developer-info">
                 <span>تم التطوير بواسطة: </span>
-                <!-- ✅ اسم المطور مع كلاس الإضاءة -->
-                <a href="https://wa.me/22220479962" target="_blank" class="dev-name">
+                <!-- ✅ تم التعديل هنا: إزالة Boua -->
+                <a href="https://wa.me/22220479962" target="_blank" class="dev-name" style="color:#ffeb3b; text-decoration:none;">
                     Mohamed Dah Agove
                 </a>
             </div>
@@ -76,7 +76,7 @@
             </div>
         </div>
 
-        <!-- 2. اختيار التخصص -->
+        <!-- 2. التخصص -->
         <div id="specialization-selection" class="section-box hidden">
             <div class="header-with-back">
                 <button class="back-btn" onclick="goBackToMainMenu()"><i class="fas fa-arrow-right"></i> القائمة</button>
@@ -96,11 +96,11 @@
             </div>
         </div>
 
-        <!-- 3. اختيار المستوى -->
+        <!-- 3. المستوى -->
         <div id="level-selection" class="section-box hidden">
             <div class="header-with-back">
                 <button class="back-btn" onclick="goBackToSpecialization()"><i class="fas fa-arrow-right"></i> التخصص</button>
-                <h2 class="section-title">اختر المستوى الدراسي</h2>
+                <h2 class="section-title">المستوى</h2>
             </div>
             <div class="semesters-grid">
                 <div class="semester-card" onclick="showSemesters('l1')">
@@ -185,7 +185,7 @@
             <p id="no-files-msg" class="hidden error-msg">⚠️ لا توجد ملفات تطابق البحث.</p>
         </div>
     </div>
-
+    
     <!-- متصفح داخلي -->
     <div id="web-viewer-overlay" class="hidden">
         <div class="viewer-header">
@@ -271,9 +271,8 @@
                 <p>
                     تم التطوير <i class="fas fa-heart pulse-icon"></i> بواسطة
                     <br>
-                    <!-- ✅ اسم المطور مع الإضاءة -->
                     <a href="https://wa.me/22220479962" target="_blank" class="dev-link-pro">
-                        Mohamed Dah Agove
+                        <i class="fab fa-whatsapp"></i> Mohamed Dah Agove
                     </a>
                 </p>
             </div>
