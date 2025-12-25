@@ -1,6 +1,6 @@
 :root {
-    --primary-color: #1b5e20; /* أخضر غامق */
-    --secondary-color: #2e7d32; /* أخضر قياسي */
+    --primary-color: #1b5e20;
+    --secondary-color: #2e7d32;
     --accent-color: #e8f5e9;
     --text-color: #333;
     --bg-color: #f1f8e9;
@@ -16,29 +16,23 @@ body {
     overflow-y: auto;
 }
 
-/* الشريط العلوي */
 .top-nav { background: linear-gradient(90deg, #004d40, #1b5e20); color: white; padding: 10px 0; font-size: 0.9rem; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
 .nav-content { max-width: 1000px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; flex-wrap: wrap; }
 .dev-name { color: #ffeb3b; text-decoration: none; font-weight: bold; margin-right: 5px; }
 
-/* الهيدر */
-.main-header { background: linear-gradient(135deg, #1b5e20 0%, #43a047 100%); color: white; padding: 30px 20px; text-align: center; border-radius: 0 0 30px 30px; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(27, 94, 32, 0.3); }
+.main-header { background: linear-gradient(135deg, #1b5e20 0%, #43a047 100%); color: white; padding: 40px 20px; text-align: center; border-radius: 0 0 30px 30px; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(27, 94, 32, 0.3); }
 .main-header h1 { margin: 0; font-size: 1.8rem; }
 .main-header p { margin: 5px 0 0; font-size: 0.9rem; opacity: 0.95; }
 
-/* الحاوية */
 .container { max-width: 1000px; margin: 0 auto; padding: 0 15px; width: 100%; box-sizing: border-box; }
 
-/* الأقسام */
 .section-box { background: var(--card-bg); border-radius: 15px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
 .section-title { color: var(--primary-color); border-bottom: 2px solid #a5d6a7; padding-bottom: 10px; margin-top: 0; margin-bottom: 20px; }
 
-/* الشبكة */
 .semesters-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; }
 .semester-card { background: white; border: 1px solid #c8e6c9; border-radius: 15px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
 .semester-card:hover { transform: translateY(-5px); border-color: var(--primary-color); box-shadow: 0 8px 20px rgba(27, 94, 32, 0.15); }
 
-/* البطاقات الرئيسية */
 .main-option-card { grid-column: span 2; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 160px; background: linear-gradient(145deg, #ffffff, #f1f8e9); border-color: #4caf50; }
 @media (max-width: 400px) { .semesters-grid { grid-template-columns: 1fr; } .main-option-card { grid-column: span 1; } }
 .main-option-card .icon-box { font-size: 3.5rem; color: var(--primary-color); margin-bottom: 15px; }
@@ -49,17 +43,17 @@ body {
 @media (max-width: 400px) { .about-btn-card { grid-column: span 1; } }
 .result-card { border-color: #fbc02d; background: #fffde7; }
 .result-rim-card { border-color: #009688; background: #e0f2f1; }
+.result-rim-card:hover { box-shadow: 0 10px 20px rgba(0, 150, 136, 0.2); transform: translateY(-5px); }
+
 .icon-box { font-size: 2.5rem; color: var(--secondary-color); margin-bottom: 10px; }
 
-/* شريط البحث */
-.search-wrapper { margin: 0 auto 20px; width: 100%; max-width: 600px; }
+.search-wrapper { margin: 0 auto 20px; width: 100%; max-width: 600px; position: relative; }
 .search-box { background: white; border-radius: 50px; padding: 10px 20px; display: flex; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.08); border: 2px solid transparent; transition: 0.3s; }
 .search-box:focus-within { border-color: var(--primary-color); box-shadow: 0 4px 15px rgba(27, 94, 32, 0.2); }
 .search-box input { flex: 1; border: none; outline: none; font-size: 1rem; font-family: inherit; }
 .search-icon { color: var(--primary-color); font-size: 1.2rem; }
 #close-search-btn { background: #d32f2f; color: white; border: none; padding: 10px; border-radius: 8px; width: 100%; cursor: pointer; margin-bottom: 15px; }
 
-/* أزرار المواد */
 .buttons-grid { display: flex; flex-direction: column; gap: 10px; }
 .buttons-grid button { background: white; border: 1px solid #c8e6c9; padding: 15px; border-radius: 10px; text-align: right; font-weight: bold; color: #333; cursor: pointer; transition: 0.2s; font-size: 1rem; display: flex; justify-content: space-between; align-items: center; }
 .buttons-grid button:hover { background: #e8f5e9; border-color: var(--primary-color); color: var(--primary-color); }
@@ -67,27 +61,31 @@ body {
 .archive-btn { background: #ff9800 !important; color: white !important; text-align: center !important; justify-content: center; border: none !important; }
 .archive-btn::after { content: '' !important; }
 
-/* قوائم وملفات */
 #pdf-list { list-style: none; padding: 0; }
-#pdf-list li { background: white; padding: 15px; border-bottom: 1px solid #eee; cursor: pointer; display: flex; align-items: center; }
-#pdf-list li::before { content: '📄'; margin-left: 10px; font-size: 1.2rem; }
+#pdf-list li { background: white; padding: 15px; border-bottom: 1px solid #eee; cursor: pointer; display: flex; align-items: center; font-size: 1rem; gap: 10px; }
+#pdf-list li:hover { background-color: #f1f8e9; }
+.file-icon { font-size: 1.3rem; width: 25px; text-align: center; }
+.icon-pdf { color: #dc3545; }
+.icon-word { color: #0d6efd; }
+.icon-powerpoint { color: #fd7e14; }
+
+.header-with-back { display: flex; justify-content: space-between; align-items: center; }
+.back-btn { background: none; border: 1px solid #ccc; padding: 5px 15px; border-radius: 20px; cursor: pointer; color: #666; font-family: 'Tajawal'; }
 .hidden { display: none !important; }
 .fade-in { animation: fadeIn 0.4s ease-in-out; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-/* المتصفح الداخلي */
 #web-viewer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 5000; display: flex; flex-direction: column; }
 .web-viewer-container { flex: 1; width: 100%; height: 100%; }
 .web-viewer-container iframe { width: 100%; height: 100%; border: none; }
 
-/* عارض PDF */
 #pdf-viewer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #333; z-index: 2000; display: flex; flex-direction: column; }
-.viewer-header { background: var(--primary-color); color: white; padding: 10px; display: flex; justify-content: space-between; align-items: center; }
+.viewer-header { background: var(--primary-color); color: white; padding: 10px; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
 .close-viewer-btn { background: none; border: none; color: white; font-size: 1.2rem; }
-#pdf-render-area { flex: 1; width: 100%; background: #525659; }
+.external-btn { background: #2e7d32; color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; font-weight: bold; font-family: 'Tajawal'; }
+#pdf-render-area { flex: 1; width: 100%; height: 100%; background: #fff; overflow: hidden; }
 iframe { width: 100%; height: 100%; border: none; }
 
-/* نوافذ منبثقة */
 #ios-install-modal, #welcome-modal, #about-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 3000; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
 .welcome-content { background: white; padding: 25px; border-radius: 20px; width: 85%; max-width: 350px; text-align: center; }
 .welcome-icon { font-size: 4rem; color: var(--primary-color); margin-bottom: 15px; }
@@ -95,9 +93,11 @@ iframe { width: 100%; height: 100%; border: none; }
 .ios-modal-content ol { text-align: right; padding-right: 20px; }
 .ios-modal-content button { background: #003366; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; width: 100%; }
 
-/* التذييل */
 .main-footer { background: #1b5e20; color: white; padding: 20px; text-align: center; margin-top: 40px; }
 .validation-text { color: #ffeb3b; font-weight: bold; margin-bottom: 10px; }
 .footer-divider { width: 50px; height: 2px; background: rgba(255,255,255,0.3); margin: 10px auto; }
 .dev-link-pro { display: inline-block; background: rgba(255,255,255,0.1); color: white; padding: 5px 15px; border-radius: 20px; text-decoration: none; margin-top: 5px; }
 .install-btn-style { width: 100%; margin-bottom: 20px; background: #2e7d32; color: white; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+.spinner { border: 4px solid rgba(255,255,255,0.3); border-top: 4px solid #fff; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 20px auto; }
+@keyframes spin { 100% { transform: rotate(360deg); } }
+#rendering-msg { color: white; text-align: center; margin-top: 20px; }

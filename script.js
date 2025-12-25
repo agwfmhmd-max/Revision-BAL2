@@ -7,46 +7,24 @@ let allFiles = [];
 let currentSpecialization = ''; 
 let currentLevel = '';
 
-// ✅ قائمة المواد المشتركة المحدثة (تم حذف المواد التي تختلف بين التخصصين)
-// المواد المتبقية هنا ستظهر للجميع بدون شرط FC
+// المواد المشتركة
 const commonSubjects = [
-    // S1 (المشترك فقط)
-    "Statistique descriptive I", 
-    "Mathématique", 
-    "Méthodologie du travail universitaire", 
-    "Introduction au droit",
-    "MS office",
-    "Anglais I",
-    
-    // S2 (المشترك فقط)
-    "Statistique descriptive II", 
-    "Anglais II",
-    "Aptitudes en TIC",
-    "Développement personnel",
-    
-    // S3 (المشترك فقط)
-    "Comptabilité des Sociétés", 
-    "Méthodes d’aide à la décision"
+    "Statistique descriptive I", "Mathématique", "Méthodologie du travail universitaire",
+    "Introduction au droit", "Statistique descriptive II", "Comptabilité des Sociétés",
+    "Méthodes d’aide à la décision", "MS office", "Anglais I", "Anglais II",
+    "Aptitudes en TIC", "Développement personnel"
 ];
-
-/* 
-   ملاحظة: المواد التالية تم إخراجها من القائمة المشتركة وسينطبق عليها شرط FC:
-   - Principe de gestion
-   - Comptabilité financière I
-   - Introduction à l’économie
-   - Technique de communication
-   - وغيرها من مواد التخصص...
-*/
 
 document.addEventListener("DOMContentLoaded", () => {
     fetchFilesFromGitHub();
     checkWelcome();
 });
 
-// دوال النوافذ
+// ✅ دوال من نحن
 function openAboutModal() { document.getElementById('about-modal').classList.remove('hidden'); }
 function closeAboutModal() { document.getElementById('about-modal').classList.add('hidden'); }
 
+// ✅ دوال الترحيب
 function checkWelcome() {
     if (!localStorage.getItem('welcome_seen_permanent')) {
         document.getElementById('welcome-modal').classList.remove('hidden');
@@ -74,6 +52,21 @@ function fetchFilesFromGitHub() {
         .catch(err => console.error("Error:", err));
 }
 
+// ✅ دالة التحقق من الامتدادات
+function isValidExtension(filename) {
+    const ext = filename.split('.').pop().toLowerCase();
+    return ['pdf', 'doc', 'docx', 'ppt', 'pptx'].includes(ext);
+}
+
+// ✅ دالة الأيقونات
+function getFileIconClass(filename) {
+    const ext = filename.split('.').pop().toLowerCase();
+    if (ext === 'pdf') return 'fas fa-file-pdf icon-pdf';
+    if (ext === 'doc' || ext === 'docx') return 'fas fa-file-word icon-word';
+    if (ext === 'ppt' || ext === 'pptx') return 'fas fa-file-powerpoint icon-powerpoint';
+    return 'fas fa-file';
+}
+
 // ---------------- البحث الشامل ----------------
 function handleGlobalSearch(query) {
     const fileListContainer = document.getElementById('file-list-container');
@@ -83,7 +76,7 @@ function handleGlobalSearch(query) {
     const noFilesMsg = document.getElementById('no-files-msg');
     
     if (query.trim().length > 0) {
-        document.querySelectorAll('.section-box').forEach(el => el.classList.add('hidden'));
+        hideAll();
         fileListContainer.classList.remove('hidden');
         closeBtn.classList.remove('hidden');
         selectedTitle.textContent = `نتائج البحث عن: "${query}"`;
@@ -102,7 +95,7 @@ function handleGlobalSearch(query) {
             noFilesMsg.classList.add('hidden');
             results.forEach(file => {
                 const li = document.createElement('li');
-                li.innerHTML = `${getFileIcon(file.name)} ${file.name.replace(/\.(pdf|pptx|ppt)$/i, '')}`;
+                li.innerHTML = `<i class="${getFileIconClass(file.name)} file-icon"></i> ${file.name.replace(/\.[^/.]+$/, "")}`;
                 li.onclick = () => openSmartViewer(file.name);
                 pdfList.appendChild(li);
             });
@@ -146,11 +139,9 @@ function showSemesters(level) {
     currentLevel = level;
     hideAll();
     document.getElementById('semesters-container').classList.remove('hidden');
-    
     const grid = document.getElementById('semesters-grid-view');
     grid.innerHTML = ''; 
     let semesters = (level === 'l1') ? ['s1', 's2'] : (level === 'l2') ? ['s3', 's4'] : ['s5', 's6'];
-    
     semesters.forEach(sem => {
         const div = document.createElement('div');
         div.className = 'semester-card';
@@ -186,7 +177,7 @@ function goBackToSemesters() {
 }
 function hideAll() { document.querySelectorAll('.section-box').forEach(el => el.classList.add('hidden')); }
 
-// ---------------- أدوات النصوص والمطابقة ----------------
+// ---------------- الفلترة (الصارمة) ----------------
 function normalizeText(text) {
     return text.toLowerCase()
         .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
@@ -204,24 +195,12 @@ function mapRomanNumbers(text) {
     return safeText;
 }
 
-function isValidExtension(filename) {
-    const lower = filename.toLowerCase();
-    return lower.endsWith(".pdf") || lower.endsWith(".pptx") || lower.endsWith(".ppt");
-}
-
-function getFileIcon(filename) {
-    if (filename.toLowerCase().endsWith(".pdf")) return "📄";
-    return "📊";
-}
-
-// ✅ خوارزمية المطابقة (النسخة الصارمة لـ FC)
 function isFileMatch(fileName, subjectName) {
     let fileClean = normalizeText(fileName);
     let subjectClean = normalizeText(subjectName);
     let fileMapped = mapRomanNumbers(fileClean);
     let subjectMapped = mapRomanNumbers(subjectClean);
 
-    // 1️⃣ هل المادة مشتركة؟
     const isCommon = commonSubjects.some(common => 
         normalizeText(common) === subjectClean
     );
@@ -229,17 +208,13 @@ function isFileMatch(fileName, subjectName) {
     if (isCommon) {
         // مادة مشتركة: تظهر للجميع
     } else {
-        // مادة خاصة: تطبيق شرط FC
         if (currentSpecialization === 'fc') {
-            // تخصص FC: يجب أن يبدأ الملف بـ "fc"
             if (!fileName.toLowerCase().startsWith("fc")) return false;
         } else if (currentSpecialization === 'ba') {
-            // تخصص BA: يجب ألا يبدأ بـ FC
             if (fileName.toLowerCase().startsWith("fc")) return false;
         }
     }
 
-    // 2️⃣ مطابقة الاسم
     if (subjectClean.includes("affaires")) {
         if (!fileClean.includes("affaires")) return false;
     } 
@@ -272,7 +247,6 @@ function isFileMatch(fileName, subjectName) {
     return matchCount >= Math.ceil(subjectKeywords.length * 0.7); 
 }
 
-// ---------------- التحميل والعرض ----------------
 function loadFiles(subjectName) {
     const listContainer = document.getElementById('file-list-container');
     const pdfList = document.getElementById('pdf-list');
@@ -324,7 +298,7 @@ function renderFiles(subjectName) {
         noFilesMsg.classList.add('hidden');
         filteredFiles.forEach(file => {
             const li = document.createElement('li');
-            li.innerHTML = `${getFileIcon(file.name)} ${file.name.replace(/\.(pdf|pptx|ppt)$/i, '')}`;
+            li.innerHTML = `<i class="${getFileIconClass(file.name)} file-icon"></i> ${file.name.replace(/\.[^/.]+$/, "")}`;
             li.onclick = () => openSmartViewer(file.name);
             pdfList.appendChild(li);
         });
@@ -357,7 +331,7 @@ function openSmartViewer(fileName) {
 
     renderArea.innerHTML = "";
     viewerOverlay.classList.remove('hidden');
-    filenameLabel.textContent = fileName.replace(/\.(pdf|pptx|ppt)$/i, '');
+    filenameLabel.textContent = fileName.replace(/\.[^/.]+$/, "");
     msgDiv.style.display = 'block';
     
     const cdnUrl = `https://cdn.jsdelivr.net/gh/${repoOwner}/${repoName}@${branchName}/${encodeURIComponent(fileName)}`;
