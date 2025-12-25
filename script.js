@@ -37,6 +37,7 @@ function fetchFilesFromGitHub() {
     if (cachedFiles) {
         try { allFiles = JSON.parse(cachedFiles); } catch(e){}
     }
+    
     fetch(apiUrl + "?t=" + new Date().getTime())
         .then(res => res.json())
         .then(data => {
@@ -73,12 +74,15 @@ function handleGlobalSearch(query) {
         fileListContainer.classList.remove('hidden');
         closeBtn.classList.remove('hidden');
         selectedTitle.textContent = `نتائج البحث عن: "${query}"`;
+        
         pdfList.innerHTML = "";
+        
         const searchClean = normalizeText(query);
         const results = allFiles.filter(file => {
             const fileNameClean = normalizeText(file.name);
             return fileNameClean.includes(searchClean) && isValidExtension(file.name);
         });
+
         if (results.length === 0) {
             noFilesMsg.classList.remove('hidden');
         } else {
@@ -91,7 +95,9 @@ function handleGlobalSearch(query) {
             });
             setTimeout(() => { fileListContainer.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 100);
         }
-    } else { closeSearch(); }
+    } else {
+        closeSearch();
+    }
 }
 
 function closeSearch() {
@@ -153,8 +159,8 @@ function isFileMatch(fileName, subjectName) {
     let subjectClean = normalizeText(subjectName);
     let fileMapped = mapRomanNumbers(fileClean);
     let subjectMapped = mapRomanNumbers(subjectClean);
-    const isCommon = commonSubjects.some(common => normalizeText(common) === subjectClean);
-    if (!isCommon) {
+    const isCommonSubject = commonSubjects.some(common => normalizeText(common) === subjectClean);
+    if (!isCommonSubject) {
         if (currentSpecialization === 'fc') { if (!fileClean.includes("fc")) return false; } 
         else if (currentSpecialization === 'ba') { if (fileClean.includes("fc")) return false; }
     }
@@ -194,6 +200,7 @@ function loadFiles(subjectName) {
         if (filteredFiles.length === 0) {
             noFilesMsg.classList.remove('hidden');
         } else {
+            noFilesMsg.classList.add('hidden');
             filteredFiles.forEach(file => {
                 const li = document.createElement('li');
                 li.innerHTML = `<i class="${getFileIconClass(file.name)} file-icon"></i> ${file.name.replace(/\.[^/.]+$/, "")}`;
@@ -205,7 +212,7 @@ function loadFiles(subjectName) {
     }, 50);
 }
 
-// ✅ دالة العرض الذكية (Switching Logic)
+// ✅ العارض الشامل (Google GView)
 function openSmartViewer(fileName) {
     const viewerOverlay = document.getElementById('pdf-viewer-overlay');
     const renderArea = document.getElementById('pdf-render-area');
@@ -218,33 +225,21 @@ function openSmartViewer(fileName) {
     filenameLabel.textContent = fileName.replace(/\.[^/.]+$/, "");
     msgDiv.style.display = 'block';
     
-    // رابط CDN للملف
+    // رابط الملف المباشر من CDN
     const cdnUrl = `https://cdn.jsdelivr.net/gh/${repoOwner}/${repoName}@${branchName}/${encodeURIComponent(fileName)}`;
     
-    // تحديد الامتداد
-    const ext = fileName.split('.').pop().toLowerCase();
-    let viewerUrl = "";
+    // ✅ استخدام Google Docs Viewer الكلاسيكي (الأكثر توافقاً مع Word/PPTX)
+    const viewerUrl = `https://docs.google.com/gview?url=${cdnUrl}&embedded=true`;
 
-    if (ext === 'pdf') {
-        // للـ PDF نستخدم Google (أفضل للـ PDF)
-        viewerUrl = `https://drive.google.com/viewerng/viewer?embedded=true&url=${cdnUrl}`;
-    } else {
-        // للـ DOCX و PPTX نستخدم Microsoft (هو الوحيد الذي يفتحها بشكل صحيح)
-        // ملاحظة: مايكروسوفت تتطلب أن يكون الرابط مشفراً بشكل صحيح
-        viewerUrl = `https://view.officeapps.live.com/op/embed.aspx?src=${cdnUrl}`;
-    }
-
-    // زر الفتح الخارجي
-    actionBtn.onclick = () => window.open(cdnUrl, '_blank');
+    // زر الفتح الخارجي: يفتح العارض في نافذة جديدة (بدلاً من التنزيل)
+    actionBtn.onclick = () => window.open(`https://docs.google.com/gview?url=${cdnUrl}`, '_blank');
     actionBtn.style.display = 'block'; 
 
     const iframe = document.createElement('iframe');
     iframe.setAttribute('loading', 'lazy');
     iframe.src = viewerUrl;
     
-    // إخفاء رسالة التحميل عند النجاح
     iframe.onload = function() { msgDiv.style.display = 'none'; };
-    // مهلة أمان
     setTimeout(() => { msgDiv.style.display = 'none'; }, 3000);
 
     renderArea.appendChild(iframe);
